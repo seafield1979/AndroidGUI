@@ -32,32 +32,22 @@ public class IconRect extends Icon {
     public void draw(Canvas canvas, Paint paint) {
         // 描画方法
         paint.setStyle(Paint.Style.FILL);
-        // 線の太さ
-//        paint.setStrokeWidth(3);
         // 色
-        paint.setColor(color);
+        if (isAnimating) {
+            double v1 = ((double)animeFrame / (double)animeFrameMax) * 180;
+            int alpha = (int)((1.0 -  Math.sin(v1 * RAD)) * 255);
+            paint.setColor((alpha << 24) | (color & 0xffffff));
+        } else {
+            paint.setColor(color);
+        }
 
         // 四角形描画
         canvas.drawRect(rect, paint);
+
+        drawId(canvas, paint);
     }
 
-    /**
-     * アニメーション処理
-     *
-     * @return
-     */
-    public boolean animate() {
-        return true;
-    }
 
-    /**
-     * アニメーション中かどうか
-     *
-     * @return
-     */
-    public boolean isAnimating() {
-        return false;
-    }
 
     /**
      * 描画範囲の矩形を取得

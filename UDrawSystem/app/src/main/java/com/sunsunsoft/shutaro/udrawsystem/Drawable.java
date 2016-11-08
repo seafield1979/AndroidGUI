@@ -10,6 +10,8 @@ import android.graphics.Rect;
  */
 
 public interface Drawable {
+    double RAD = 3.1415 / 180.0;
+
     /**
      * 描画処理
      * @param canvas
@@ -18,8 +20,23 @@ public interface Drawable {
     void draw(Canvas canvas, Paint paint );
 
     /**
-     * アニメーション処理
+     * 描画範囲の矩形を取得
      * @return
+     */
+    Rect getRect();
+
+    public void setDrawList(DrawList drawList);
+    public DrawList getDrawList();
+
+    /**
+     * アニメーション開始
+     */
+    void startAnim();
+
+    /**
+     * アニメーション処理
+     * onDrawからの描画処理で呼ばれる
+     * @return true:アニメーション中
      */
     boolean animate();
 
@@ -28,10 +45,4 @@ public interface Drawable {
      * @return
      */
     boolean isAnimating();
-
-    /**
-     * 描画範囲の矩形を取得
-     * @return
-     */
-    Rect getRect();
 }

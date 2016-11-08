@@ -13,20 +13,22 @@ import java.util.TreeMap;
  *
  */
 public class DrawManager {
+    public static final String TAG = "DrawManager";
 
     // 同じプライオリティーのDrawableリストを管理するリスト
     TreeMap<Integer, DrawList> lists = new TreeMap<>();
 
-    public boolean add(int priority, Drawable obj) {
+    public boolean addDrawable(int priority, Drawable obj) {
         // 挿入するリストを探す
         Integer _priority = new Integer(priority);
         DrawList list = lists.get(_priority);
         if (list == null) {
             // まだ存在していないのでリストを生成
-            list = new DrawList();
+            list = new DrawList(priority);
             lists.put(_priority, list);
         }
         list.add(obj);
+        obj.setDrawList(list);
         return true;
     }
 
@@ -47,17 +49,28 @@ public class DrawManager {
                 }
                 else {
                     list.remove(obj);
-                    add(priority, obj);
+                    addDrawable(priority, obj);
                     return;
                 }
             }
         }
     }
 
-    public void draw(Canvas canvas, Paint paint) {
+    /**
+     * 配下の描画オブジェクトを全て描画する
+     * @param canvas
+     * @param paint
+     * @return true:再描画あり / false:再描画なし
+     */
+    public boolean draw(Canvas canvas, Paint paint) {
+        boolean redraw = false;
+
         for (DrawList list : lists.descendingMap().values()) {
-            list.draw(canvas, paint);
+            if (list.draw(canvas, paint) ) {
+                redraw = true;
+            }
         }
+        return redraw;
     }
 }
 
@@ -68,16 +81,26 @@ public class DrawManager {
 class DrawList
 {
     // 描画範囲 この範囲外には描画しない
-    public Rect rect;
+    public Rect clipRect;
+    private int priority;
     private LinkedList<Drawable> list = new LinkedList<>();
 
-    // Get/Set
-    public Rect getRect() {
-        return rect;
+    public DrawList(int priority) {
+        this.priority = priority;
     }
 
-    public void setRect(Rect clipRect) {
-        this.rect = clipRect;
+    // Get/Set
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public Rect getClipRect() {
+        return clipRect;
+    }
+
+    public void setClipRect(Rect clipRect) {
+        this.clipRect = clipRect;
     }
 
     public void add(Drawable obj) {
@@ -107,25 +130,43 @@ class DrawList
         return false;
     }
 
-    public void draw(Canvas canvas, Paint paint) {
-        if (rect != null) {
+    /**
+     * リストの描画オブジェクトを描画する
+     * @param canvas
+     * @param paint
+     * @return true:再描画あり (まだアニメーション中のオブジェクトあり)
+     */
+    public boolean draw(Canvas canvas, Paint paint) {
+        if (clipRect != null) {
             // クリッピング領域を設定
             canvas.save();
-            canvas.clipRect(rect);
+            canvas.clipRect(clipRect);
         }
+
+        // 分けるのが面倒なのでアニメーションと描画を同時に処理する
+        boolean allDone = true;
+
         for (Drawable obj : list) {
             Rect objRect = obj.getRect();
-            if (rect != null) {
-                if (rect.intersect(objRect)) {
-                    obj.draw(canvas, paint);
+
+            boolean isDraw = true;
+
+            // rectが設定されていたらクリッピング処理を行う
+            if (clipRect != null && !(clipRect.intersect(objRect))) {
+                // 全く重なっていなかったら描画しない
+                isDraw = false;
+            }
+            if (isDraw) {
+                if (obj.animate()) {
+                    allDone = false;
                 }
-            } else {
                 obj.draw(canvas, paint);
             }
         }
-        if (rect != null) {
+        if (clipRect != null) {
             // クリッピング解除
             canvas.restore();
         }
+        return !allDone;
     }
 }

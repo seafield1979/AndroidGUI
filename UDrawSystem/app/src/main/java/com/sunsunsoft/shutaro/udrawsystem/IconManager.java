@@ -32,7 +32,7 @@ public class IconManager {
         if (icon != null) {
             icons.add(icon);
         }
-        mDrawManager.add(priority, icon);
+        mDrawManager.addDrawable(priority, icon);
     }
 
     /**
@@ -51,6 +51,7 @@ public class IconManager {
             Icon icon = checkClick((int)vt.touchX(), (int)vt.touchY());
                 if (icon != null) {
                     mDrawManager.setPriority(icon, 1);
+                    icon.startAnim();
                     done = true;
                 }
             }

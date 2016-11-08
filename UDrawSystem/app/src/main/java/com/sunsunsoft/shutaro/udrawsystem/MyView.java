@@ -71,7 +71,9 @@ public class MyView extends View implements OnTouchListener{
         // アンチエリアシング(境界のぼかし)
         paint.setAntiAlias(true);
 
-        mDrawManager.draw(canvas, paint);
+        if (mDrawManager.draw(canvas, paint)) {
+            invalidate();
+        }
     }
 
     /**
