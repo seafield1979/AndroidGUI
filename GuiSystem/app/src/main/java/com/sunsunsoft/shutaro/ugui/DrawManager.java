@@ -103,12 +103,13 @@ public class DrawManager {
      */
     public boolean draw(Canvas canvas, Paint paint) {
         boolean redraw = false;
-
+        MyLog.startCount(TAG);
         for (DrawList list : lists.descendingMap().values()) {
             if (list.draw(canvas, paint) ) {
                 redraw = true;
             }
         }
+        MyLog.endCount(TAG);
         return redraw;
     }
 }
@@ -183,28 +184,19 @@ class DrawList
 
         // 分けるのが面倒なのでアニメーションと描画を同時に処理する
         boolean allDone = true;
-
         for (Drawable obj : list) {
             Rect objRect = obj.getRect();
 
-            boolean isDraw = true;
-
             // rectが設定されていたらクリッピング処理を行う
-            if (clipRect != null && !(clipRect.intersect(objRect))) {
-                // 全く重なっていなかったら描画しない
-                isDraw = false;
+            if (obj.animate()) {
+                allDone = false;
             }
-            if (isDraw) {
-                if (obj.animate()) {
-                    allDone = false;
-                }
-                obj.draw(canvas, paint, null);
-                drawId(canvas, paint, obj.getRect(), priority);
+            MyLog.count(DrawManager.TAG);
+            obj.draw(canvas, paint, null);
+            drawId(canvas, paint, obj.getRect(), priority);
 
-                if (MyDebug.drawIconId) {
-                    Rect _rect = obj.getRect();
-
-                }
+            if (MyDebug.drawIconId) {
+                Rect _rect = obj.getRect();
             }
         }
         if (clipRect != null) {

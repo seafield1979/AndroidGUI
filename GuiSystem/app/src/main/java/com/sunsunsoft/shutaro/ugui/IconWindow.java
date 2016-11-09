@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.view.View;
 
 import java.util.Collections;
@@ -30,6 +32,7 @@ public class IconWindow extends Window implements AutoMovable{
     }
 
     public static final String TAG = "IconWindow";
+    public static final int DRAW_PRIORITY = 100;
     private static final int RECT_ICON_NUM = 10;
     private static final int CIRCLE_ICON_NUM = 10;
     private static final int BOX_ICON_NUM = 10;
@@ -49,6 +52,7 @@ public class IconWindow extends Window implements AutoMovable{
     private View mParentView;
     private IconCallbacks mIconCallbacks;
     private IconManager mIconManager;
+    private DrawList mDrawList;
 
     // 他のIconWindow
     // ドラッグで他のWindowにアイコンを移動するのに使用する
@@ -95,10 +99,6 @@ public class IconWindow extends Window implements AutoMovable{
 
     public void setParentView(View mParentView) {
         this.mParentView = mParentView;
-    }
-
-    public boolean isAnimating() {
-        return isAnimating;
     }
 
     public void setAnimating(boolean animating) {
@@ -177,6 +177,9 @@ public class IconWindow extends Window implements AutoMovable{
             for (int i = 0; i < BOX_ICON_NUM; i++) {
                 Icon icon = mIconManager.addIcon(IconShape.BOX, AddPos.Tail);
             }
+            // 描画はDrawManagerに任せるのでDrawManagerに登録
+            mDrawList = DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
+            mDrawList.setClipRect(rect);
         }
 
         sortRects(false);
@@ -184,34 +187,58 @@ public class IconWindow extends Window implements AutoMovable{
 
     /**
      * 毎フレーム行う処理
-     * @return true:描画を行う
+     * @return true:再描画を行う(まだ処理が終わっていない)
      */
     public boolean doAction() {
-        boolean isDraw = false;
+        boolean redraw = false;
+        boolean allFinished = true;
+        List<Icon> icons = getIcons();
+
         if (isMoving) {
             // 移動処理
             if (isMoving) {
                 if (move()) {
-                    isMoving = false;
+                    allFinished = false;
                 } else {
-                    isDraw = true;
+                    isMoving = false;
                 }
             }
         }
         if (isAnimating) {
-            boolean allFinished = true;
-            List<Icon> icons = getIcons();
-            for (Icon icon : icons) {
-                if (icon.animate()) {
-                    isDraw = true;
-                    allFinished = false;
+            if (icons != null) {
+                allFinished = true;
+                for (Icon icon : icons) {
+                    if (icon.animate()) {
+                        allFinished = false;
+                    }
+                }
+                if (allFinished) {
+                    isAnimating = false;
+                } else {
+                    redraw = true;
                 }
             }
-            if (allFinished) {
-                isAnimating = false;
+        }
+
+        // アイコンの移動
+        if (icons != null) {
+            if (state == viewState.icon_moving) {
+                allFinished = true;
+                for (Icon icon : icons) {
+                    if (icon.move()) {
+                        allFinished = false;
+                    }
+                }
+                if (allFinished) {
+                    state = viewState.none;
+                }
+                else {
+                    redraw = true;
+                }
             }
         }
-        return isDraw;
+
+        return redraw;
     }
 
     /**
@@ -220,62 +247,39 @@ public class IconWindow extends Window implements AutoMovable{
      * @param paint
      * @return trueなら描画継続
      */
-    public boolean draw(Canvas canvas, Paint paint) {
-        if (!isShow) return false;
+    public void draw(Canvas canvas, Paint paint, PointF offset)
+    {
+        if (!isShow) return;
         List<Icon> icons = getIcons();
-        if (icons == null) return false;
+        if (icons == null) return;
 
-        boolean invalidate = false;
+        // ウィンドウの座標とスクロールの座標を求める
+        PointF _offset = new PointF(pos.x - contentTop.x, pos.y - contentTop.y);
+        Rect windowRect = new Rect((int)contentTop.x, (int)contentTop.y, (int)contentTop.x + size.width, (int)contentTop.y + size.height);
 
-        // クリッピング領域を設定
-        canvas.save();
-        canvas.clipRect(rect);
+        if (offset != null) {
+            _offset.x += offset.x;
+            _offset.y += offset.y;
+        }
 
-        // 背景色
-        paint.setColor(bgColor);
-        canvas.drawRect(rect, paint);
+        //MyLog.print(TAG, " - u:" + windowRect.top + " d:" + windowRect.bottom);
 
-        switch (state) {
-            case none:
-                for (Icon icon : icons) {
-                    if (icon == null) continue;
-                    icon.draw(canvas, paint, getWin2ScreenPos(), rect);
-                }
-                break;
-            case drag:
-                for (Icon icon : icons) {
-                    if (icon == null || icon == dragIcon) continue;
-                    icon.draw(canvas, paint, getWin2ScreenPos(), rect);
-                }
-                break;
+        int clipCount = 0;
+        for (Icon icon : mIconManager.getIcons()) {
+            // クリッピング
+            if (MyRect.intersect(windowRect, icon.getRect())) {
+                icon.draw(canvas, paint, _offset);
+            } else {
+                clipCount++;
+            }
         }
 
         // スクロールバー
         mScrollBar.draw(canvas, paint);
 
-        if (state == viewState.icon_moving) {
-            boolean allFinish = true;
-            for (Icon icon : icons) {
-                if (icon == null || icon == dragIcon) continue;
-                if (!icon.move()) {
-                    allFinish = false;
-                }
-                icon.draw(canvas, paint, getWin2ScreenPos(), rect);
-            }
-            if (allFinish) {
-                state = viewState.none;
-                IconsPosFixed();
-            }
-            invalidate = true;
-        }
-        // クリップ解除
-        canvas.restore();
-
         if (MyDebug.DRAW_ICON_BLOCK_RECT) {
             mIconManager.getBlockManager().draw(canvas, paint, getWin2ScreenPos());
         }
-
-        return invalidate;
     }
 
     /**
@@ -284,21 +288,21 @@ public class IconWindow extends Window implements AutoMovable{
      * @param paint
      */
     public void drawDragIcon(Canvas canvas, Paint paint) {
-        if (dragIcon != null) {
-            // ドラッグアイコンは２つのWindowをまたいで表示されるのでクリップ外で描画
-            if (state == viewState.drag) {
-                dragIcon.draw(canvas, paint, getWin2ScreenPos(), null);
-                return;
-            }
-        }
-        // dragIconが元の位置に戻る際にクリッピングで見えなくなるので最前面に描画する
-        if (dragEndIcon != null) {
-            if (state == viewState.icon_moving) {
-                MyLog.print(TAG, "dragEndIcon:" + dragEndIcon.pos.x + " " + dragEndIcon.pos.y);
-                dragEndIcon.draw(canvas, paint, getWin2ScreenPos(), null);
-                return;
-            }
-        }
+//        if (dragIcon != null) {
+//            // ドラッグアイコンは２つのWindowをまたいで表示されるのでクリップ外で描画
+//            if (state == viewState.drag) {
+//                dragIcon.draw(canvas, paint, getWin2ScreenPos(), null);
+//                return;
+//            }
+//        }
+//        // dragIconが元の位置に戻る際にクリッピングで見えなくなるので最前面に描画する
+//        if (dragEndIcon != null) {
+//            if (state == viewState.icon_moving) {
+//                MyLog.print(TAG, "dragEndIcon:" + dragEndIcon.pos.x + " " + dragEndIcon.pos.y);
+//                dragEndIcon.draw(canvas, paint, getWin2ScreenPos(), null);
+//                return;
+//            }
+//        }
     }
 
     /**
@@ -510,7 +514,7 @@ public class IconWindow extends Window implements AutoMovable{
         // 全てのWindowの全ての
         for (IconWindow window : windows) {
             // Windowの領域外ならスキップ
-            if (!(window.rect.contains(vt.getX(),vt.getY()))){
+            if (!(window.rect.contains((int)vt.getX(),(int)vt.getY()))){
                 continue;
             }
 
@@ -588,7 +592,7 @@ public class IconWindow extends Window implements AutoMovable{
         dragEndIcon = dragIcon;
         dragIcon = null;
 
-        return isDroped;
+        return true;
     }
 
 
@@ -610,7 +614,7 @@ public class IconWindow extends Window implements AutoMovable{
         }
 
         // 範囲外なら除外
-        if (!(rect.contains(vt.touchX(), vt.touchY()))) {
+        if (!(rect.contains((int)vt.touchX(), (int)vt.touchY()))) {
             return false;
         }
 
@@ -747,5 +751,48 @@ public class IconWindow extends Window implements AutoMovable{
         }
 
         sortRects(true);
+    }
+
+    /**
+     * 以下Drawableインターフェースのメソッド
+     */
+    public void setDrawList(DrawList drawList) {
+        mDrawList = drawList;
+    }
+
+    public DrawList getDrawList() {
+        return mDrawList;
+    }
+
+    /**
+     * 描画範囲の矩形を取得
+     * @return
+     */
+    public Rect getRect() {
+        return rect;
+    }
+
+    /**
+     * アニメーション開始
+     */
+    public void startAnim() {
+
+    }
+
+    /**
+     * アニメーション処理
+     * onDrawからの描画処理で呼ばれる
+     * @return true:アニメーション中
+     */
+    public boolean animate() {
+        return false;
+    }
+
+    /**
+     * アニメーション中かどうか
+     * @return
+     */
+    public boolean isAnimating() {
+        return false;
     }
 }

@@ -309,7 +309,6 @@ public class MyScrollBar {
      * @return
      */
     public boolean touchEvent(ViewTouch tv) {
-        MyLog.print(TAG, "vt : " + tv.type);
         switch(tv.type) {
             case Touch:
                 if (touchDown(tv)) {

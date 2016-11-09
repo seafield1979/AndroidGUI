@@ -27,35 +27,14 @@ public class IconBmp extends Icon {
         this.bmp = bmp;
     }
 
-    public boolean draw(Canvas canvas,Paint paint) {
-        return draw(canvas, paint, null, null);
-    }
-
-    public boolean draw(Canvas canvas,Paint paint, PointF toScreen, RectF clipRect) {
-        if (bmp == null) return false;
-
-        if (toScreen == null) {
-            toScreen = new PointF(0,0);
-        }
-        Point drawPos = new Point((int)(pos.x + toScreen.x), (int)(pos.y + toScreen.y));
-        RectF rect = new RectF(drawPos.x, drawPos.y, drawPos.x + size.width, drawPos.y + size
-                .height);
-
-        // クリッピング処理
-        // 表示領域外なら描画しない
-        if (clipRect != null) {
-            if (rect.contains(clipRect)) {
-                return false;
-            }
-        }
-
-        // そのままのサイズで描画
-        //         canvas.drawBitmap(bmp, x, y, paint);
+    public void draw(Canvas canvas,Paint paint, PointF offset) {
+        if (bmp == null) return;
 
         // 領域の幅に合わせて伸縮
+        Rect rect = new Rect((int)pos.x, (int)pos.y, size.width, size.height);
         canvas.drawBitmap(bmp, new Rect(0, 0, bmp.getWidth(), bmp.getHeight()), rect, paint);
         drawId(canvas, paint);
 
-        return true;
+        return;
     }
 }

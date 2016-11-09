@@ -3,21 +3,22 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
-abstract public class Window implements AutoMovable {
-
+abstract public class Window implements AutoMovable, Drawable {
+    public static final String TAG = "Window";
     protected static final int SCROLL_BAR_W = 100;
 
     // メンバ変数
     protected boolean isShow = true;
     protected PointF pos = new PointF();
     protected Size size = new Size();
-    protected RectF rect = new RectF();
+    protected Rect rect = new Rect();
     protected int bgColor;
 
     // Window移動用
@@ -49,10 +50,10 @@ abstract public class Window implements AutoMovable {
     }
 
     protected void updateRect() {
-        rect.left = pos.x;
-        rect.right = pos.x + size.width;
-        rect.top = pos.y;
-        rect.bottom = pos.y + size.height;
+        rect.left = (int)pos.x;
+        rect.right = (int)pos.x + size.width;
+        rect.top = (int)pos.y;
+        rect.bottom = (int)pos.y + size.height;
     }
 
     protected void setSize(int width, int height) {
@@ -124,6 +125,7 @@ abstract public class Window implements AutoMovable {
         this.bgColor = color;
         updateRect();
 
+        // スクロールバー
         mScrollBar = new MyScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
         mScrollBar.setBgColor(Color.rgb(128, 128, 128));
     }
@@ -161,7 +163,7 @@ abstract public class Window implements AutoMovable {
      * @param paint
      * @return trueなら描画継続
      */
-    abstract public boolean draw(Canvas canvas, Paint paint);
+//    abstract public boolean draw(Canvas canvas, Paint paint);
 
     /**
      * タッチ処理
@@ -230,12 +232,12 @@ abstract public class Window implements AutoMovable {
     /**
      * 移動
      * 移動開始位置、終了位置、経過フレームから現在位置を計算する
-     * @return 移動完了したらtrue
+     * @return true:移動中
      */
     public boolean move() {
-        if (!isMoving) return true;
+        if (!isMoving) return false;
 
-        boolean ret = false;
+        boolean ret = true;
 
         float ratio = (float)movingFrame / (float)movingFrameMax;
         pos.x = srcPos.x + ((dstPos.x - srcPos.x) * ratio);
@@ -247,9 +249,10 @@ abstract public class Window implements AutoMovable {
             pos.x = dstPos.x;
             pos.y = dstPos.y;
 
-            ret = true;
+            ret = false;
         }
         updateRect();
+        MyLog.print(TAG, "move");
         return ret;
     }
 }

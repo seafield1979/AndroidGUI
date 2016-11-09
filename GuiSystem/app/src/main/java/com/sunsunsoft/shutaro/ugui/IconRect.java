@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
@@ -11,6 +12,7 @@ import android.graphics.RectF;
  */
 
 public class IconRect extends Icon {
+    public static final String TAG = "IconRect";
     private static final int ICON_W = 200;
     private static final int ICON_H = 150;
 
@@ -24,27 +26,7 @@ public class IconRect extends Icon {
         color = Color.rgb(0,255,255);
     }
 
-    public boolean draw(Canvas canvas,Paint paint)
-    {
-        return draw(canvas, paint, null, null);
-    }
-
-
-    public boolean draw(Canvas canvas,Paint paint, PointF toScreen, RectF clipRect) {
-        if (toScreen == null) {
-            toScreen = new PointF(0, 0);
-        }
-        float drawX = pos.x + toScreen.x;
-        float drawY = pos.y + toScreen.y;
-        RectF rect = new RectF(drawX, drawY, drawX + size.width, drawY + size.height);
-
-        // クリッピング処理
-        // 表示領域外なら描画しない
-        if (clipRect != null) {
-            if (rect.contains(clipRect)) {
-                return false;
-            }
-        }
+    public void draw(Canvas canvas,Paint paint, PointF offset) {
 
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);
@@ -60,10 +42,18 @@ public class IconRect extends Icon {
         } else {
             paint.setColor(color);
         }
-        canvas.drawRect(rect.left, rect.top, rect.right, rect.bottom,  paint);
 
-        drawId(canvas, paint);
-        return true;
+        Rect drawRect = null;
+        if (offset != null) {
+            drawRect = new Rect(rect.left + (int)offset.x,
+                    rect.top + (int)offset.y,
+                    rect.right + (int)offset.x,
+                    rect.bottom + (int)offset.y);
+        } else {
+            drawRect = rect;
+        }
+        canvas.drawRect(drawRect, paint);
+        MyLog.print(TAG, "" + drawRect.left + " " + drawRect.top +  " " + drawRect.top + " " + drawRect.bottom);
     }
 
     @Override
@@ -79,6 +69,5 @@ public class IconRect extends Icon {
     @Override
     public void moving() {
         super.moving();
-
     }
 }

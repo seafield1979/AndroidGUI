@@ -13,7 +13,7 @@ import static com.sunsunsoft.shutaro.ugui.MyDebug.drawIconId;
 /**
  * ViewのonDrawで描画するアイコンの情報
  */
-abstract public class Icon implements AutoMovable, Animatable {
+abstract public class Icon implements AutoMovable, Drawable {
 
     private static final String TAG = "Icon";
     private static int count;
@@ -21,9 +21,11 @@ abstract public class Icon implements AutoMovable, Animatable {
     public int id;
     protected IconWindow parentWindow;
     private IconCallbacks mCallbacks;
+    protected DrawList drawList;
 
     protected PointF pos = new PointF();
     protected Size size = new Size();
+    protected Rect rect;
 
     // 移動用
     protected boolean isMoving;
@@ -54,12 +56,10 @@ abstract public class Icon implements AutoMovable, Animatable {
         this.shape = shape;
         this.setPos(x, y);
         this.setSize(width, height);
+        updateRect();
         this.color = Color.rgb(0,0,0);
         count++;
     }
-
-    abstract public boolean draw(Canvas canvas, Paint paint);
-    abstract public boolean draw(Canvas canvas, Paint paint, PointF top, RectF clipRect);
 
     public IconShape getShape() { return shape; }
 
@@ -82,6 +82,17 @@ abstract public class Icon implements AutoMovable, Animatable {
     public void setPos(float x, float y) {
         pos.x = x;
         pos.y = y;
+        updateRect();
+    }
+    protected void updateRect() {
+        if (rect == null) {
+            rect = new Rect((int)pos.x, (int)pos.y, (int)pos.x + size.width, (int)pos.y + size.height);
+        } else {
+            rect.left = (int) pos.x;
+            rect.right = (int) pos.x + size.width;
+            rect.top = (int) pos.y;
+            rect.bottom = (int) pos.y + size.height;
+        }
     }
 
     public float getRight() {
@@ -108,13 +119,15 @@ abstract public class Icon implements AutoMovable, Animatable {
     public void setSize(int width, int height) {
         size.width = width;
         size.height = height;
+        updateRect();
     }
-    public Rect getRect() { return new Rect((int)pos.x, (int)pos.y, (int)pos.x + size.width, (int)pos.y + size.height);}
+    public Rect getRect() {return rect;}
 
     // 移動
     public void move(float moveX, float moveY) {
         pos.x += moveX;
         pos.y += moveY;
+        updateRect();
     }
 
     // 色
@@ -147,10 +160,10 @@ abstract public class Icon implements AutoMovable, Animatable {
     /**
      * 移動
      * 移動開始位置、終了位置、経過フレームから現在位置を計算する
-     * @return 移動完了したらtrue
+     * @return true:移動中
      */
     public boolean move() {
-        if (!isMoving) return true;
+        if (!isMoving) return false;
 
         float ratio = (float)movingFrame / (float)movingFrameMax;
         pos.x = srcPos.x + ((dstPos.x - srcPos.x) * ratio);
@@ -162,9 +175,9 @@ abstract public class Icon implements AutoMovable, Animatable {
             isMoving = false;
             pos.x = dstPos.x;
             pos.y = dstPos.y;
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public void click() {
@@ -247,6 +260,18 @@ abstract public class Icon implements AutoMovable, Animatable {
         }
     }
 
+
+    /*
+        Drawableインターフェース
+     */
+    public void setDrawList(DrawList drawList) {
+        this.drawList = drawList;
+    }
+
+    public DrawList getDrawList() {
+        return drawList;
+    }
+
     /**
      * アニメーション開始
      */
@@ -273,5 +298,13 @@ abstract public class Icon implements AutoMovable, Animatable {
 
         animeFrame++;
         return true;
+    }
+
+    /**
+     * アニメーション中かどうか
+     * @return
+     */
+    public boolean isAnimating() {
+        return isAnimating;
     }
 }

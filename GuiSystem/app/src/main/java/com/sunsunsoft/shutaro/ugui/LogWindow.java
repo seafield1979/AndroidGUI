@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -19,28 +21,37 @@ import java.util.TimerTask;
 public class LogWindow extends Window {
     public static final int SHOW_TIME = 3000;
     public static final int MESSAGE_MAX = 30;
+    public static final int DRAW_PRIORITY = 80;
 
     private LinkedList<LogData> logs = new LinkedList<>();
+    private DrawList mDrawList;
     private Timer timer;
     private View parentView;
     private Context context;
     private int count = 1;
 
-    private LogWindow(float x, float y, int width, int height, int color)
+    private LogWindow(Context context, View parentView, float x, float y, int width, int height, int color)
     {
         super(0, 0, width, height, color);
-
+        this.parentView = parentView;
+        this.context = context;
+        setShow(false);
+        startTimer(SHOW_TIME);
     }
 
     public static LogWindow createInstance(Context context, View parentView, int width, int
             height, int bgColor)
     {
-        LogWindow instance = new LogWindow(0, 0, width, height, bgColor);
-        instance.parentView = parentView;
-        instance.context = context;
-        instance.isShow = false;
-        instance.startTimer(SHOW_TIME);
+        LogWindow instance = new LogWindow(context, parentView, 0, 0, width, height, bgColor);
+        instance.init();
+
         return instance;
+    }
+
+    private void init() {
+        // 描画はDrawManagerに任せるのでDrawManagerに登録
+        mDrawList = DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
+        mDrawList.setClipRect(rect);
     }
 
     /**
@@ -54,7 +65,7 @@ public class LogWindow extends Window {
         if (logs.size() > MESSAGE_MAX) {
             logs.removeLast();
         }
-        isShow = true;
+        setShow(true);
         startTimer(SHOW_TIME);
         count++;
     }
@@ -105,13 +116,13 @@ public class LogWindow extends Window {
         if (!isShow) return false;
 
         // 範囲外なら除外
-        if (!(rect.contains(vt.getX(), vt.getY()))) {
+        if (!(rect.contains((int)vt.getX(), (int)vt.getY()))) {
             return false;
         }
 
         switch (vt.type) {
             case Click:
-                isShow = false;
+                setShow(false);
                 break;
             case Moving:
                 if (vt.isMoveStart()) {
@@ -150,6 +161,57 @@ public class LogWindow extends Window {
                 timer.cancel();
             }
         }, showTime, showTime);
+    }
+
+    /*
+        Drawableインターフェースのメソッド
+     */
+    /**
+     * 描画処理
+     * @param canvas
+     * @param paint
+     */
+    public void draw(Canvas canvas, Paint paint, PointF offset ) {
+
+    }
+
+    /**
+     * 描画範囲の矩形を取得
+     * @return
+     */
+    public Rect getRect() {
+        return rect;
+    }
+
+    public void setDrawList(DrawList drawList) {
+        mDrawList = drawList;
+    }
+    public DrawList getDrawList() {
+        return mDrawList;
+    }
+
+    /**
+     * アニメーション開始
+     */
+    public void startAnim() {
+
+    }
+
+    /**
+     * アニメーション処理
+     * onDrawからの描画処理で呼ばれる
+     * @return true:アニメーション中
+     */
+    public boolean animate() {
+        return false;
+    }
+
+    /**
+     * アニメーション中かどうか
+     * @return
+     */
+    public boolean isAnimating() {
+        return false;
     }
 }
 

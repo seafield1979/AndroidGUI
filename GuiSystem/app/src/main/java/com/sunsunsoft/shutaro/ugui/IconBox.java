@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.View;
 
@@ -53,26 +54,15 @@ public class IconBox extends Icon {
         }
     }
 
-    public boolean draw(Canvas canvas, Paint paint)
-    {
-        return draw(canvas, paint, null, null);
-    }
-
-
-    public boolean draw(Canvas canvas, Paint paint, PointF toScreen, RectF clipRect) {
-        if (toScreen == null) {
-            toScreen = new PointF(0, 0);
-        }
-        float drawX = pos.x + toScreen.x;
-        float drawY = pos.y + toScreen.y;
-        RectF rect = new RectF(drawX, drawY, drawX + size.width, drawY + size.height);
-
-        // クリッピング処理
-        // 表示領域外なら描画しない
-        if (clipRect != null) {
-            if (rect.contains(clipRect)) {
-                return false;
-            }
+    public void draw(Canvas canvas, Paint paint, PointF offset) {
+        Rect drawRect = null;
+        if (offset != null) {
+            drawRect = new Rect(rect.left + (int)offset.x,
+                    rect.top + (int)offset.y,
+                    rect.right + (int)offset.x,
+                    rect.bottom + (int)offset.y);
+        } else {
+            drawRect = rect;
         }
 
         // 内部を塗りつぶし
@@ -93,7 +83,6 @@ public class IconBox extends Icon {
         canvas.drawRect(rect.left, rect.top, rect.right, rect.bottom,  paint);
 
         drawId(canvas, paint);
-        return true;
     }
 
     @Override

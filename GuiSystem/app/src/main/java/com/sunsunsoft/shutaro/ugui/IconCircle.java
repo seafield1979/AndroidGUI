@@ -26,24 +26,7 @@ public class IconCircle extends Icon {
         this.radius = width / 2;
     }
 
-    public boolean draw(Canvas canvas,Paint paint) {
-        return draw(canvas, paint, null, null);
-    }
-
-    public boolean draw(Canvas canvas,Paint paint, PointF toScreen, RectF clipRect) {
-        if (toScreen == null) {
-            toScreen = new PointF(0, 0);
-        }
-        // クリッピング
-        float x = pos.x + toScreen.x;
-        float y = pos.y + toScreen.y;
-        RectF rect = new RectF(x, y, x + radius * 2, y + radius * 2);
-        if (clipRect != null) {
-            if (!MyRect.intersect(rect, clipRect)) {
-                return false;
-            }
-        }
-
+    public void draw(Canvas canvas,Paint paint, PointF offset) {
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);
 
@@ -61,9 +44,12 @@ public class IconCircle extends Icon {
         }
 
         // x,yが円を囲む矩形の左上にくるように座標を調整
-        canvas.drawCircle(pos.x+radius + toScreen.x, pos.y+radius + toScreen.y, radius, paint);
-
-        drawId(canvas, paint);
-        return true;
+        PointF drawPos = null;
+        if (offset != null) {
+            drawPos = new PointF(pos.x + offset.x, pos.y + offset.y);
+        } else {
+            drawPos = pos;
+        }
+        canvas.drawCircle(drawPos.x+radius, drawPos.y+radius, radius, paint);
     }
 }

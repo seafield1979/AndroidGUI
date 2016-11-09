@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.view.View;
 
 // メニューバーのトップ項目
@@ -31,6 +32,7 @@ public class MenuBar extends Window {
     private MenuItemCallbacks mCallbackClass;
     MenuItemTop[] topItems = new MenuItemTop[TOP_MENU_MAX];
     MenuItem[] items = new MenuItem[MenuItemId.values().length];
+    private DrawList mDrawList;
 
     // Get/Set
     public boolean isShow() {
@@ -152,34 +154,6 @@ public class MenuBar extends Window {
         topItem.addItem(item);
     }
 
-    /**
-     * 表示する
-     * @param canvas
-     * @param paint
-     */
-    public boolean draw(Canvas canvas, Paint paint) {
-        if (!isShow) return false;
-
-        // bg
-        // 内部を塗りつぶし
-        paint.setStyle(Paint.Style.FILL);
-        // 色
-        paint.setColor(0xff000000);
-
-        canvas.drawRect(pos.x,
-                pos.y,
-                pos.x + size.width,
-                pos.y + size.height,
-                paint);
-
-
-        for (MenuItemTop item : topItems) {
-            if (item != null) {
-                item.draw(canvas, paint, pos);
-            }
-        }
-        return false;
-    }
 
     /**
      * メニューのアクション
@@ -268,5 +242,74 @@ public class MenuBar extends Window {
         }
         PointF itemPos = item.getPos();
         return new PointF(toScreenX(itemPos.x), toScreenY(itemPos.y));
+    }
+
+    /*
+        Drawableインターフェースメソッド
+     */
+    /**
+     * 描画処理
+     * @param canvas
+     * @param paint
+     */
+    public void draw(Canvas canvas, Paint paint, PointF offset ) {
+        if (!isShow) return;
+
+        // bg
+        // 内部を塗りつぶし
+        paint.setStyle(Paint.Style.FILL);
+        // 色
+        paint.setColor(0xff000000);
+
+        canvas.drawRect(pos.x,
+                pos.y,
+                pos.x + size.width,
+                pos.y + size.height,
+                paint);
+
+        for (MenuItemTop item : topItems) {
+            if (item != null) {
+                item.draw(canvas, paint, pos);
+            }
+        }
+        return;
+    }
+
+    /**
+     * 描画範囲の矩形を取得
+     * @return
+     */
+    public Rect getRect() {
+        return rect;
+    }
+
+    public void setDrawList(DrawList drawList) {
+        mDrawList = drawList;
+    }
+    public DrawList getDrawList() {
+        return mDrawList;
+    }
+
+    /**
+     * アニメーション開始
+     */
+    public void startAnim() {
+    }
+
+    /**
+     * アニメーション処理
+     * onDrawからの描画処理で呼ばれる
+     * @return true:アニメーション中
+     */
+    public boolean animate() {
+        return false;
+    }
+
+    /**
+     * アニメーション中かどうか
+     * @return
+     */
+    public boolean isAnimating() {
+        return false;
     }
 }

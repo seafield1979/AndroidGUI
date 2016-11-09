@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
             transaction.add(R.id.fragment_container, fragment, FragmentTop.FRAMGMENT_NAME);
             // 画面に表示
             transaction.commit();
+
+            DrawManager.getInstance().init();
         }
     }
 }
