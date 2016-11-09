@@ -53,7 +53,6 @@ public class IconRect extends Icon {
             drawRect = rect;
         }
         canvas.drawRect(drawRect, paint);
-        MyLog.print(TAG, "" + drawRect.left + " " + drawRect.top +  " " + drawRect.top + " " + drawRect.bottom);
     }
 
     @Override

@@ -4,6 +4,7 @@ package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 
 import java.util.LinkedList;
@@ -50,6 +51,21 @@ public class DrawManager {
         list.add(obj);
         obj.setDrawList(list);
         return list;
+    }
+
+    /**
+     * リストに登録済みの描画オブジェクトを削除
+     * @param priority
+     * @param obj
+     * @return
+     */
+    public boolean removeDrawable(int priority, Drawable obj) {
+        Integer _priority = new Integer(priority);
+        DrawList list = lists.get(_priority);
+        if (list != null) {
+            return list.remove(obj);
+        }
+        return false;
     }
 
     /**
@@ -121,7 +137,7 @@ public class DrawManager {
 class DrawList
 {
     // 描画範囲 この範囲外には描画しない
-    public Rect clipRect;
+//    public Rect clipRect;
     private int priority;
     private LinkedList<Drawable> list = new LinkedList<>();
 
@@ -134,20 +150,12 @@ class DrawList
         return priority;
     }
 
-    public Rect getClipRect() {
-        return clipRect;
-    }
-
-    public void setClipRect(Rect clipRect) {
-        this.clipRect = clipRect;
-    }
-
     public void add(Drawable obj) {
         list.add(obj);
     }
 
-    public void remove(Drawable obj) {
-        list.remove(obj);
+    public boolean remove(Drawable obj) {
+        return list.remove(obj);
     }
 
     public void toLast(Drawable obj) {
@@ -176,12 +184,6 @@ class DrawList
      * @return true:再描画あり (まだアニメーション中のオブジェクトあり)
      */
     public boolean draw(Canvas canvas, Paint paint) {
-        if (clipRect != null) {
-            // クリッピング領域を設定
-            canvas.save();
-            canvas.clipRect(clipRect);
-        }
-
         // 分けるのが面倒なのでアニメーションと描画を同時に処理する
         boolean allDone = true;
         for (Drawable obj : list) {
@@ -192,16 +194,17 @@ class DrawList
                 allDone = false;
             }
             MyLog.count(DrawManager.TAG);
-            obj.draw(canvas, paint, null);
+            PointF offset = obj.getDrawOffset();
+            obj.draw(canvas, paint, offset);
             drawId(canvas, paint, obj.getRect(), priority);
+
+            if (priority == IconWindow.DRAG_ICON_PRIORITY) {
+                MyLog.print(DrawManager.TAG, "" + obj.getRect().bottom);
+            }
 
             if (MyDebug.drawIconId) {
                 Rect _rect = obj.getRect();
             }
-        }
-        if (clipRect != null) {
-            // クリッピング解除
-            canvas.restore();
         }
         return !allDone;
     }

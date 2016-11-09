@@ -84,6 +84,12 @@ abstract public class Icon implements AutoMovable, Drawable {
         pos.y = y;
         updateRect();
     }
+    public void setPos(PointF pos) {
+        this.pos.x = pos.x;
+        this.pos.y = pos.y;
+        updateRect();
+    }
+
     protected void updateRect() {
         if (rect == null) {
             rect = new Rect((int)pos.x, (int)pos.y, (int)pos.x + size.width, (int)pos.y + size.height);
@@ -166,16 +172,15 @@ abstract public class Icon implements AutoMovable, Drawable {
         if (!isMoving) return false;
 
         float ratio = (float)movingFrame / (float)movingFrameMax;
-        pos.x = srcPos.x + ((dstPos.x - srcPos.x) * ratio);
-        pos.y = srcPos.y + ((dstPos.y - srcPos.y) * ratio);
-
 
         movingFrame++;
         if (movingFrame >= movingFrameMax) {
             isMoving = false;
-            pos.x = dstPos.x;
-            pos.y = dstPos.y;
+            setPos(dstPos);
             return false;
+        } else {
+            setPos(srcPos.x + ((dstPos.x - srcPos.x) * ratio),
+                    srcPos.y + ((dstPos.y - srcPos.y) * ratio));
         }
         return true;
     }
@@ -270,6 +275,20 @@ abstract public class Icon implements AutoMovable, Drawable {
 
     public DrawList getDrawList() {
         return drawList;
+    }
+
+
+    /**
+     * 描画オフセットを取得する
+     * @return
+     */
+    public PointF getDrawOffset() {
+        // 親Windowの座標とスクロール量を取得
+        if (parentWindow != null) {
+            return new PointF(parentWindow.pos.x - parentWindow.contentTop.x,
+                    parentWindow.pos.y - parentWindow.contentTop.y);
+        }
+        return null;
     }
 
     /**

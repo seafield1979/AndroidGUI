@@ -21,6 +21,12 @@ public interface Drawable {
     void draw(Canvas canvas, Paint paint, PointF offset );
 
     /**
+     * 描画オフセットを取得する
+     * @return
+     */
+    public PointF getDrawOffset();
+
+    /**
      * 描画範囲の矩形を取得
      * @return
      */

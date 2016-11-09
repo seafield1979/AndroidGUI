@@ -51,7 +51,6 @@ public class LogWindow extends Window {
     private void init() {
         // 描画はDrawManagerに任せるのでDrawManagerに登録
         mDrawList = DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
-        mDrawList.setClipRect(rect);
     }
 
     /**
@@ -105,6 +104,14 @@ public class LogWindow extends Window {
             drawY += 30;
         }
         return false;
+    }
+
+    /**
+     * 描画オフセットを取得する
+     * @return
+     */
+    public PointF getDrawOffset() {
+        return null;
     }
 
     /**

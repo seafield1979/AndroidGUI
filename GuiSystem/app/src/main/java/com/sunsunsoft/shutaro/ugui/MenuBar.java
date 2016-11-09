@@ -276,6 +276,14 @@ public class MenuBar extends Window {
     }
 
     /**
+     * 描画オフセットを取得する
+     * @return
+     */
+    public PointF getDrawOffset() {
+        return null;
+    }
+
+    /**
      * 描画範囲の矩形を取得
      * @return
      */

@@ -150,11 +150,6 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
         }
 
         DrawManager.getInstance().draw(canvas, paint);
-
-        for (IconWindow win : mIconWindows) {
-            if (!win.isShow()) continue;
-            win.drawDragIcon(canvas, paint);
-        }
     }
 
     /**

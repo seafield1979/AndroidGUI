@@ -55,15 +55,6 @@ public class IconBox extends Icon {
     }
 
     public void draw(Canvas canvas, Paint paint, PointF offset) {
-        Rect drawRect = null;
-        if (offset != null) {
-            drawRect = new Rect(rect.left + (int)offset.x,
-                    rect.top + (int)offset.y,
-                    rect.right + (int)offset.x,
-                    rect.bottom + (int)offset.y);
-        } else {
-            drawRect = rect;
-        }
 
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);
@@ -80,7 +71,17 @@ public class IconBox extends Icon {
         } else {
             paint.setColor(color);
         }
-        canvas.drawRect(rect.left, rect.top, rect.right, rect.bottom,  paint);
+
+        Rect drawRect = null;
+        if (offset != null) {
+            drawRect = new Rect(rect.left + (int)offset.x,
+                    rect.top + (int)offset.y,
+                    rect.right + (int)offset.x,
+                    rect.bottom + (int)offset.y);
+        } else {
+            drawRect = rect;
+        }
+        canvas.drawRect(drawRect,  paint);
 
         drawId(canvas, paint);
     }
