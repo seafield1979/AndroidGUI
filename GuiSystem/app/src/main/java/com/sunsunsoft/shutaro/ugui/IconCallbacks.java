@@ -5,7 +5,7 @@ package com.sunsunsoft.shutaro.ugui;
  */
 
 public interface IconCallbacks {
-    void clickIcon(IconBase icon);
-    void longClickIcon(IconBase icon);
-    void dropToIcon(IconBase icon);
+    void clickIcon(Icon icon);
+    void longClickIcon(Icon icon);
+    void dropToIcon(Icon icon);
 }

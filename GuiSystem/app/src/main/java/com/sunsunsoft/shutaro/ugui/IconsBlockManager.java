@@ -1,7 +1,6 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -18,14 +17,14 @@ import java.util.List;
 public class IconsBlockManager {
     public static final String TAG = "IconsBlockManager";
     LinkedList<IconsBlock> blockList = new LinkedList<>();
-    List<IconBase> icons;
+    List<Icon> icons;
 
     /**
      * インスタンスを取得
      * @param icons
      * @return
      */
-    public static IconsBlockManager createInstance(List<IconBase> icons) {
+    public static IconsBlockManager createInstance(List<Icon> icons) {
         IconsBlockManager instance = new IconsBlockManager();
         instance.icons = icons;
         return instance;
@@ -35,7 +34,7 @@ public class IconsBlockManager {
      * アイコンリストを設定する
      * アイコンリストはアニメーションが終わって座標が確定した時点で行う
      */
-    public void setIcons(List<IconBase> icons) {
+    public void setIcons(List<Icon> icons) {
         this.icons = icons;
         update();
     }
@@ -50,7 +49,7 @@ public class IconsBlockManager {
         }
 
         IconsBlock block = null;
-        for (IconBase icon : icons) {
+        for (Icon icon : icons) {
             if (block == null) {
                 block = new IconsBlock();
             }
@@ -75,10 +74,10 @@ public class IconsBlockManager {
      * @param pos
      * @return
      */
-    public IconBase getOverlapedIcon(Point pos, IconBase exceptIcon) {
+    public Icon getOverlapedIcon(Point pos, Icon exceptIcon) {
         //MyLog.startCount(TAG);
         for (IconsBlock block : blockList) {
-            IconBase icon = block.getOverlapedIcon(pos, exceptIcon);
+            Icon icon = block.getOverlapedIcon(pos, exceptIcon);
             if (icon != null) {
                 //MyLog.endCount(TAG);
                 return icon;
@@ -118,7 +117,7 @@ public class IconsBlockManager {
 class IconsBlock {
     private static final int BLOCK_ICON_MAX = 8;
 
-    private LinkedList<IconBase> icons = new LinkedList<>();
+    private LinkedList<Icon> icons = new LinkedList<>();
     private Rect rect = new Rect();
     private int color = MyColor.BLACK;
 
@@ -127,7 +126,7 @@ class IconsBlock {
         return rect;
     }
 
-    public LinkedList<IconBase> getIcons() {
+    public LinkedList<Icon> getIcons() {
         return icons;
     }
 
@@ -136,7 +135,7 @@ class IconsBlock {
      * @param icon
      * @return true:リストがいっぱい
      */
-    public boolean add(IconBase icon) {
+    public boolean add(Icon icon) {
         icons.add(icon);
         if (icons.size() >= BLOCK_ICON_MAX) {
             return true;
@@ -150,7 +149,7 @@ class IconsBlock {
     public void updateRect() {
         rect.left = 1000000;
         rect.top = 1000000;
-        for (IconBase icon : icons) {
+        for (Icon icon : icons) {
             if (icon.pos.x < rect.left) {
                 rect.left = (int)icon.pos.x;
             }
@@ -173,10 +172,10 @@ class IconsBlock {
      * @param exceptIcon
      * @return null:重なるアイコンなし
      */
-    public IconBase getOverlapedIcon(Point pos, IconBase exceptIcon) {
+    public Icon getOverlapedIcon(Point pos, Icon exceptIcon) {
 //        MyLog.count(IconsBlockManager.TAG);
         if (rect.contains(pos.x, pos.y)) {
-            for (IconBase icon : icons) {
+            for (Icon icon : icons) {
                 if (icon == exceptIcon) continue;
                 MyLog.count(IconsBlockManager.TAG);
                 if (icon.getRect().contains(pos.x, pos.y)) {

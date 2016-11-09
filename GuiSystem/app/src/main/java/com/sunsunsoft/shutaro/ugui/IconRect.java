@@ -3,16 +3,14 @@ package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
  * 四角形のアイコン
  */
 
-public class IconRect extends IconBase {
+public class IconRect extends Icon {
     private static final int ICON_W = 200;
     private static final int ICON_H = 150;
 

@@ -3,7 +3,6 @@ package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
@@ -11,7 +10,7 @@ import android.graphics.RectF;
  * 円形のアイコン
  */
 
-public class IconCircle extends IconBase {
+public class IconCircle extends Icon {
     private static final int ICON_W = 150;
 
     protected int radius;
@@ -40,7 +39,7 @@ public class IconCircle extends IconBase {
         float y = pos.y + toScreen.y;
         RectF rect = new RectF(x, y, x + radius * 2, y + radius * 2);
         if (clipRect != null) {
-            if (!MyRect.isOverlapping(rect, clipRect)) {
+            if (!MyRect.intersect(rect, clipRect)) {
                 return false;
             }
         }

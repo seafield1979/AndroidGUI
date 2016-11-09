@@ -41,19 +41,27 @@ public class MenuBar extends Window {
         isShow = show;
     }
 
-    public static MenuBar createInstance(View parentView, MenuItemCallbacks callbackClass, int width, int height, int bgColor)
+    private MenuBar(View parentView, MenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
     {
-        MenuBar instance = new MenuBar(parentView, callbackClass);
-        instance.createWindow(0, height - MENU_BAR_H, width, MENU_BAR_H, bgColor);
-        instance.mParentView = parentView;
-        instance.mCallbackClass = callbackClass;
-        instance.initMenuBar();
-        return instance;
-    }
-
-    public MenuBar(View parentView, MenuItemCallbacks callbackClass) {
+        super(0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
         mParentView = parentView;
         mCallbackClass = callbackClass;
+    }
+
+    /**
+     * メニューバーを生成する
+     * @param parentView
+     * @param callbackClass
+     * @param parentW     親Viewのwidth
+     * @param parentH    親Viewのheight
+     * @param bgColor
+     * @return
+     */
+    public static MenuBar createInstance(View parentView, MenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
+    {
+        MenuBar instance = new MenuBar(parentView, callbackClass, parentW, parentH, bgColor);
+        instance.initMenuBar();
+        return instance;
     }
 
     /**

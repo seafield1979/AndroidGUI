@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.LinearLayout;
 
 /**
  * メニューバー、サブViewのサンプル
@@ -222,7 +221,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     private void addIcon(int windowId, IconShape shape, MenuItemId menuItemId) {
         IconWindow iconWindow = mIconWindows[windowId];
         IconManager manager = iconWindow.getIconManager();
-        IconBase icon = manager.addIcon(shape, AddPos.Top);
+        Icon icon = manager.addIcon(shape, AddPos.Top);
 
         // アイコンの初期座標は追加メニューアイコンの位置
         PointF menuPos = mMenuBar.getItemPos(menuItemId);
@@ -275,7 +274,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     /**
      * IconCallbacks
      */
-    public void clickIcon(IconBase icon) {
+    public void clickIcon(Icon icon) {
         MyLog.print(TAG, "clickIcon");
         switch(icon.shape) {
             case CIRCLE:
@@ -296,10 +295,10 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
                 break;
         }
     }
-    public void longClickIcon(IconBase icon) {
+    public void longClickIcon(Icon icon) {
         MyLog.print(TAG, "longClickIcon");
     }
-    public void dropToIcon(IconBase icon) {
+    public void dropToIcon(Icon icon) {
         MyLog.print(TAG, "dropToIcon");
     }
 

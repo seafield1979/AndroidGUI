@@ -71,6 +71,8 @@ public class UWindowTest1 extends UWindow {
         boolean done = false;
         switch(vt.type) {
             case Click:
+                startMove(pos.x, pos.y + 200, 10);
+                done = true;
                 break;
             case Moving:
 //                movePos(vt.moveX, vt.moveY);

@@ -113,24 +113,19 @@ abstract public class Window implements AutoMovable {
     }
 
     /**
-     * Windowを生成する
-     * インスタンス生成後に一度だけ呼ぶ
-     *
-     * @param x
-     * @param y
-     * @param width
-     * @param height
+     * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する
+     * インスタンス生成には createWindow を使うべし
      */
-    public void createWindow(float x, float y, int width, int height, int bgColor) {
-        setPos(x, y, false);
-        setSize(width, height);
-        this.bgColor = bgColor;
-
+    protected Window(float x, float y, int width, int height, int color) {
+        pos.x = x;
+        pos.y = y;
+        size.width = width;
+        size.height = height;
+        this.bgColor = color;
         updateRect();
 
         mScrollBar = new MyScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
         mScrollBar.setBgColor(Color.rgb(128, 128, 128));
-
     }
 
     public void setContentSize(int width, int height) {

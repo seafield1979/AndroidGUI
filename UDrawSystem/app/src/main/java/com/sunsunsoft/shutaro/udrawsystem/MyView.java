@@ -11,6 +11,11 @@ import android.view.View.OnTouchListener;
 
 /**
  * カスタムView
+ * UDrawSystemによって描画オブジェクトの管理を行う
+ * UDrawSystemの機能
+ *   プライオリティ順に描画
+ *   表示エリア外の描画オブジェクトをクリッピング
+ *   Windowで描画オブジェクトをまとめて表示
  */
 
 public class MyView extends View implements OnTouchListener{
@@ -46,6 +51,11 @@ public class MyView extends View implements OnTouchListener{
         if (isFirst) {
             isFirst = false;
             init(getWidth());
+        }
+        if (window != null) {
+            if (!window.move()) {
+                invalidate();
+            }
         }
 
         // 背景塗りつぶし

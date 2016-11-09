@@ -4,7 +4,11 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 
 /**
- * Created by shutaro on 2016/11/09.
+ * Windowクラス
+ * Window配下にオブジェクトを配置できる
+ * Window配下のオブジェクトをまとめて描画できる
+ * 枠外のオブジェクトをクリッピングできる
+ * Windowを自動で移動できる
  */
 
 abstract public class UWindow implements Drawable{

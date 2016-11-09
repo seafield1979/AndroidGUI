@@ -3,7 +3,6 @@ package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.PointF;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -24,15 +23,15 @@ public class IconManager {
 
     private View mParentView;
     private IconWindow mParentWindow;
-    private LinkedList<IconBase> icons;
+    private LinkedList<Icon> icons;
     private IconsBlockManager mBlockManager;
 
     // Get/Set
-    public LinkedList<IconBase> getIcons() {
+    public LinkedList<Icon> getIcons() {
         return icons;
     }
 
-    public void setIcons(LinkedList<IconBase> icons) {
+    public void setIcons(LinkedList<Icon> icons) {
         this.icons = icons;
     }
 
@@ -59,9 +58,9 @@ public class IconManager {
      * @param addPos
      * @return
      */
-    public IconBase addIcon(IconShape type, AddPos addPos) {
+    public Icon addIcon(IconShape type, AddPos addPos) {
 
-        IconBase icon = null;
+        Icon icon = null;
         switch (type) {
             case RECT:
                 icon = new IconRect(mParentWindow);
@@ -95,7 +94,7 @@ public class IconManager {
      * @param icon
      * @return
      */
-    public boolean addIcon(IconBase icon) {
+    public boolean addIcon(Icon icon) {
         // すでに追加されている場合は追加しない
         if (!icons.contains(icon)) {
             icons.add(icon);
@@ -108,7 +107,7 @@ public class IconManager {
      * アイコンを削除
      * @param icon
      */
-    public void removeIcon(IconBase icon) {
+    public void removeIcon(Icon icon) {
         icons.remove(icon);
     }
 
@@ -127,7 +126,7 @@ public class IconManager {
      * @param exceptIcon
      * @return
      */
-    public IconBase getOverlappedIcon(Point pos, IconBase exceptIcon) {
+    public Icon getOverlappedIcon(Point pos, Icon exceptIcon) {
         return mBlockManager.getOverlapedIcon(pos, exceptIcon);
     }
 }

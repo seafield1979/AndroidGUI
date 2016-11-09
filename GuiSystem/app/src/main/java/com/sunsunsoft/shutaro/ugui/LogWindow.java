@@ -26,20 +26,21 @@ public class LogWindow extends Window {
     private Context context;
     private int count = 1;
 
+    private LogWindow(float x, float y, int width, int height, int color)
+    {
+        super(0, 0, width, height, color);
+
+    }
+
     public static LogWindow createInstance(Context context, View parentView, int width, int
-            height, int bgColor) {
-        LogWindow instance = new LogWindow();
-        instance.createWindow(parentView, 0, 0, width, height, bgColor);
+            height, int bgColor)
+    {
+        LogWindow instance = new LogWindow(0, 0, width, height, bgColor);
+        instance.parentView = parentView;
         instance.context = context;
         instance.isShow = false;
         instance.startTimer(SHOW_TIME);
         return instance;
-    }
-
-    public void createWindow(View parentView, float x, float y, int width, int height, int bgColor) {
-        super.createWindow(x, y, width, height, bgColor);
-
-        this.parentView = parentView;
     }
 
     /**

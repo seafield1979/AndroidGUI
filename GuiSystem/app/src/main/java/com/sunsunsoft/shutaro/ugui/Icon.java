@@ -13,9 +13,9 @@ import static com.sunsunsoft.shutaro.ugui.MyDebug.drawIconId;
 /**
  * ViewのonDrawで描画するアイコンの情報
  */
-abstract public class IconBase implements AutoMovable, Animatable {
+abstract public class Icon implements AutoMovable, Animatable {
 
-    private static final String TAG = "IconBase";
+    private static final String TAG = "Icon";
     private static int count;
 
     public int id;
@@ -45,7 +45,7 @@ abstract public class IconBase implements AutoMovable, Animatable {
 
     protected int color;
 
-    public IconBase(IconWindow parentWindow, IconShape shape, float x, float y, int width, int
+    public Icon(IconWindow parentWindow, IconShape shape, float x, float y, int width, int
             height)
     {
         this.parentWindow = parentWindow;

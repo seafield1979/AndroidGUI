@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PointF;
 import android.view.View;
 
 import java.util.Collections;
@@ -56,10 +55,10 @@ public class IconWindow extends Window implements AutoMovable{
     private IconWindow[] windows;
 
     // ドラッグ中のアイコン
-    private IconBase dragIcon;
-    private IconBase dragEndIcon;
+    private Icon dragIcon;
+    private Icon dragEndIcon;
     // ドロップ中のアイコン
-    private IconBase dropIcon;
+    private Icon dropIcon;
 
     // アニメーション用
     private viewState state = viewState.none;
@@ -85,7 +84,7 @@ public class IconWindow extends Window implements AutoMovable{
         this.mIconManager = mIconManager;
     }
 
-    public LinkedList<IconBase> getIcons() {
+    public LinkedList<Icon> getIcons() {
         if (mIconManager == null) return null;
         return mIconManager.getIcons();
     }
@@ -110,13 +109,19 @@ public class IconWindow extends Window implements AutoMovable{
         return mIconCallbacks;
     }
 
+    private IconWindow(View parent, IconCallbacks iconCallbacks,float x, float y, int width, int height, int color) {
+        super(x, y, width, height, color);
+        this.mParentView = parent;
+        this.mIconCallbacks = iconCallbacks;
+    }
     /**
      * インスタンスを生成する
      * Homeタイプが２つできないように自動でHome、Subのタイプ分けがされる
      * @return
      */
-    public static IconWindow createInstance(View parent, IconCallbacks iconCallbacks, float x, float y, int width, int height, int bgColor) {
-        IconWindow instance = new IconWindow();
+    public static IconWindow createInstance(View parent, IconCallbacks iconCallbacks, float x, float y, int width, int height, int bgColor)
+    {
+        IconWindow instance = new IconWindow(parent, iconCallbacks, x, y, width, height, bgColor);
         if (!createdHome) {
             createdHome = true;
             instance.type = WindowType.Home;
@@ -124,29 +129,20 @@ public class IconWindow extends Window implements AutoMovable{
         } else {
             instance.type = WindowType.Sub;
         }
-        instance.mIconCallbacks = iconCallbacks;
-        instance.createWindow(parent, x, y, width, height, bgColor);
+        instance.init();
         return instance;
     }
 
     /**
      * Windowを生成する
      * インスタンス生成後に一度だけ呼ぶ
-     * @param x
-     * @param y
-     * @param width
-     * @param height
      */
-    public void createWindow(View parent, float x, float y, int width, int height, int bgColor) {
-        super.createWindow(x, y, width, height, bgColor);
-
-        mParentView = parent;
-
+    public void init() {
         // アイコンを追加
         if (type == WindowType.Home) {
             for (int i = 0; i < RECT_ICON_NUM; i++) {
 
-                IconBase icon = mIconManager.addIcon(IconShape.RECT, AddPos.Tail);
+                Icon icon = mIconManager.addIcon(IconShape.RECT, AddPos.Tail);
                 int color = 0;
                 switch (i % 3) {
                     case 0:
@@ -163,7 +159,7 @@ public class IconWindow extends Window implements AutoMovable{
             }
 
             for (int i = 0; i < CIRCLE_ICON_NUM; i++) {
-                IconBase icon = mIconManager.addIcon(IconShape.CIRCLE, AddPos.Tail);
+                Icon icon = mIconManager.addIcon(IconShape.CIRCLE, AddPos.Tail);
                 int color = 0;
                 switch (i % 3) {
                     case 0:
@@ -179,7 +175,7 @@ public class IconWindow extends Window implements AutoMovable{
                 icon.setColor(color);
             }
             for (int i = 0; i < BOX_ICON_NUM; i++) {
-                IconBase icon = mIconManager.addIcon(IconShape.BOX, AddPos.Tail);
+                Icon icon = mIconManager.addIcon(IconShape.BOX, AddPos.Tail);
             }
         }
 
@@ -204,8 +200,8 @@ public class IconWindow extends Window implements AutoMovable{
         }
         if (isAnimating) {
             boolean allFinished = true;
-            List<IconBase> icons = getIcons();
-            for (IconBase icon : icons) {
+            List<Icon> icons = getIcons();
+            for (Icon icon : icons) {
                 if (icon.animate()) {
                     isDraw = true;
                     allFinished = false;
@@ -226,7 +222,7 @@ public class IconWindow extends Window implements AutoMovable{
      */
     public boolean draw(Canvas canvas, Paint paint) {
         if (!isShow) return false;
-        List<IconBase> icons = getIcons();
+        List<Icon> icons = getIcons();
         if (icons == null) return false;
 
         boolean invalidate = false;
@@ -241,13 +237,13 @@ public class IconWindow extends Window implements AutoMovable{
 
         switch (state) {
             case none:
-                for (IconBase icon : icons) {
+                for (Icon icon : icons) {
                     if (icon == null) continue;
                     icon.draw(canvas, paint, getWin2ScreenPos(), rect);
                 }
                 break;
             case drag:
-                for (IconBase icon : icons) {
+                for (Icon icon : icons) {
                     if (icon == null || icon == dragIcon) continue;
                     icon.draw(canvas, paint, getWin2ScreenPos(), rect);
                 }
@@ -259,7 +255,7 @@ public class IconWindow extends Window implements AutoMovable{
 
         if (state == viewState.icon_moving) {
             boolean allFinish = true;
-            for (IconBase icon : icons) {
+            for (Icon icon : icons) {
                 if (icon == null || icon == dragIcon) continue;
                 if (!icon.move()) {
                     allFinish = false;
@@ -329,7 +325,7 @@ public class IconWindow extends Window implements AutoMovable{
      * Viewのサイズが確定した時点で呼び出す
      */
     public void sortRects(boolean animate) {
-        List<IconBase> icons = getIcons();
+        List<Icon> icons = getIcons();
         if (icons == null) return;
 
         int column = size.width / (ICON_W + 20);
@@ -340,7 +336,7 @@ public class IconWindow extends Window implements AutoMovable{
         int maxHeight = 0;
         if (animate) {
             int i=0;
-            for (IconBase icon : icons) {
+            for (Icon icon : icons) {
                 int x = (i%column) * (ICON_W + 20);
                 int y = (i/column) * (ICON_H + 20);
                 int height = y + (ICON_H + 20);
@@ -354,7 +350,7 @@ public class IconWindow extends Window implements AutoMovable{
         }
         else {
             int i=0;
-            for (IconBase icon : icons) {
+            for (Icon icon : icons) {
                 int x = (i%column) * (ICON_W + 20);
                 int y = (i/column) * (ICON_H + 20);
                 int height = y + (ICON_H + 20);
@@ -388,10 +384,10 @@ public class IconWindow extends Window implements AutoMovable{
      * @return
      */
     private boolean touchIcons(ViewTouch vt) {
-        List<IconBase> icons = getIcons();
+        List<Icon> icons = getIcons();
         if (icons == null) return false;
 
-        for (IconBase icon : icons) {
+        for (Icon icon : icons) {
             if (icon.checkTouch(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
                 return true;
             }
@@ -405,11 +401,11 @@ public class IconWindow extends Window implements AutoMovable{
      * @return アイコンがクリックされたらtrue
      */
     private boolean clickIcons(ViewTouch vt) {
-        List<IconBase> icons = getIcons();
+        List<Icon> icons = getIcons();
         if (icons == null) return false;
 
         // どのアイコンがクリックされたかを判定
-        for (IconBase icon : icons) {
+        for (Icon icon : icons) {
             if (icon.checkClick(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
                 return true;
             }
@@ -430,14 +426,14 @@ public class IconWindow extends Window implements AutoMovable{
      * @param vt
      */
     private boolean dragStart(ViewTouch vt) {
-        List<IconBase> icons = getIcons();
+        List<Icon> icons = getIcons();
         if (icons == null) return false;
 
         // タッチされたアイコンを選択する
         // 一番上のアイコンからタッチ判定したいのでリストを逆順（一番手前から）で参照する
         boolean ret = false;
         Collections.reverse(icons);
-        for (IconBase icon : icons) {
+        for (Icon icon : icons) {
             // 座標判定
             if (icon.checkTouch(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
                 dragIcon = icon;
@@ -476,7 +472,7 @@ public class IconWindow extends Window implements AutoMovable{
                 IconManager manager = window.getIconManager();
                 if (manager == null) continue;
 
-                IconBase icon = manager.getOverlappedIcon(dragPos, dragIcon);
+                Icon icon = manager.getOverlappedIcon(dragPos, dragIcon);
                 if (icon != null) {
                     isDone = true;
                     dropIcon = icon;
@@ -518,8 +514,8 @@ public class IconWindow extends Window implements AutoMovable{
                 continue;
             }
 
-            LinkedList<IconBase> srcIcons = getIcons();
-            LinkedList<IconBase> dstIcons = window.getIcons();
+            LinkedList<Icon> srcIcons = getIcons();
+            LinkedList<Icon> dstIcons = window.getIcons();
 
             if (dstIcons == null) continue;
 
@@ -527,7 +523,7 @@ public class IconWindow extends Window implements AutoMovable{
             float winX = window.toWinX(vt.getX());
             float winY = window.toWinY(vt.getY());
 
-            for (IconBase icon : dstIcons) {
+            for (Icon icon : dstIcons) {
                 if (icon == dragIcon) continue;
 
                 if (icon.checkDrop(winX, winY)) {
@@ -560,7 +556,7 @@ public class IconWindow extends Window implements AutoMovable{
             // その他の場所にドロップされた場合
             if (!isDroped && dstIcons != null ) {
                 if (dstIcons.size() > 0) {
-                    IconBase lastIcon = dstIcons.getLast();
+                    Icon lastIcon = dstIcons.getLast();
                     if ((lastIcon.getY() <= winY &&
                             winY <= lastIcon.getBottom() &&
                             lastIcon.getRight() <= winX) ||
@@ -673,8 +669,8 @@ public class IconWindow extends Window implements AutoMovable{
      * @param icon2
      * @param window
      */
-    private void changeIcons(List<IconBase> srcIcons, List<IconBase> dstIcons, IconBase
-            icon1, IconBase icon2, IconWindow window )
+    private void changeIcons(List<Icon> srcIcons, List<Icon> dstIcons, Icon
+            icon1, Icon icon2, IconWindow window )
     {
         // アイコンの位置を交換
         // 並び順も重要！
@@ -710,7 +706,7 @@ public class IconWindow extends Window implements AutoMovable{
      * @param dstIcon  挿入先のアイコン
      * @param window
      */
-    private void insertIcons(List<IconBase> srcIcons, List<IconBase> dstIcons, IconBase srcIcon, IconBase dstIcon, IconWindow window, boolean animate)
+    private void insertIcons(List<Icon> srcIcons, List<Icon> dstIcons, Icon srcIcon, Icon dstIcon, IconWindow window, boolean animate)
     {
         int index = dstIcons.indexOf(dstIcon);
         if (index == -1) return;
@@ -738,7 +734,7 @@ public class IconWindow extends Window implements AutoMovable{
      * @param srcIcon ドロップ元のIcon
      * @param dstIcon ドロップ先のIcon
      */
-    private void moveIconIntoBox(List<IconBase> srcIcons, List<IconBase> dstIcons, IconBase srcIcon, IconBase dstIcon)
+    private void moveIconIntoBox(List<Icon> srcIcons, List<Icon> dstIcons, Icon srcIcon, Icon dstIcon)
     {
         srcIcons.remove(srcIcon);
         dstIcons.add(srcIcon);

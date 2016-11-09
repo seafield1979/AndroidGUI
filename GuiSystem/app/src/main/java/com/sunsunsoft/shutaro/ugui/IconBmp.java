@@ -1,7 +1,6 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -13,7 +12,7 @@ import android.graphics.RectF;
  * 画像のアイコン
  */
 
-public class IconBmp extends IconBase {
+public class IconBmp extends Icon {
     private static final int ICON_W = 150;
 
     private Bitmap bmp;

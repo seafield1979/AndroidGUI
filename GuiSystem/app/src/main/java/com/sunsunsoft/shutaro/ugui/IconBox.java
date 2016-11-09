@@ -7,14 +7,13 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.View;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * 子要素を持つことができるIcon
  */
 
-public class IconBox extends IconBase {
+public class IconBox extends Icon {
     public static final int ICON_W = 150;
     public static final int DUMMY_ICON_NUM = 10;
 
@@ -28,7 +27,7 @@ public class IconBox extends IconBase {
     public IconManager getIconManager() {
         return mIconManager;
     }
-    public List<IconBase> getIcons() {
+    public List<Icon> getIcons() {
         return mIconManager.getIcons();
     }
 
@@ -49,7 +48,7 @@ public class IconBox extends IconBase {
         // ダミーで子要素を追加
         mIconManager = IconManager.createInstance(parentView, parentWindow);
         for (int i=0; i<DUMMY_ICON_NUM; i++) {
-            IconBase icon = mIconManager.addIcon(IconShape.RECT, AddPos.Tail);
+            Icon icon = mIconManager.addIcon(IconShape.RECT, AddPos.Tail);
             icon.setColor(color);
         }
     }
