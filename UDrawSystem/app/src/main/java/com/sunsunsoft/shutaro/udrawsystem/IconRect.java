@@ -3,6 +3,7 @@ package com.sunsunsoft.shutaro.udrawsystem;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 
 /**
@@ -29,7 +30,7 @@ public class IconRect extends Icon {
      * @param canvas
      * @param paint
      */
-    public void draw(Canvas canvas, Paint paint) {
+    public void draw(Canvas canvas, Paint paint, PointF offset) {
         // 描画方法
         paint.setStyle(Paint.Style.FILL);
         // 色
@@ -42,7 +43,16 @@ public class IconRect extends Icon {
         }
 
         // 四角形描画
-        canvas.drawRect(rect, paint);
+        Rect drawRect = null;
+        if (offset != null) {
+            drawRect = new Rect(rect.left + (int)offset.x,
+                                rect.top + (int)offset.y,
+                                rect.right + (int)offset.x,
+                                rect.bottom + (int)offset.y);
+        } else {
+            drawRect = rect;
+        }
+        canvas.drawRect(drawRect, paint);
 
         drawId(canvas, paint);
     }

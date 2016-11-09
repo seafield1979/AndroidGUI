@@ -21,6 +21,7 @@ public class MyLog {
     // 初期化、アプリ起動時に１回だけ呼ぶ
     public static void init() {
         setEnable("viewtouch", false);
+        setEnable(UWindowTest1.TAG, false);
     }
 
     // ログ出力

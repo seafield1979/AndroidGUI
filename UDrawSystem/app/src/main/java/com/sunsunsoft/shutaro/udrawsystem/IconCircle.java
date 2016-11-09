@@ -2,6 +2,7 @@ package com.sunsunsoft.shutaro.udrawsystem;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 
 /**
@@ -29,7 +30,7 @@ public class IconCircle extends Icon{
      * @param canvas
      * @param paint
      */
-    public void draw(Canvas canvas, Paint paint)
+    public void draw(Canvas canvas, Paint paint, PointF offset)
     {
         // 描画方法
         paint.setStyle(Paint.Style.FILL);
@@ -43,7 +44,13 @@ public class IconCircle extends Icon{
         }
 
         // 四角形描画
-        canvas.drawCircle(pos.x + radius, pos.y + radius, radius, paint);
+        PointF drawPos = null;
+        if (offset != null) {
+            drawPos = new PointF(pos.x + offset.x, pos.y + offset.y);
+        } else {
+            drawPos = pos;
+        }
+        canvas.drawCircle(drawPos.x + radius, drawPos.y + radius, radius, paint);
 
         drawId(canvas, paint);
     }

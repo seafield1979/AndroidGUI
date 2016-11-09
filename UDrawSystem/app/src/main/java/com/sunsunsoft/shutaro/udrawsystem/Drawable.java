@@ -1,7 +1,9 @@
 package com.sunsunsoft.shutaro.udrawsystem;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 
 /**
@@ -17,7 +19,7 @@ public interface Drawable {
      * @param canvas
      * @param paint
      */
-    void draw(Canvas canvas, Paint paint );
+    void draw(Canvas canvas, Paint paint, PointF offset );
 
     /**
      * 描画範囲の矩形を取得

@@ -40,6 +40,13 @@ abstract public class Icon implements Drawable {
         this.pos.y = y;
     }
 
+    public float getX() {
+        return pos.x;
+    }
+    public float getY() {
+        return pos.y;
+    }
+
     public Size getSize() {
         return size;
     }
@@ -120,10 +127,13 @@ abstract public class Icon implements Drawable {
      */
     protected void drawId(Canvas canvas, Paint paint) {
         // idを表示
-        if (MyDebug.drawIconId) {
-            paint.setColor(Color.WHITE);
-            paint.setTextSize(30);
-            canvas.drawText("" + getDrawList().getPriority(), pos.x+10, pos.y + size.height - 30, paint);
-        }
+        if (!MyDebug.drawIconId) return;
+
+        DrawList drawList = getDrawList();
+        if (drawList == null) return;
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(30);
+        canvas.drawText("" + drawList.getPriority(), pos.x+10, pos.y + size.height - 30, paint);
+
     }
 }

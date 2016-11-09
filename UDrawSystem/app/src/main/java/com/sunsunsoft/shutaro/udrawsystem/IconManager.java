@@ -1,5 +1,7 @@
 package com.sunsunsoft.shutaro.udrawsystem;
 
+import android.graphics.PointF;
+
 import java.util.LinkedList;
 
 /**
@@ -9,13 +11,45 @@ import java.util.LinkedList;
 public class IconManager {
     DrawManager mDrawManager;
 
-    LinkedList<Icon> icons = new LinkedList<>();
+    private LinkedList<Icon> icons = new LinkedList<>();
+    private PointF parentPos;
+    private PointF parentScroll;
 
-    public IconManager(DrawManager drawManager) {
-        mDrawManager = drawManager;
+    // Get/Set
+    public LinkedList<Icon> getIcons() {
+        return icons;
     }
 
-    public void addIcon(IconType type, float x, float y, int color) {
+    public PointF getParentPos() {
+        return parentPos;
+    }
+
+    public void setParentPos(PointF parentPos) {
+        this.parentPos = parentPos;
+    }
+
+    public PointF getParentScroll() {
+        return parentScroll;
+    }
+
+    public void setParentScroll(PointF parentScroll) {
+        this.parentScroll = parentScroll;
+    }
+
+    // Constructor
+    public IconManager() {
+        mDrawManager = DrawManager.getInstance();
+    }
+
+    /**
+     * アイコンを追加
+     * @param type
+     * @param x
+     * @param y
+     * @param color
+     * @param isDraw  trueなら描画マネージャーに追加する
+     */
+    public Icon addIcon(IconType type, float x, float y, int color, boolean isDraw) {
         Icon icon = null;
         int priority = 100;
 
@@ -32,7 +66,10 @@ public class IconManager {
         if (icon != null) {
             icons.add(icon);
         }
-        mDrawManager.addDrawable(priority, icon);
+        if (isDraw) {
+            mDrawManager.addDrawable(priority, icon);
+        }
+        return icon;
     }
 
     /**

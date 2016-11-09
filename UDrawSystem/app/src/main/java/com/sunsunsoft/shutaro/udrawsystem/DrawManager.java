@@ -1,6 +1,7 @@
 package com.sunsunsoft.shutaro.udrawsystem;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -10,15 +11,33 @@ import java.util.TreeMap;
 /**
  * 描画オブジェクトを管理するクラス
  * 描画するオブジェクトを登録すると一括で描画を行ってくれる
- *
+ * ※シングルトンなので getInstance() でインスタンスを取得する
  */
 public class DrawManager {
     public static final String TAG = "DrawManager";
 
-    // 同じプライオリティーのDrawableリストを管理するリスト
-    TreeMap<Integer, DrawList> lists = new TreeMap<>();
+    private static DrawManager singleton = new DrawManager();
 
-    public boolean addDrawable(int priority, Drawable obj) {
+    public static DrawManager getInstance() { return singleton; }
+
+    // 同じプライオリティーのDrawableリストを管理するリスト
+    TreeMap<Integer, DrawList> lists;
+
+    /**
+     * 初期化
+     * アクティビティが生成されるタイミングで呼ぶ
+     */
+    public void init() {
+        lists = new TreeMap<>();
+    }
+
+    /**
+     * 描画オブジェクトを追加
+     * @param priority
+     * @param obj
+     * @return
+     */
+    public DrawList addDrawable(int priority, Drawable obj) {
         // 挿入するリストを探す
         Integer _priority = new Integer(priority);
         DrawList list = lists.get(_priority);
@@ -29,9 +48,28 @@ public class DrawManager {
         }
         list.add(obj);
         obj.setDrawList(list);
-        return true;
+        return list;
     }
 
+    /**
+     * DrawListのプライオリティを変更する
+     * @param list1  変更元のリスト
+     * @param priority
+     */
+    public void setPriority(DrawList list1, int priority) {
+        // 変更先のプライオリティーを持つリストを探す
+        Integer _priority = new Integer(priority);
+        DrawList list2 = lists.get(_priority);
+        if (list2 != null) {
+            // すでに変更先のプライオリティーのリストがあるので交換
+            int srcPriority = list1.getPriority();
+            Integer _srcPriority = new Integer(srcPriority);
+            lists.put(_priority, list1);
+            lists.put(_srcPriority, list2);
+        } else {
+            lists.put(_priority, list1);
+        }
+    }
 
     /**
      * 追加済みのオブジェクトのプライオリティーを変更する
@@ -40,7 +78,7 @@ public class DrawManager {
      */
     public void setPriority(Drawable obj, int priority) {
         // 探す
-        for (Integer pri : lists.descendingKeySet()) {
+        for (Integer pri : lists.keySet()) {
             DrawList list = lists.get(pri);
             if (list.contains(obj)) {
                 if (pri == priority) {
@@ -90,7 +128,6 @@ class DrawList
     }
 
     // Get/Set
-
     public int getPriority() {
         return priority;
     }
@@ -160,7 +197,13 @@ class DrawList
                 if (obj.animate()) {
                     allDone = false;
                 }
-                obj.draw(canvas, paint);
+                obj.draw(canvas, paint, null);
+                drawId(canvas, paint, obj.getRect(), priority);
+
+                if (MyDebug.drawIconId) {
+                    Rect _rect = obj.getRect();
+
+                }
             }
         }
         if (clipRect != null) {
@@ -168,5 +211,25 @@ class DrawList
             canvas.restore();
         }
         return !allDone;
+    }
+
+    /**
+     * プライオリティを表示する
+     * @param canvas
+     * @param paint
+     */
+    protected void drawId(Canvas canvas, Paint paint, Rect rect, int priority) {
+        // idを表示
+        if (!MyDebug.drawIconId) return;
+
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(30);
+
+        String text = "" + priority;
+        Rect textRect = new Rect();
+        paint.getTextBounds(text, 0, text.length(), textRect);
+
+        canvas.drawText("" + priority, rect.centerX() - textRect.width() / 2, rect.centerY() - textRect.height() / 2, paint);
+
     }
 }

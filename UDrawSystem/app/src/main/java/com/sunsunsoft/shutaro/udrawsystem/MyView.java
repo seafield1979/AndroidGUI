@@ -22,9 +22,9 @@ public class MyView extends View implements OnTouchListener{
     private Paint paint = new Paint();
     private Context context;
 
-    private DrawManager mDrawManager = new DrawManager();
-    private IconManager mIconManager = new IconManager(mDrawManager);
+    private IconManager mIconManager = new IconManager();
     private ViewTouch viewTouch = new ViewTouch();
+    private UWindowTest1 window;
 
     public MyView(Context context) {
         super(context);
@@ -35,26 +35,9 @@ public class MyView extends View implements OnTouchListener{
         this.setOnTouchListener(this);
     }
 
-    private void init(int width, int height) {
-
-        float x = 0, y = 0;
-        for (int i=0; i<RECT_ICON_NUM; i++) {
-            mIconManager.addIcon(IconType.Rect, x, y, MyColor.getRandom());
-            x += IconRect.ICON_W + 30;
-            if (x + IconRect.ICON_W + 30 > width) {
-                x = 0;
-                y += IconRect.ICON_H + 30;
-            }
-        }
-        x = 50;
-        y = 50;
-        for (int i=0; i<CIRCLE_ICON_NUM; i++) {
-            mIconManager.addIcon(IconType.Circle, x, y, MyColor.getRandom());
-            x += IconRect.ICON_W + 30;
-            if (x + IconRect.ICON_W + 30 > width) {
-                x = 0;
-                y += IconRect.ICON_H + 30;
-            }
+    private void init(int width) {
+        if (window == null) {
+            window = UWindowTest1.createWindow(0, 0, width, 500, Color.WHITE);
         }
     }
 
@@ -62,7 +45,7 @@ public class MyView extends View implements OnTouchListener{
     public void onDraw(Canvas canvas) {
         if (isFirst) {
             isFirst = false;
-            init(getWidth(), getHeight());
+            init(getWidth());
         }
 
         // 背景塗りつぶし
@@ -71,7 +54,7 @@ public class MyView extends View implements OnTouchListener{
         // アンチエリアシング(境界のぼかし)
         paint.setAntiAlias(true);
 
-        if (mDrawManager.draw(canvas, paint)) {
+        if (DrawManager.getInstance().draw(canvas, paint)) {
             invalidate();
         }
     }
@@ -89,6 +72,19 @@ public class MyView extends View implements OnTouchListener{
 
         if (mIconManager.touchEvent(viewTouch)) {
             invalidate();
+        }
+
+        if (window != null) {
+            if (window.touchEvent(viewTouch)) {
+                invalidate();
+            }
+        }
+
+        switch(viewTouch.type) {
+            case Click:
+                break;
+            case Moving:
+                break;
         }
 
         switch(e.getAction()) {
