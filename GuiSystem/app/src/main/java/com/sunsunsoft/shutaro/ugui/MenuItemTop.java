@@ -22,8 +22,8 @@ public class MenuItemTop extends MenuItem{
 
 
     // Constructor
-    public MenuItemTop(MenuItemId id, Bitmap icon) {
-        super(id, icon);
+    public MenuItemTop(MenuBar parent, MenuItemId id, Bitmap icon) {
+        super(parent, id, icon);
     }
 
     // Get/Set

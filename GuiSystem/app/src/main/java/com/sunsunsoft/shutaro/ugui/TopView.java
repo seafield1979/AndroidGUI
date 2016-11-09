@@ -84,6 +84,10 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
             mIconWindows[1].setWindows(mIconWindows);
             mWindows[WindowType.Icon2.ordinal()] = mIconWindows[1];
         }
+        // アイコンの登録はMainとSubのWindowを作成後に行う必要がある
+        mIconWindows[0].init();
+        mIconWindows[1].init();
+
         // MenuBar
         if (mMenuBar == null) {
             mMenuBar = MenuBar.createInstance(this, this, width, height, Color.BLACK);
@@ -119,12 +123,6 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
-
-        // ここでとるサイズはViewのgetWidth(),getHeightと異なるので使用できない
-//        if (isFirst) {
-//            isFirst = false;
-//            initWindows(viewW, viewH);
-//        }
     }
 
     @Override
@@ -149,7 +147,9 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
             }
         }
 
-        DrawManager.getInstance().draw(canvas, paint);
+        if (DrawManager.getInstance().draw(canvas, paint)){
+            invalidate();
+        }
     }
 
     /**

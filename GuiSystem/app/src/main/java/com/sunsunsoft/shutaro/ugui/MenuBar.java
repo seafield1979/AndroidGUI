@@ -21,6 +21,8 @@ enum TopMenu {
  * メニューに表示する項目を管理する
  */
 public class MenuBar extends Window {
+
+    public static final int DRAW_PRIORITY = 90;
     public static final int MENU_BAR_H = 150;
     private static final int MARGIN_L = 30;
     private static final int MARGIN_LR = 50;
@@ -33,6 +35,7 @@ public class MenuBar extends Window {
     MenuItemTop[] topItems = new MenuItemTop[TOP_MENU_MAX];
     MenuItem[] items = new MenuItem[MenuItemId.values().length];
     private DrawList mDrawList;
+    private boolean isAnimating;
 
     // Get/Set
     public boolean isShow() {
@@ -41,6 +44,10 @@ public class MenuBar extends Window {
 
     public void setShow(boolean show) {
         isShow = show;
+    }
+
+    public void setAnimating(boolean animating) {
+        isAnimating = animating;
     }
 
     private MenuBar(View parentView, MenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
@@ -89,6 +96,7 @@ public class MenuBar extends Window {
         addChildMenuItem(TopMenu.ListType, MenuItemId.ListType2, R.drawable.hogeman);
         addChildMenuItem(TopMenu.ListType, MenuItemId.ListType3, R.drawable.hogeman);
 
+        DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
         updateBGSize();
     }
 
@@ -104,7 +112,7 @@ public class MenuBar extends Window {
      */
     private void addTopMenuItem(TopMenu topId, MenuItemId menuId, int bmpId) {
         Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
-        MenuItemTop item = new MenuItemTop(menuId, bmp);
+        MenuItemTop item = new MenuItemTop(this, menuId, bmp);
         item.setCallbacks(mCallbackClass);
         addItem(topId, item);
 
@@ -119,7 +127,7 @@ public class MenuBar extends Window {
      */
     private void addChildMenuItem(TopMenu topId, MenuItemId menuId, int bmpId) {
         Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
-        MenuItemChild item = new MenuItemChild(menuId, bmp);
+        MenuItemChild item = new MenuItemChild(this, menuId, bmp);
         item.setCallbacks(mCallbackClass);
         addChildItem(topId, item);
 
@@ -172,9 +180,9 @@ public class MenuBar extends Window {
             }
 
             // アニメーション
-            if (item.animate()) {
-                allFinished = false;
-            }
+//            if (item.animate()) {
+//                allFinished = false;
+//            }
         }
 
         return !allFinished;
@@ -261,6 +269,16 @@ public class MenuBar extends Window {
         // 色
         paint.setColor(0xff000000);
 
+        Rect drawRect = null;
+        if (offset != null) {
+            drawRect = new Rect(rect.left + (int)offset.x,
+                    rect.top + (int)offset.y,
+                    rect.right + (int)offset.x,
+                    rect.bottom + (int)offset.y);
+        } else {
+            drawRect = rect;
+        }
+
         canvas.drawRect(pos.x,
                 pos.y,
                 pos.x + size.width,
@@ -310,7 +328,18 @@ public class MenuBar extends Window {
      * @return true:アニメーション中
      */
     public boolean animate() {
-        return false;
+        if (!isAnimating) return false;
+        boolean allFinished = true;
+
+        for (MenuItemTop item : topItems) {
+            if (item.animate()) {
+                allFinished = false;
+            }
+        }
+        if (allFinished) {
+            isAnimating = false;
+        }
+        return !allFinished;
     }
 
     /**
@@ -318,6 +347,6 @@ public class MenuBar extends Window {
      * @return
      */
     public boolean isAnimating() {
-        return false;
+        return isAnimating;
     }
 }

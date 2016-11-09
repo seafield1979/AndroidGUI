@@ -32,14 +32,14 @@ abstract public class MenuItem implements Animatable{
     public static final int ITEM_H = 120;
     public static final int ANIME_FRAME = 15;
 
-    protected PointF pos = new PointF();
+    protected MenuBar parent;
+    protected MenuItemCallbacks mCallbacks;
 
+    protected PointF pos = new PointF();
     protected MenuItemId id;
 
     // アイコン用画像
     protected Bitmap icon;
-
-    protected MenuItemCallbacks mCallbacks;
 
     // アニメーション用
     private boolean isAnimating;
@@ -60,7 +60,8 @@ abstract public class MenuItem implements Animatable{
         return pos;
     }
 
-    public MenuItem(MenuItemId id, Bitmap icon) {
+    public MenuItem(MenuBar parent, MenuItemId id, Bitmap icon) {
+        this.parent = parent;
         this.id = id;
         this.icon = icon;
     }
@@ -97,6 +98,7 @@ abstract public class MenuItem implements Animatable{
      * アニメーション開始
      */
     public void startAnim() {
+        parent.setAnimating(true);
         isAnimating = true;
         animeFrame = 0;
         animeFrameMax = ANIME_FRAME;

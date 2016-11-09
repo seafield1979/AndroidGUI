@@ -99,6 +99,8 @@ public class IconWindow extends Window implements AutoMovable{
         this.windows = windows;
     }
 
+    public IconWindow[] getWindows() { return this.windows; }
+
     public void setParentView(View mParentView) {
         this.mParentView = mParentView;
     }
@@ -143,7 +145,6 @@ public class IconWindow extends Window implements AutoMovable{
         } else {
             instance.type = WindowType.Sub;
         }
-        instance.init();
         return instance;
     }
 
@@ -194,7 +195,6 @@ public class IconWindow extends Window implements AutoMovable{
         }
         // 描画はDrawManagerに任せるのでDrawManagerに登録
         mDrawList = DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
-//        mDrawList.setClipRect(rect);
 
         sortRects(false);
     }
@@ -288,12 +288,12 @@ public class IconWindow extends Window implements AutoMovable{
         // スクロールバー
         mScrollBar.draw(canvas, paint);
 
-        // クリッピング解除
-        canvas.restore();
-
         if (MyDebug.DRAW_ICON_BLOCK_RECT) {
             mIconManager.getBlockManager().draw(canvas, paint, getWin2ScreenPos());
         }
+
+        // クリッピング解除
+        canvas.restore();
     }
 
 

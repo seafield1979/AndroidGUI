@@ -189,7 +189,6 @@ class DrawList
         for (Drawable obj : list) {
             Rect objRect = obj.getRect();
 
-            // rectが設定されていたらクリッピング処理を行う
             if (obj.animate()) {
                 allDone = false;
             }

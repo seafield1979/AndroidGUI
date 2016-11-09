@@ -46,8 +46,8 @@ public class MenuItemChild extends MenuItem implements AutoMovable{
         return isMoving;
     }
 
-    public MenuItemChild(MenuItemId id, Bitmap icon) {
-        super(id, icon);
+    public MenuItemChild(MenuBar parent, MenuItemId id, Bitmap icon) {
+        super(parent, id, icon);
     }
 
     public boolean checkClick(ViewTouch vt, float clickX, float clickY) {

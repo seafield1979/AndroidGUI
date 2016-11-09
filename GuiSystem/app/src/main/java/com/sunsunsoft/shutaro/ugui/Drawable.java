@@ -27,12 +27,21 @@ public interface Drawable {
     public PointF getDrawOffset();
 
     /**
-     * 描画範囲の矩形を取得
+     * 描画範囲の矩形を取得。これでクリッピング処理を行う
      * @return
      */
     Rect getRect();
 
+    /**
+     * 親のDrawListを設定
+     * @param drawList
+     */
     public void setDrawList(DrawList drawList);
+
+    /**
+     * 親のDrawListを取得
+     * @return
+     */
     public DrawList getDrawList();
 
     /**

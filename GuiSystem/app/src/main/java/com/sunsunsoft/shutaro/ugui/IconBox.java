@@ -47,7 +47,10 @@ public class IconBox extends Icon {
         color = MyColor.getRandomColor();
 
         // ダミーで子要素を追加
-        mIconManager = IconManager.createInstance(parentView, parentWindow);
+        IconWindow[] windows = parentWindow.getWindows();
+        IconWindow subIconWindow = windows[IconWindow.WindowType.Sub.ordinal()];
+
+        mIconManager = IconManager.createInstance(parentView, subIconWindow);
         for (int i=0; i<DUMMY_ICON_NUM; i++) {
             Icon icon = mIconManager.addIcon(IconShape.RECT, AddPos.Tail);
             icon.setColor(color);
