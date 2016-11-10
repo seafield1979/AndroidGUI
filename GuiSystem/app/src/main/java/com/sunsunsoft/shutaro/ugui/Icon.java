@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.Log;
 
 import static com.sunsunsoft.shutaro.ugui.MyDebug.drawIconId;
@@ -43,17 +42,17 @@ abstract public class Icon implements AutoMovable, Drawable {
     // ドラッグ中のアイコンが上にある状態
     protected boolean isDroping;
 
-    protected IconShape shape;
+    protected IconType type;
 
     protected int color;
 
-    public Icon(IconWindow parentWindow, IconShape shape, float x, float y, int width, int
+    public Icon(IconWindow parentWindow, IconType type, float x, float y, int width, int
             height)
     {
         this.parentWindow = parentWindow;
         this.mCallbacks = parentWindow.getIconCallbacks();
         this.id = count;
-        this.shape = shape;
+        this.type = type;
         this.setPos(x, y);
         this.setSize(width, height);
         updateRect();
@@ -61,7 +60,7 @@ abstract public class Icon implements AutoMovable, Drawable {
         count++;
     }
 
-    public IconShape getShape() { return shape; }
+    public IconType getType() { return type; }
 
 
     // 座標、サイズのGet/Set
@@ -128,6 +127,10 @@ abstract public class Icon implements AutoMovable, Drawable {
         updateRect();
     }
     public Rect getRect() {return rect;}
+    public Rect getRectWithOffset(PointF offset) {
+        return new Rect(rect.left + (int)offset.x, rect.top + (int)offset.y,
+                rect.right + (int)offset.x, rect.bottom + (int)offset.y);
+    }
 
     // 移動
     public void move(float moveX, float moveY) {

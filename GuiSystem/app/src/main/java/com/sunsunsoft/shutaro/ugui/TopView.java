@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -147,6 +149,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
             }
         }
 
+        // マネージャに登録した描画オブジェクトをまとめて描画
         if (DrawManager.getInstance().draw(canvas, paint)){
             invalidate();
         }
@@ -208,7 +211,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
      * @param shape
      * @param menuItemId
      */
-    private void addIcon(int windowId, IconShape shape, MenuItemId menuItemId) {
+    private void addIcon(int windowId, IconType shape, MenuItemId menuItemId) {
         IconWindow iconWindow = mIconWindows[windowId];
         IconManager manager = iconWindow.getIconManager();
         Icon icon = manager.addIcon(shape, AddPos.Top);
@@ -230,10 +233,10 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
             case AddTop:
                 break;
             case AddCard:
-                addIcon(0, IconShape.CIRCLE, id);
+                addIcon(0, IconType.CIRCLE, id);
                 break;
             case AddBook:
-                addIcon(0, IconShape.RECT, id);
+                addIcon(0, IconType.RECT, id);
                 break;
             case AddBox:
                 break;
@@ -276,7 +279,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
      */
     public void clickIcon(Icon icon) {
         MyLog.print(TAG, "clickIcon");
-        switch(icon.shape) {
+        switch(icon.type) {
             case CIRCLE:
                 break;
             case RECT:
@@ -287,7 +290,6 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
                     IconBox box = (IconBox)icon;
                     mIconWindows[1].setIconManager(box.getIconManager());
                     mIconWindows[1].sortRects(false);
-                    box.setSubWindow(mIconWindows[1]);
                     float posY = mIconWindows[1].pos.y;
                     mIconWindows[1].setPos(0, getHeight(), true);
                     mIconWindows[1].startMove(0, posY, 10);

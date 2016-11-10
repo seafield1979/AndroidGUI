@@ -4,7 +4,7 @@ package com.sunsunsoft.shutaro.ugui;
  * アイコンの形
  */
 
-public enum IconShape {
+public enum IconType {
     RECT,
     CIRCLE,
     IMAGE,

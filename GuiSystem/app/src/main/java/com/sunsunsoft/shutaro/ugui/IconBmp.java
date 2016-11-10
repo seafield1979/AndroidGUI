@@ -3,10 +3,8 @@ package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.RectF;
 
 /**
  * 画像のアイコン
@@ -22,7 +20,7 @@ public class IconBmp extends Icon {
         this(parent, 0, 0, ICON_W, ICON_W, bmp);
     }
     public IconBmp(IconWindow parent, int x, int y, int width, int height, Bitmap bmp) {
-        super(parent, IconShape.IMAGE, x, y, width, height);
+        super(parent, IconType.IMAGE, x, y, width, height);
 
         this.bmp = bmp;
     }

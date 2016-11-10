@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.RectF;
 
 /**
  * 四角形のアイコン
@@ -21,7 +20,7 @@ public class IconRect extends Icon {
     }
 
     public IconRect(IconWindow parent, int x, int y, int width, int height) {
-        super(parent, IconShape.RECT, x,y,width,height);
+        super(parent, IconType.RECT, x,y,width,height);
 
         color = Color.rgb(0,255,255);
     }

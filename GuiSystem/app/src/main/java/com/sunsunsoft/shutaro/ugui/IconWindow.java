@@ -23,9 +23,9 @@ public class IconWindow extends Window implements AutoMovable{
         icon_moving,        // アイコンの一変更後の移動中
     }
 
-    // アイコンウィンドウのメイン、サブ
-    // ホームはトップのウィンドウ
-    // サブはトップウィンドウ以下のBoxアイコンを開いた時のウィンドウ
+    // アイコンウィンドウの種類
+    // Homeはデスクトップのアイコンを表示するウィンドウ
+    // サブはHome以下のBoxアイコンを開いた時のウィンドウ
     enum WindowType {
         Home,
         Sub
@@ -62,9 +62,11 @@ public class IconWindow extends Window implements AutoMovable{
     private IconWindow[] windows;
 
     // ドラッグ中のアイコン
-    private Icon dragIcon;
+    private Icon dragedIcon;
     // ドロップ中のアイコン
-    private Icon dropIcon;
+    private Icon dropedIcon;
+    // 選択中のアイコン
+    private Icon selectedIcon;
 
     // アニメーション用
     private viewState state = viewState.none;
@@ -113,16 +115,16 @@ public class IconWindow extends Window implements AutoMovable{
         return mIconCallbacks;
     }
 
-    public void setDragIcon(Icon dragIcon) {
-        if (dragIcon == null) {
-            if (this.dragIcon != null) {
-                DrawManager.getInstance().removeDrawable(DRAG_ICON_PRIORITY, this.dragIcon);
+    public void setDragedIcon(Icon dragedIcon) {
+        if (dragedIcon == null) {
+            if (this.dragedIcon != null) {
+                DrawManager.getInstance().removeDrawable(DRAG_ICON_PRIORITY, this.dragedIcon);
             }
         }
         else {
-            DrawManager.getInstance().addDrawable(DRAG_ICON_PRIORITY, dragIcon);
+            DrawManager.getInstance().addDrawable(DRAG_ICON_PRIORITY, dragedIcon);
         }
-        this.dragIcon = dragIcon;
+        this.dragedIcon = dragedIcon;
     }
 
     private IconWindow(View parent, IconCallbacks iconCallbacks, float x, float y, int width, int height, int color) {
@@ -157,7 +159,7 @@ public class IconWindow extends Window implements AutoMovable{
         if (type == WindowType.Home) {
             for (int i = 0; i < RECT_ICON_NUM; i++) {
 
-                Icon icon = mIconManager.addIcon(IconShape.RECT, AddPos.Tail);
+                Icon icon = mIconManager.addIcon(IconType.RECT, AddPos.Tail);
                 int color = 0;
                 switch (i % 3) {
                     case 0:
@@ -174,7 +176,7 @@ public class IconWindow extends Window implements AutoMovable{
             }
 
             for (int i = 0; i < CIRCLE_ICON_NUM; i++) {
-                Icon icon = mIconManager.addIcon(IconShape.CIRCLE, AddPos.Tail);
+                Icon icon = mIconManager.addIcon(IconType.CIRCLE, AddPos.Tail);
                 int color = 0;
                 switch (i % 3) {
                     case 0:
@@ -190,7 +192,7 @@ public class IconWindow extends Window implements AutoMovable{
                 icon.setColor(color);
             }
             for (int i = 0; i < BOX_ICON_NUM; i++) {
-                Icon icon = mIconManager.addIcon(IconShape.BOX, AddPos.Tail);
+                Icon icon = mIconManager.addIcon(IconType.BOX, AddPos.Tail);
             }
         }
         // 描画はDrawManagerに任せるのでDrawManagerに登録
@@ -208,8 +210,8 @@ public class IconWindow extends Window implements AutoMovable{
         boolean allFinished = true;
         List<Icon> icons = getIcons();
 
+        // Windowの移動
         if (isMoving) {
-            // 移動処理
             if (isMoving) {
                 if (!move()) {
                     isMoving = false;
@@ -228,7 +230,8 @@ public class IconWindow extends Window implements AutoMovable{
                 }
                 if (allFinished) {
                     state = viewState.none;
-                    setDragIcon(null);
+                    mIconManager.updateBlockRect();
+                    setDragedIcon(null);
                 }
                 else {
                     redraw = true;
@@ -268,10 +271,15 @@ public class IconWindow extends Window implements AutoMovable{
 
         int clipCount = 0;
         for (Icon icon : mIconManager.getIcons()) {
-            if (icon == dragIcon) continue;
+            if (icon == dragedIcon) continue;
             // 矩形範囲外なら描画しない
             if (MyRect.intersect(windowRect, icon.getRect())) {
                 icon.draw(canvas, paint, _offset);
+
+                // 選択中のアイコンに枠を表示する
+                if (icon == selectedIcon) {
+                    MyDraw.drawRect(canvas, paint, icon.getRectWithOffset(_offset), 5, Color.RED);
+                }
             } else {
                 clipCount++;
             }
@@ -404,6 +412,9 @@ public class IconWindow extends Window implements AutoMovable{
         // どのアイコンがクリックされたかを判定
         for (Icon icon : icons) {
             if (icon.checkClick(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
+                if (icon.type == IconType.BOX) {
+                    selectedIcon = icon;
+                }
                 return true;
             }
         }
@@ -433,7 +444,7 @@ public class IconWindow extends Window implements AutoMovable{
         for (Icon icon : icons) {
             // 座標判定
             if (icon.checkTouch(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
-                setDragIcon(icon);
+                setDragedIcon(icon);
                 ret = true;
                 break;
             }
@@ -451,15 +462,15 @@ public class IconWindow extends Window implements AutoMovable{
     private boolean dragMove(ViewTouch vt) {
         // ドラッグ中のアイコンを移動
         boolean ret = false;
-        if (dragIcon != null) {
-            dragIcon.move((int)vt.moveX, (int)vt.moveY);
+        if (dragedIcon != null) {
+            dragedIcon.move((int)vt.moveX, (int)vt.moveY);
             ret = true;
 
             boolean isDone = false;
 
             // 現在のドロップフラグをクリア
-            if (dropIcon != null) {
-                dropIcon.isDroping = false;
+            if (dropedIcon != null) {
+                dropedIcon.isDroping = false;
             }
 
             for (IconWindow window : windows) {
@@ -469,11 +480,11 @@ public class IconWindow extends Window implements AutoMovable{
                 IconManager manager = window.getIconManager();
                 if (manager == null) continue;
 
-                Icon icon = manager.getOverlappedIcon(dragPos, dragIcon);
+                Icon icon = manager.getOverlappedIcon(dragPos, dragedIcon);
                 if (icon != null) {
                     isDone = true;
-                    dropIcon = icon;
-                    dropIcon.isDroping = true;
+                    dropedIcon = icon;
+                    dropedIcon.isDroping = true;
                 }
                 if (isDone) break;
             }
@@ -494,14 +505,14 @@ public class IconWindow extends Window implements AutoMovable{
     private boolean dragEnd(ViewTouch vt) {
         // ドロップ処理
         // 他のアイコンの上にドロップされたらドロップ処理を呼び出す
-        if (dragIcon == null) return false;
+        if (dragedIcon == null) return false;
         boolean ret = false;
 
         boolean isDroped = false;
 
-        if (dropIcon != null) {
-            dropIcon.isDroping = false;
-            dropIcon = null;
+        if (dropedIcon != null) {
+            dropedIcon.isDroping = false;
+            dropedIcon = null;
         }
 
         // 全てのWindowの全ての
@@ -521,26 +532,33 @@ public class IconWindow extends Window implements AutoMovable{
             float winY = window.toWinY(vt.getY());
 
             for (Icon icon : dstIcons) {
-                if (icon == dragIcon) continue;
+                if (icon == dragedIcon) continue;
 
                 if (icon.checkDrop(winX, winY)) {
-                    switch (icon.getShape()) {
+                    switch (icon.getType()) {
                         case CIRCLE:
                             // ドラッグ位置のアイコンと場所を交換する
-                            changeIcons(srcIcons, dstIcons, dragIcon, icon, window);
+                            changeIcons(srcIcons, dstIcons, dragedIcon, icon, window);
                             isDroped = true;
                             break;
                         case RECT:
                         case IMAGE:
                             // ドラッグ位置にアイコンを挿入する
-                            insertIcons(srcIcons, dstIcons, dragIcon, icon, window, true);
+                            insertIcons(srcIcons, dstIcons, dragedIcon, icon, window, true);
                             isDroped = true;
                             break;
                         case BOX:
-                            if (dragIcon.shape != IconShape.BOX) {
+                            if (dragedIcon.type != IconType.BOX) {
                                 IconBox box = (IconBox) icon;
                                 if (box.getIcons() != null) {
-                                    moveIconIntoBox(srcIcons, box.getIcons(), dragIcon, icon);
+                                    moveIconIntoBox(srcIcons, box.getIcons(), dragedIcon, icon);
+                                    mIconManager.updateBlockRect();
+                                    for (IconWindow win : windows) {
+                                        IconManager manager = win.getIconManager();
+                                        if (manager != null) {
+                                            manager.updateBlockRect();
+                                        }
+                                    }
                                     isDroped = true;
                                 }
                             }
@@ -560,21 +578,21 @@ public class IconWindow extends Window implements AutoMovable{
                             (lastIcon.getBottom() <= winY)) {
                         // 最後のアイコンの後の空きスペースにドロップされた場合
                         // ドラッグ中のアイコンをリストの最後に移動
-                        srcIcons.remove(dragIcon);
-                        dstIcons.add(dragIcon);
+                        srcIcons.remove(dragedIcon);
+                        dstIcons.add(dragedIcon);
                         isDroped = true;
                     }
                 } else {
                     // ドラッグ中のアイコンをリストの最後に移動
-                    srcIcons.remove(dragIcon);
-                    dstIcons.add(dragIcon);
+                    srcIcons.remove(dragedIcon);
+                    dstIcons.add(dragedIcon);
                 }
             }
             // 再配置
             if (srcIcons != dstIcons) {
                 // 座標系変換(移動元Windowから移動先Window)
                 if (isDroped) {
-                    dragIcon.setPos(win1ToWin2X(dragIcon.pos.x, this, window), win1ToWin2Y(dragIcon.pos.y, this, window));
+                    dragedIcon.setPos(win1ToWin2X(dragedIcon.pos.x, this, window), win1ToWin2Y(dragedIcon.pos.y, this, window));
                 }
                 window.sortRects(true);
             }
@@ -641,7 +659,7 @@ public class IconWindow extends Window implements AutoMovable{
                     break;
                 case MoveCancel:
                     sortRects(false);
-                    setDragIcon(null);
+                    setDragedIcon(null);
                     break;
             }
         }
@@ -681,8 +699,8 @@ public class IconWindow extends Window implements AutoMovable{
         if (srcIcons != dstIcons) {
             // ドロップアイコンの座標系を変換
             // アイコン1 Window -> アイコン2 Window
-            dragIcon.setPos(dragIcon.pos.x + this.pos.x - window.pos.x,
-                    dragIcon.pos.y + this.pos.y - window.pos.y);
+            dragedIcon.setPos(dragedIcon.pos.x + this.pos.x - window.pos.x,
+                    dragedIcon.pos.y + this.pos.y - window.pos.y);
 
             // アイコン2 Window -> アイコン1 Window
             icon2.setPos(icon2.pos.x + window.pos.x - this.pos.x,
@@ -712,7 +730,7 @@ public class IconWindow extends Window implements AutoMovable{
         if (animate) {
             if (srcIcons != dstIcons) {
                 // ドロップアイコンの座標系を変換
-                dragIcon.setPos(srcIcon.pos.x + this.pos.x - window.pos.x,
+                dragedIcon.setPos(srcIcon.pos.x + this.pos.x - window.pos.x,
                         srcIcon.pos.y + this.pos.y - window.pos.y);
                 window.sortRects(animate);
             }

@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.RectF;
 
 /**
  * 円形のアイコン
@@ -20,7 +19,7 @@ public class IconCircle extends Icon {
     }
 
     public IconCircle(IconWindow parent, int x, int y, int width) {
-        super(parent, IconShape.CIRCLE, x,y,width,width);
+        super(parent, IconType.CIRCLE, x,y,width,width);
 
         color = Color.rgb(0,255,255);
         this.radius = width / 2;

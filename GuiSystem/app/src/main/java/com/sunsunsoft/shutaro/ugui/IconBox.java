@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.view.View;
 
 import java.util.List;
@@ -36,25 +35,22 @@ public class IconBox extends Icon {
         return subWindow;
     }
 
-    public void setSubWindow(IconWindow subWindow) {
-        this.subWindow = subWindow;
-    }
-
     public IconBox(View parentView, IconWindow parentWindow) {
-        super(parentWindow, IconShape.BOX, 0, 0, ICON_W, ICON_W);
+        super(parentWindow, IconType.BOX, 0, 0, ICON_W, ICON_W);
         mParentView = parentView;
 
         color = MyColor.getRandomColor();
 
         // ダミーで子要素を追加
         IconWindow[] windows = parentWindow.getWindows();
-        IconWindow subIconWindow = windows[IconWindow.WindowType.Sub.ordinal()];
+        subWindow = windows[IconWindow.WindowType.Sub.ordinal()];
 
-        mIconManager = IconManager.createInstance(parentView, subIconWindow);
+        mIconManager = IconManager.createInstance(parentView, subWindow);
         for (int i=0; i<DUMMY_ICON_NUM; i++) {
-            Icon icon = mIconManager.addIcon(IconShape.RECT, AddPos.Tail);
+            Icon icon = mIconManager.addIcon(IconType.RECT, AddPos.Tail);
             icon.setColor(color);
         }
+
     }
 
     public void draw(Canvas canvas, Paint paint, PointF offset) {

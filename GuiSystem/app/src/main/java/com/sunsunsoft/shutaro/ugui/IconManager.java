@@ -58,7 +58,7 @@ public class IconManager {
      * @param addPos
      * @return
      */
-    public Icon addIcon(IconShape type, AddPos addPos) {
+    public Icon addIcon(IconType type, AddPos addPos) {
 
         Icon icon = null;
         switch (type) {
