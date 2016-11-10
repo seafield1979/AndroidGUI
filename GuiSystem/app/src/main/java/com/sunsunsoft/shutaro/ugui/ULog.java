@@ -19,10 +19,11 @@ public class ULog {
 
     // 初期化、アプリ起動時に１回だけ呼ぶ
     public static void init() {
-        setEnable("viewtouch", false);
+        setEnable(ViewTouch.TAG, false);
         setEnable("MenuBar", false);
         setEnable(ScrollBar.TAG, false);
         setEnable(IconWindow.TAG, true);
+        setEnable(UButton.TAG, true);
     }
 
     // ログ出力

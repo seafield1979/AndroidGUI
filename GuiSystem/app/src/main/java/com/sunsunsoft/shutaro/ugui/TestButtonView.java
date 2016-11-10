@@ -50,29 +50,8 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
 
     private void initDrawables(int width, int height) {
         if (uButton == null) {
-            uButton = new UButton(this, ButtonId.Test1, 100, 100, width - 100*2, 100, Color.GREEN);
-        }
-    }
-
-    /**
-     * Viewのサイズを指定する
-     * @param widthMeasureSpec
-     * @param heightMeasureSpec
-     */
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int viewW = MeasureSpec.getSize(widthMeasureSpec);
-        int viewH = MeasureSpec.getSize(heightMeasureSpec);
-        int modeW = MeasureSpec.getMode(widthMeasureSpec);
-        int modeH = MeasureSpec.getMode(heightMeasureSpec);
-        ULog.print(TAG, "measure w:" + viewW + " h:" + viewH + " wm:" + (modeW >> 30) + " wh:" + (modeH >> 30));
-
-        if (resetSize) {
-            int width = MeasureSpec.EXACTLY | newWidth;
-            int height = MeasureSpec.EXACTLY | newHeight;
-            setMeasuredDimension(width, height);
-        } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            uButton = new UButton(this, ButtonId.Test1, "test1", 100, 100, width - 100*2, 100,
+                    Color.rgb(0,128,0));
         }
     }
 
@@ -106,6 +85,11 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
 
         viewTouch.checkTouchType(e);
 
+        if (uButton.touchEvent(viewTouch)) {
+//            ULog.print(TAG, "invalidate");
+            invalidate();
+        }
+
         switch(e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // trueを返す。こうしないと以降のMoveイベントが発生しなくなる。
@@ -130,7 +114,15 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
      */
 
     public void click(UButton button) {
-
+        switch(button.getId()) {
+            case Test1:
+                ULog.print(TAG, "button click:" + button.getId());
+                break;
+            case Test2:
+                break;
+            case Test3:
+                break;
+        }
     }
     public void longClick(UButton button) {
 

@@ -12,20 +12,48 @@ import android.util.Log;
  * 生成後ViewのonDraw内で draw メソッドを呼ぶと表示される
  */
 
-public class UButton extends DrawableClass {
-    private static final String TAG = "UButton";
+public class UButton extends DrawableClass implements Touchable {
+    public static final String TAG = "UButton";
     public static final int DRAW_PRIORITY = 100;
+    private static final int PRESS_Y = 30;
 
     private ButtonId id;
     private UButtonCallbacks mCallbacks;
+    private boolean isPressed;
+    private String text;
+    private int textColor;
+    private int pressedColor;
 
-    public UButton(UButtonCallbacks callbacks, ButtonId id, float x, float y, int width, int height, int color)
+    // Get/Set
+    public ButtonId getId() {
+        return id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public int getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+    }
+
+    public UButton(UButtonCallbacks callbacks, ButtonId id, String text, float x, float y, int width, int height, int color)
     {
         super(x, y, width, height);
-
         this.id = id;
         this.mCallbacks = callbacks;
         this.color = color;
+        this.text = text;
+        this.textColor = Color.WHITE;
+        this.pressedColor = UColor.addBrightness(color, 2.0f);
 
         DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
     }
@@ -42,69 +70,94 @@ public class UButton extends DrawableClass {
     public void draw(Canvas canvas, Paint paint, PointF offset) {
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);
+
         // 色
+        // 押されていたら明るくする
+        int _color = color;
+        if (isPressed) {
+            _color = pressedColor;
+        }
+
         if (isAnimating) {
             double v1 = ((double)animeFrame / (double)animeFrameMax) * 180;
             int alpha = (int)((1.0 -  Math.sin(v1 * RAD)) * 255);
-            paint.setColor((alpha << 24) | (color & 0xffffff));
+            paint.setColor((alpha << 24) | (_color & 0xffffff));
         } else {
-            paint.setColor(color);
+            paint.setColor(_color);
         }
 
-        Rect drawRect = null;
-        if (offset != null) {
-            drawRect = new Rect(rect.left + (int)offset.x,
-                    rect.top + (int)offset.y,
-                    rect.right + (int)offset.x,
-                    rect.bottom + (int)offset.y);
-        } else {
-            drawRect = rect;
-        }
+        PointF _pos = new PointF(pos.x, pos.y);
+
+//        if (isPressed) {
+//            _pos.y += PRESS_Y;
+//        }
+//
+//        if (offset != null) {
+//            _pos.x += offset.x;
+//            _pos.y += offset.y;
+//        }
+        Rect drawRect = new Rect((int)_pos.x, (int)_pos.y, (int)_pos.x + size.width, (int)_pos.y + size.height);
+
         canvas.drawRect(drawRect, paint);
+
+        // テキスト
+        if (text != null) {
+            Rect bound = new Rect();
+            paint.setTextSize(50);
+            paint.setColor(textColor);
+
+            // センタリング
+            paint.getTextBounds(text, 0, text.length(), bound);
+            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+            float baseY = drawRect.centerY() - (fontMetrics.ascent + fontMetrics.descent) / 2;
+
+            canvas.drawText(text, _pos.x + (size.width - bound.width()) / 2, baseY, paint);
+        }
     }
 
     public void click() {
         Log.v(TAG, "click");
-        startAnim();
         if (mCallbacks != null) {
             mCallbacks.click(this);
         }
     }
-    public void longClick() {
-        Log.v(TAG, "long click");
-        if (mCallbacks != null) {
-            mCallbacks.longClick(this);
-        }
-    }
 
     /**
-     * アイコンのタッチ処理
-     * @param tx
-     * @param ty
-     * @return
+     * Touchable Interface
      */
-    public boolean checkTouch(float tx, float ty) {
-        if (pos.x <= tx && tx <= getRight() &&
-                pos.y <= ty && ty <= getBottom() )
-        {
-            return true;
-        }
-        return false;
-    }
 
     /**
-     * クリックのチェックとクリック処理。このメソッドはすでにクリック判定された後の座標が渡される
-     * @param clickX
-     * @param clickY
-     * @return
+     * タッチイベント
+     * @param vt
+     * @return true:イベントを処理した(再描画が必要)
      */
-    public boolean checkClick(float clickX, float clickY) {
-        if (pos.x <= clickX && clickX <= getRight() &&
-                pos.y <= clickY && clickY <= getBottom() )
-        {
-            click();
-            return true;
+    public boolean touchEvent(ViewTouch vt) {
+        boolean done = false;
+//        ULog.print(TAG, "vt:" + vt.type);
+        switch(vt.type) {
+            case None:
+                break;
+            case Touch:
+                if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {
+                    isPressed = true;
+                    done = true;
+                }
+                break;
+            case Click:
+                isPressed = false;
+                done = true;
+                if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {
+                    mCallbacks.click(this);
+                }
+                break;
+            case TouchUp:
+            case MoveEnd:
+                if (isPressed) {
+                    isPressed = false;
+                    done = true;
+                }
+                break;
         }
-        return false;
+        return done;
     }
 }
