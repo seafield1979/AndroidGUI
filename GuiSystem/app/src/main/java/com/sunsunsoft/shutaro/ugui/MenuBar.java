@@ -13,7 +13,8 @@ import android.view.View;
 enum TopMenu {
     Add,            // 追加
     Sort,           // 並び替え
-    ListType        // リストの表示方法
+    ListType,       // リストの表示方法
+    Debug           // デバッグ
 }
 
 /**
@@ -77,24 +78,26 @@ public class MenuBar extends Window {
      * メニューバーを初期化
      */
     private void initMenuBar() {
-        // トップ要素
-        addTopMenuItem(TopMenu.Add, MenuItemId.AddTop, R.drawable.hogeman);
-        addTopMenuItem(TopMenu.Sort, MenuItemId.SortTop, R.drawable.hogeman);
-        addTopMenuItem(TopMenu.ListType, MenuItemId.ListTypeTop, R.drawable.hogeman);
-
-        // 子要素
         // Add
+        addTopMenuItem(TopMenu.Add, MenuItemId.AddTop, R.drawable.hogeman);
         addChildMenuItem(TopMenu.Add, MenuItemId.AddCard, R.drawable.hogeman);
         addChildMenuItem(TopMenu.Add, MenuItemId.AddBook, R.drawable.hogeman);
         addChildMenuItem(TopMenu.Add, MenuItemId.AddBox, R.drawable.hogeman);
         // Sort
+        addTopMenuItem(TopMenu.Sort, MenuItemId.SortTop, R.drawable.hogeman);
         addChildMenuItem(TopMenu.Sort, MenuItemId.Sort1, R.drawable.hogeman);
         addChildMenuItem(TopMenu.Sort, MenuItemId.Sort2, R.drawable.hogeman);
         addChildMenuItem(TopMenu.Sort, MenuItemId.Sort3, R.drawable.hogeman);
         // ListType
+        addTopMenuItem(TopMenu.ListType, MenuItemId.ListTypeTop, R.drawable.hogeman);
         addChildMenuItem(TopMenu.ListType, MenuItemId.ListType1, R.drawable.hogeman);
         addChildMenuItem(TopMenu.ListType, MenuItemId.ListType2, R.drawable.hogeman);
         addChildMenuItem(TopMenu.ListType, MenuItemId.ListType3, R.drawable.hogeman);
+        // Debug
+        addTopMenuItem(TopMenu.Debug, MenuItemId.DebugTop, R.drawable.debug);
+        addChildMenuItem(TopMenu.Debug, MenuItemId.Debug1, R.drawable.debug);
+        addChildMenuItem(TopMenu.Debug, MenuItemId.Debug2, R.drawable.debug);
+        addChildMenuItem(TopMenu.Debug, MenuItemId.Debug3, R.drawable.debug);
 
         DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
         updateBGSize();

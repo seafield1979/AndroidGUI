@@ -54,6 +54,9 @@ abstract public class Window implements AutoMovable, Drawable {
         rect.right = (int)pos.x + size.width;
         rect.top = (int)pos.y;
         rect.bottom = (int)pos.y + size.height;
+        if (rect.top < 0) {
+            MyLog.print(TAG, "" + rect.top);
+        }
     }
 
     protected void setSize(int width, int height) {

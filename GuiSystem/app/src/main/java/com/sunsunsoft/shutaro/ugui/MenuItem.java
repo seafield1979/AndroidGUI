@@ -20,7 +20,11 @@ enum MenuItemId {
     ListTypeTop,
     ListType1,
     ListType2,
-    ListType3
+    ListType3,
+    DebugTop,
+    Debug1,
+    Debug2,
+    Debug3
 };
 
 /**

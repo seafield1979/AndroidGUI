@@ -144,6 +144,13 @@ abstract public class Icon implements AutoMovable, Drawable {
         this.color = color;
     }
 
+    public IconWindow getParentWindow() {
+        return parentWindow;
+    }
+    public void setParentWindow(IconWindow parentWindow) {
+        this.parentWindow = parentWindow;
+    }
+
     /**
      * 自動移動開始
      * @param dstX  目的位置x

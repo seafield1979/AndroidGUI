@@ -97,6 +97,7 @@ public class ViewTouch {
             }
                 break;
             case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
             {
                 MyLog.print("viewtouch", "Up");
                 isTouching = false;
@@ -154,13 +155,13 @@ public class ViewTouch {
                 y = e.getY();
 
                 break;
-            case MotionEvent.ACTION_CANCEL:
-                MyLog.print("viewtouch", "Cancel");
-                if (type == TouchType.Moving) {
-                    type = TouchType.None;
-                    return TouchType.MoveCancel;
-                }
-                break;
+//            case MotionEvent.ACTION_CANCEL:
+//                MyLog.print("viewtouch", "Cancel");
+//                if (type == TouchType.Moving) {
+//                    type = TouchType.None;
+//                    return TouchType.MoveCancel;
+//                }
+//                break;
         }
 
         return type;

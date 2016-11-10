@@ -253,6 +253,16 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
                 break;
             case ListType3:
                 break;
+            case Debug1:
+                // ログウィンドウの表示切り替え
+                mLogWin.toggle();
+                invalidate();
+                break;
+            case Debug2:
+                mLogWin.addMessage("hoge", MyColor.getRandomColor());
+                break;
+            case Debug3:
+                break;
         }
         MyLog.print(TAG, "menu item clicked " + id);
     }
@@ -278,6 +288,9 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
                     mIconWindows[1].setIconManager(box.getIconManager());
                     mIconWindows[1].sortRects(false);
                     box.setSubWindow(mIconWindows[1]);
+                    float posY = mIconWindows[1].pos.y;
+                    mIconWindows[1].setPos(0, getHeight(), true);
+                    mIconWindows[1].startMove(0, posY, 10);
                 }
             }
                 break;

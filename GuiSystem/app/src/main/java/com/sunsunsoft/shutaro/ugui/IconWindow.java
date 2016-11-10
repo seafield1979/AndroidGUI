@@ -216,21 +216,6 @@ public class IconWindow extends Window implements AutoMovable{
                 }
             }
         }
-        if (isAnimating) {
-            if (icons != null) {
-                allFinished = true;
-                for (Icon icon : icons) {
-                    if (icon.animate()) {
-                        allFinished = false;
-                    }
-                }
-                if (allFinished) {
-                    isAnimating = false;
-                } else {
-                    redraw = true;
-                }
-            }
-        }
 
         // アイコンの移動
         if (icons != null) {
@@ -265,6 +250,13 @@ public class IconWindow extends Window implements AutoMovable{
         if (!isShow) return;
         List<Icon> icons = getIcons();
         if (icons == null) return;
+
+        // 背景を描画
+        if (bgColor != 0) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(bgColor);
+            canvas.drawRect(rect, paint);
+        }
 
         // ウィンドウの座標とスクロールの座標を求める
         PointF _offset = new PointF(pos.x - contentTop.x, pos.y - contentTop.y);
@@ -743,8 +735,10 @@ public class IconWindow extends Window implements AutoMovable{
 
         if (dstIcon instanceof IconBox) {
             IconBox box = (IconBox)dstIcon;
-            if (box.getSubWindow() != null) {
-                box.getSubWindow().sortRects(false);
+            IconWindow parentWindow = box.getSubWindow();
+            if (parentWindow != null) {
+                parentWindow.sortRects(false);
+                srcIcon.setParentWindow(parentWindow);
             }
         }
 
@@ -783,7 +777,23 @@ public class IconWindow extends Window implements AutoMovable{
      * @return true:アニメーション中
      */
     public boolean animate() {
-        return false;
+        boolean allFinished = true;
+
+        List<Icon> icons = getIcons();
+        if (isAnimating) {
+            if (icons != null) {
+                allFinished = true;
+                for (Icon icon : icons) {
+                    if (icon.animate()) {
+                        allFinished = false;
+                    }
+                }
+                if (allFinished) {
+                    isAnimating = false;
+                }
+            }
+        }
+        return !allFinished;
     }
 
     /**
@@ -791,6 +801,6 @@ public class IconWindow extends Window implements AutoMovable{
      * @return
      */
     public boolean isAnimating() {
-        return false;
+        return isAnimating;
     }
 }

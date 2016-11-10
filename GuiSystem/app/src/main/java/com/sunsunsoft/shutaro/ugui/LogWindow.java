@@ -21,7 +21,7 @@ import java.util.TimerTask;
 public class LogWindow extends Window {
     public static final int SHOW_TIME = 3000;
     public static final int MESSAGE_MAX = 30;
-    public static final int DRAW_PRIORITY = 80;
+    public static final int DRAW_PRIORITY = 5;
 
     private LinkedList<LogData> logs = new LinkedList<>();
     private DrawList mDrawList;
@@ -39,6 +39,15 @@ public class LogWindow extends Window {
         startTimer(SHOW_TIME);
     }
 
+    /**
+     * インスタンスを生成する
+     * @param context
+     * @param parentView
+     * @param width
+     * @param height
+     * @param bgColor
+     * @return
+     */
     public static LogWindow createInstance(Context context, View parentView, int width, int
             height, int bgColor)
     {
@@ -70,6 +79,14 @@ public class LogWindow extends Window {
     }
 
     /**
+     * 表示のON/OFFを切り替える
+     */
+    public boolean toggle() {
+        isShow = !isShow;
+        return isShow;
+    }
+
+    /**
      * 毎フレーム行う処理
      *
      * @return true:描画を行う
@@ -78,33 +95,6 @@ public class LogWindow extends Window {
         return false;
     }
 
-    /**
-     * 描画処理
-     *
-     * @param canvas
-     * @param paint
-     * @return trueなら描画継続
-     */
-    public boolean draw(Canvas canvas, Paint paint) {
-        if (!isShow) return false;
-
-        // 背景
-        paint.setColor(bgColor);
-        canvas.drawRect(rect, paint);
-
-        // テキスト表示
-        paint.setTextSize(30);
-        paint.setAntiAlias(true);
-
-        float drawX = 0;
-        float drawY = 50;
-        for (LogData msg : logs) {
-            paint.setColor(msg.color);
-            canvas.drawText(msg.text, pos.x + drawX, pos.y + drawY, paint);
-            drawY += 30;
-        }
-        return false;
-    }
 
     /**
      * 描画オフセットを取得する
@@ -179,7 +169,23 @@ public class LogWindow extends Window {
      * @param paint
      */
     public void draw(Canvas canvas, Paint paint, PointF offset ) {
+        if (!isShow) return;
 
+        // 背景
+        paint.setColor(bgColor);
+        canvas.drawRect(rect, paint);
+
+        // テキスト表示
+        paint.setTextSize(30);
+        paint.setAntiAlias(true);
+
+        float drawX = 0;
+        float drawY = 50;
+        for (LogData msg : logs) {
+            paint.setColor(msg.color);
+            canvas.drawText(msg.text, pos.x + drawX, pos.y + drawY, paint);
+            drawY += 30;
+        }
     }
 
     /**
