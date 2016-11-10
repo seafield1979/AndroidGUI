@@ -7,7 +7,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
 
-import static com.sunsunsoft.shutaro.ugui.MyDebug.drawIconId;
+import static com.sunsunsoft.shutaro.ugui.UDebug.drawIconId;
 
 /**
  * ViewのonDrawで描画するアイコンの情報

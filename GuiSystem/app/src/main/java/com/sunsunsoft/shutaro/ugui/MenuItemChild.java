@@ -55,7 +55,7 @@ public class MenuItemChild extends MenuItem implements AutoMovable{
                 pos.y <= clickY && clickY <= pos.y + ITEM_H)
         {
             if (vt.type == TouchType.Click) {
-                MyLog.print("MenuItem", "clicked");
+                ULog.print("MenuItem", "clicked");
                 // タッチされた時の処理
                 if (mCallbacks != null) {
                     mCallbacks.callback1(id);

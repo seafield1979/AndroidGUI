@@ -1,8 +1,5 @@
 package com.sunsunsoft.shutaro.ugui;
 
-import android.graphics.PointF;
-import android.text.method.Touch;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.Timer;
@@ -75,7 +72,7 @@ public class ViewTouch {
     public boolean checkLongTouch() {
         // ロングタッチが検出済みならそれを返す
         if (isLongTouch) {
-            MyLog.print("viewtouch", "Long Touch");
+            ULog.print("viewtouch", "Long Touch");
             isLongTouch = false;
             return true;
         }
@@ -86,7 +83,7 @@ public class ViewTouch {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
             {
-                MyLog.print("viewtouch", "Touch Down");
+                ULog.print("viewtouch", "Touch Down");
 
                 isTouching = true;
                 touchX = e.getX();
@@ -99,13 +96,13 @@ public class ViewTouch {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
             {
-                MyLog.print("viewtouch", "Up");
+                ULog.print("viewtouch", "Up");
                 isTouching = false;
 
                 timer.cancel();
 
                 if (type == TouchType.Moving) {
-                    MyLog.print("viewtouch", "MoveEnd");
+                    ULog.print("viewtouch", "MoveEnd");
                     type = TouchType.MoveEnd;
                     return type;
                 } else {
@@ -118,10 +115,10 @@ public class ViewTouch {
 
                         if (time <= LONG_CLICK_TIME) {
                             type = TouchType.Click;
-                            MyLog.print("viewtouch", "SingleClick");
+                            ULog.print("viewtouch", "SingleClick");
                         } else {
                             type = TouchType.LongClick;
-                            MyLog.print("viewtouch", "LongClick");
+                            ULog.print("viewtouch", "LongClick");
                         }
                     } else {
                         type = TouchType.None;
@@ -156,7 +153,7 @@ public class ViewTouch {
 
                 break;
 //            case MotionEvent.ACTION_CANCEL:
-//                MyLog.print("viewtouch", "Cancel");
+//                ULog.print("viewtouch", "Cancel");
 //                if (type == TouchType.Moving) {
 //                    type = TouchType.None;
 //                    return TouchType.MoveCancel;
@@ -183,7 +180,7 @@ public class ViewTouch {
                 if (isTouching) {
                     // ロングタッチを検出する
                     isLongTouch = true;
-                    MyLog.print("viewtouch", "timer Long Touch");
+                    ULog.print("viewtouch", "timer Long Touch");
                 }
             }
         }, LONG_TOUCH_TIME, 1000);

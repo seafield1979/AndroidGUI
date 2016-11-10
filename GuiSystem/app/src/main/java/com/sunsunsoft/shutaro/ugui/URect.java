@@ -8,7 +8,7 @@ import android.graphics.RectF;
  * 自前のRectクラス
  */
 
-public class MyRect {
+public class URect {
     /**
      * 重なっているかチェック
      * @param rect1

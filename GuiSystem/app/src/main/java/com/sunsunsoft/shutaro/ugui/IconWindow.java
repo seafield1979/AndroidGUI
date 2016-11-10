@@ -273,12 +273,12 @@ public class IconWindow extends Window implements AutoMovable{
         for (Icon icon : mIconManager.getIcons()) {
             if (icon == dragedIcon) continue;
             // 矩形範囲外なら描画しない
-            if (MyRect.intersect(windowRect, icon.getRect())) {
+            if (URect.intersect(windowRect, icon.getRect())) {
                 icon.draw(canvas, paint, _offset);
 
                 // 選択中のアイコンに枠を表示する
                 if (icon == selectedIcon) {
-                    MyDraw.drawRect(canvas, paint, icon.getRectWithOffset(_offset), 5, Color.RED);
+                    UDraw.drawRect(canvas, paint, icon.getRectWithOffset(_offset), 5, Color.RED);
                 }
             } else {
                 clipCount++;
@@ -288,7 +288,7 @@ public class IconWindow extends Window implements AutoMovable{
         // スクロールバー
         mScrollBar.draw(canvas, paint);
 
-        if (MyDebug.DRAW_ICON_BLOCK_RECT) {
+        if (UDebug.DRAW_ICON_BLOCK_RECT) {
             mIconManager.getBlockManager().draw(canvas, paint, getWin2ScreenPos());
         }
 

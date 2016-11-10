@@ -39,7 +39,7 @@ public class IconBox extends Icon {
         super(parentWindow, IconType.BOX, 0, 0, ICON_W, ICON_W);
         mParentView = parentView;
 
-        color = MyColor.getRandomColor();
+        color = UColor.getRandomColor();
 
         // ダミーで子要素を追加
         IconWindow[] windows = parentWindow.getWindows();

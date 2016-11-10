@@ -75,15 +75,15 @@ public class IconsBlockManager {
      * @return
      */
     public Icon getOverlapedIcon(Point pos, Icon exceptIcon) {
-        //MyLog.startCount(TAG);
+        //ULog.startCount(TAG);
         for (IconsBlock block : blockList) {
             Icon icon = block.getOverlapedIcon(pos, exceptIcon);
             if (icon != null) {
-                //MyLog.endCount(TAG);
+                //ULog.endCount(TAG);
                 return icon;
             }
         }
-        //MyLog.endCount(TAG);
+        //ULog.endCount(TAG);
         return null;
     }
 
@@ -91,7 +91,7 @@ public class IconsBlockManager {
         // debug
         for (IconsBlock block : blockList) {
             Rect _rect = block.getRect();
-            MyLog.print(TAG, "count:" + block.getIcons().size() + " L:" + _rect.left + " R:" + _rect
+            ULog.print(TAG, "count:" + block.getIcons().size() + " L:" + _rect.left + " R:" + _rect
                     .right +
                     " " +
                     "U:" +
@@ -119,7 +119,7 @@ class IconsBlock {
 
     private LinkedList<Icon> icons = new LinkedList<>();
     private Rect rect = new Rect();
-    private int color = MyColor.BLACK;
+    private int color = UColor.BLACK;
 
     // Get/Set
     public Rect getRect() {
@@ -173,11 +173,11 @@ class IconsBlock {
      * @return null:重なるアイコンなし
      */
     public Icon getOverlapedIcon(Point pos, Icon exceptIcon) {
-//        MyLog.count(IconsBlockManager.TAG);
+//        ULog.count(IconsBlockManager.TAG);
         if (rect.contains(pos.x, pos.y)) {
             for (Icon icon : icons) {
                 if (icon == exceptIcon) continue;
-                MyLog.count(IconsBlockManager.TAG);
+                ULog.count(IconsBlockManager.TAG);
                 if (icon.getRect().contains(pos.x, pos.y)) {
                     return icon;
                 }

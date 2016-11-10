@@ -29,7 +29,7 @@ enum ScrollBarInOut {
  *  バー以外の領域をタップしてスクロール
  *  指定のViewに張り付くように配置
  */
-public class MyScrollBar {
+public class ScrollBar {
     public static final String TAG = "ScrollBar";
 
     private ScrollBarType type;
@@ -90,7 +90,7 @@ public class MyScrollBar {
      * @param width
      * @param contentLen
      */
-    public MyScrollBar(ScrollBarType type, ScrollBarInOut inOut, PointF parentPos, int viewWidth, int viewHeight, int width, int contentLen ) {
+    public ScrollBar(ScrollBarType type, ScrollBarInOut inOut, PointF parentPos, int viewWidth, int viewHeight, int width, int contentLen ) {
         this.type = type;
         this.inOut = inOut;
         this.parentPos = parentPos;
@@ -343,17 +343,17 @@ public class MyScrollBar {
             {
                 if (ey < barPos) {
                     // 上にスクロール
-                    MyLog.print(TAG, "Scroll Up");
+                    ULog.print(TAG, "Scroll Up");
                     scrollUp();
                     return true;
                 } else if (ey > y + barPos + barLength) {
                     // 下にスクロール
-                    MyLog.print(TAG, "Scroll Down");
+                    ULog.print(TAG, "Scroll Down");
                     scrollDown();
                     return true;
                 } else {
                     // バー
-                    MyLog.print(TAG, "Drag Start");
+                    ULog.print(TAG, "Drag Start");
                     isDraging = true;
                     return true;
                 }
@@ -364,17 +364,17 @@ public class MyScrollBar {
             {
                 if (ex < barPos) {
                     // 上にスクロール
-                    MyLog.print(TAG, "Scroll Up");
+                    ULog.print(TAG, "Scroll Up");
                     scrollUp();
                     return true;
                 } else if (ex > x + barPos + barLength) {
                     // 下にスクロール
-                    MyLog.print(TAG, "Scroll Down");
+                    ULog.print(TAG, "Scroll Down");
                     scrollDown();
                     return true;
                 } else {
                     // バー
-                    MyLog.print(TAG, "Drag Start");
+                    ULog.print(TAG, "Drag Start");
                     isDraging = true;
                     return true;
                 }
@@ -384,7 +384,7 @@ public class MyScrollBar {
     }
 
     private boolean touchUp() {
-        MyLog.print(TAG, "touchUp");
+        ULog.print(TAG, "touchUp");
         isDraging = false;
 
         return false;

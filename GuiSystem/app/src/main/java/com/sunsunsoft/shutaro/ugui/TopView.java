@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,7 +56,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     }
 
     private void initWindows(int width, int height) {
-        MyLog.print(TAG, "w:" + width + " h:" + height);
+        ULog.print(TAG, "w:" + width + " h:" + height);
 
         // IconWindow
         PointF pos1, pos2;
@@ -116,7 +114,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
         int viewH = MeasureSpec.getSize(heightMeasureSpec);
         int modeW = MeasureSpec.getMode(widthMeasureSpec);
         int modeH = MeasureSpec.getMode(heightMeasureSpec);
-        MyLog.print(TAG, "measure w:" + viewW + " h:" + viewH + " wm:" + (modeW >> 30) + " wh:" + (modeH >> 30));
+        ULog.print(TAG, "measure w:" + viewW + " h:" + viewH + " wm:" + (modeW >> 30) + " wh:" + (modeH >> 30));
 
         if (resetSize) {
             int width = MeasureSpec.EXACTLY | newWidth;
@@ -262,23 +260,23 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
                 invalidate();
                 break;
             case Debug2:
-                mLogWin.addMessage("hoge", MyColor.getRandomColor());
+                mLogWin.addMessage("hoge", UColor.getRandomColor());
                 break;
             case Debug3:
                 break;
         }
-        MyLog.print(TAG, "menu item clicked " + id);
+        ULog.print(TAG, "menu item clicked " + id);
     }
 
     public void callback2() {
-        MyLog.print(TAG, "menu item moved");
+        ULog.print(TAG, "menu item moved");
     }
 
     /**
      * IconCallbacks
      */
     public void clickIcon(Icon icon) {
-        MyLog.print(TAG, "clickIcon");
+        ULog.print(TAG, "clickIcon");
         switch(icon.type) {
             case CIRCLE:
                 break;
@@ -301,10 +299,10 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
         }
     }
     public void longClickIcon(Icon icon) {
-        MyLog.print(TAG, "longClickIcon");
+        ULog.print(TAG, "longClickIcon");
     }
     public void dropToIcon(Icon icon) {
-        MyLog.print(TAG, "dropToIcon");
+        ULog.print(TAG, "dropToIcon");
     }
 
 }

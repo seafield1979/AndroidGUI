@@ -7,7 +7,7 @@ import java.util.HashMap;
  * 出力を一括スイッチングできるLog
  * タグ毎のON/OFFを設定できる
  */
-public class MyLog {
+public class ULog {
     // タグ毎のON/OFF情報をMap(Dictionary)で持つ
     private static HashMap<String,Boolean> enables = new HashMap<>();
     private static HashMap<String,Integer> counters = new HashMap<>();
@@ -21,7 +21,7 @@ public class MyLog {
     public static void init() {
         setEnable("viewtouch", false);
         setEnable("MenuBar", false);
-        setEnable(MyScrollBar.TAG, false);
+        setEnable(ScrollBar.TAG, false);
         setEnable(IconWindow.TAG, true);
     }
 

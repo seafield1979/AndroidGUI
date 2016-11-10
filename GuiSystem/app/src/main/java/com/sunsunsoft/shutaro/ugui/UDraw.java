@@ -12,7 +12,7 @@ import android.graphics.Rect;
  * OnDrawの中から呼び出す
  */
 
-public class MyDraw {
+public class UDraw {
     // ラジアン角度
     public static final double RAD = 3.1415 / 180.0;
 

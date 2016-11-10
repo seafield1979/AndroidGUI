@@ -8,7 +8,7 @@ import java.util.Random;
  *　カスタマイズしたColorクラス
  */
 
-public class MyColor extends Color {
+public class UColor extends Color {
 
     /**
      * ランダムな色を取得

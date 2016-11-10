@@ -119,13 +119,13 @@ public class DrawManager {
      */
     public boolean draw(Canvas canvas, Paint paint) {
         boolean redraw = false;
-        MyLog.startCount(TAG);
+        ULog.startCount(TAG);
         for (DrawList list : lists.descendingMap().values()) {
             if (list.draw(canvas, paint) ) {
                 redraw = true;
             }
         }
-        MyLog.endCount(TAG);
+        ULog.endCount(TAG);
         return redraw;
     }
 }
@@ -192,16 +192,16 @@ class DrawList
             if (obj.animate()) {
                 allDone = false;
             }
-            MyLog.count(DrawManager.TAG);
+            ULog.count(DrawManager.TAG);
             PointF offset = obj.getDrawOffset();
             obj.draw(canvas, paint, offset);
             drawId(canvas, paint, obj.getRect(), priority);
 
             if (priority == IconWindow.DRAG_ICON_PRIORITY) {
-                MyLog.print(DrawManager.TAG, "" + obj.getRect().bottom);
+                ULog.print(DrawManager.TAG, "" + obj.getRect().bottom);
             }
 
-            if (MyDebug.drawIconId) {
+            if (UDebug.drawIconId) {
                 Rect _rect = obj.getRect();
             }
         }
@@ -215,7 +215,7 @@ class DrawList
      */
     protected void drawId(Canvas canvas, Paint paint, Rect rect, int priority) {
         // idを表示
-        if (!MyDebug.drawIconId) return;
+        if (!UDebug.drawIconId) return;
 
         paint.setColor(Color.BLACK);
         paint.setTextSize(30);

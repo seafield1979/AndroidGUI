@@ -1,10 +1,7 @@
 package com.sunsunsoft.shutaro.ugui;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.RectF;
 
 /**
  * Viewの中に表示できるWindow
@@ -31,7 +28,7 @@ abstract public class Window implements AutoMovable, Drawable {
     // スクロール用
     protected Size contentSize = new Size();     // 領域全体のサイズ
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
-    protected MyScrollBar mScrollBar;
+    protected ScrollBar mScrollBar;
 
     public boolean isShow() {
         return isShow;
@@ -55,14 +52,14 @@ abstract public class Window implements AutoMovable, Drawable {
         rect.top = (int)pos.y;
         rect.bottom = (int)pos.y + size.height;
         if (rect.top < 0) {
-            MyLog.print(TAG, "" + rect.top);
+            ULog.print(TAG, "" + rect.top);
         }
     }
 
     protected void setSize(int width, int height) {
         size.width = width;
         size.height = height;
-        MyLog.print("Window", "size:" + size.width + " " + size.height);
+        ULog.print("Window", "size:" + size.width + " " + size.height);
     }
 
     public PointF getContentTop() {
@@ -129,7 +126,7 @@ abstract public class Window implements AutoMovable, Drawable {
         updateRect();
 
         // スクロールバー
-        mScrollBar = new MyScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
+        mScrollBar = new ScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
         mScrollBar.setBgColor(Color.rgb(128, 128, 128));
     }
 
@@ -255,7 +252,7 @@ abstract public class Window implements AutoMovable, Drawable {
             ret = false;
         }
         updateRect();
-        MyLog.print(TAG, "move");
+        ULog.print(TAG, "move");
         return ret;
     }
 }

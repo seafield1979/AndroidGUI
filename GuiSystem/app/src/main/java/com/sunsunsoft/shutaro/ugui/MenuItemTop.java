@@ -86,7 +86,7 @@ public class MenuItemTop extends MenuItem{
         if (pos.x <= clickX && clickX <= pos.x + ITEM_W &&
                 pos.y <= clickY && clickY <= pos.y + ITEM_H)
         {
-            MyLog.print("MenuItem", "clicked");
+            ULog.print("MenuItem", "clicked");
             if (vt.type == TouchType.Click) {
                 // 子要素を持っていたら Open/Close
                 if (childItems != null) {
@@ -97,7 +97,7 @@ public class MenuItemTop extends MenuItem{
                         isOpened = true;
                         openMenu();
                     }
-                    MyLog.print("MenuItem", "isOpened " + isOpened);
+                    ULog.print("MenuItem", "isOpened " + isOpened);
                 }
 
                 // タッチされた時の処理
