@@ -6,6 +6,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 /**
  * 自前の描画処理
@@ -42,6 +43,24 @@ public class UDraw {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(color);
         canvas.drawRect(rect, paint);
+    }
+
+    /**
+     * 角丸四角形(塗りつぶし)
+     * @param canvas
+     * @param paint
+     * @param left
+     * @param top
+     * @param right
+     * @param bottom
+     * @param radius
+     * @param color
+     */
+    public static void drawRoundRectFill(Canvas canvas, Paint paint, float left, float top, float
+            right, float bottom, float radius, int color) {
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(color);
+        canvas.drawRoundRect(new RectF(left, top, right, bottom), radius, radius, paint);
     }
 
     /**

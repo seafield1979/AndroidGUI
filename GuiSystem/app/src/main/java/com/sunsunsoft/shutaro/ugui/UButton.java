@@ -96,9 +96,8 @@ public class UButton extends DrawableClass implements Touchable {
 //            _pos.x += offset.x;
 //            _pos.y += offset.y;
 //        }
-        Rect drawRect = new Rect((int)_pos.x, (int)_pos.y, (int)_pos.x + size.width, (int)_pos.y + size.height);
-
-        canvas.drawRect(drawRect, paint);
+        UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y, _pos.x + size.width, _pos.y + size
+                .height, 20, _color);
 
         // テキスト
         if (text != null) {
@@ -109,7 +108,8 @@ public class UButton extends DrawableClass implements Touchable {
             // センタリング
             paint.getTextBounds(text, 0, text.length(), bound);
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            float baseY = drawRect.centerY() - (fontMetrics.ascent + fontMetrics.descent) / 2;
+            float baseY = pos.y + size.height / 2 - (fontMetrics.ascent + fontMetrics
+                    .descent) / 2;
 
             canvas.drawText(text, _pos.x + (size.width - bound.width()) / 2, baseY, paint);
         }
@@ -144,6 +144,7 @@ public class UButton extends DrawableClass implements Touchable {
                 }
                 break;
             case Click:
+            case LongClick:
                 isPressed = false;
                 done = true;
                 if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {

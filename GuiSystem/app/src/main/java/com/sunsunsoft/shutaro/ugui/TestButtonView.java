@@ -31,11 +31,8 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
 
     private Paint paint = new Paint();
 
-    private boolean resetSize;
-    private int newWidth, newHeight;
-
     // UButton
-    private UButton uButton;
+    private UButton[] buttons = new UButton[3];
 
     // get/set
     public TestButtonView(Context context) {
@@ -47,11 +44,21 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
         this.setOnTouchListener(this);
     }
 
-
+    /**
+     * 画面に表示するオブジェクトを生成
+     * @param width
+     * @param height
+     */
     private void initDrawables(int width, int height) {
-        if (uButton == null) {
-            uButton = new UButton(this, ButtonId.Test1, "test1", 100, 100, width - 100*2, 100,
+
+        float y = 100;
+        for (int i=0; i<buttons.length; i++) {
+            ButtonId id = ButtonId.values()[i];
+            buttons[i] = new UButton(this, id, "test" + (i+1), 100, y, width -
+                    100*2,
+                    120,
                     Color.rgb(0,128,0));
+            y += 150;
         }
     }
 
@@ -85,9 +92,10 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
 
         viewTouch.checkTouchType(e);
 
-        if (uButton.touchEvent(viewTouch)) {
-//            ULog.print(TAG, "invalidate");
-            invalidate();
+        for (UButton button : buttons) {
+            if (button.touchEvent(viewTouch)) {
+                invalidate();
+            }
         }
 
         switch(e.getAction()) {
@@ -104,7 +112,6 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
             default:
         }
 
-        // コールバック
         return ret;
     }
 
@@ -114,9 +121,10 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
      */
 
     public void click(UButton button) {
+        ULog.print(TAG, "button click:" + button.getId());
+
         switch(button.getId()) {
             case Test1:
-                ULog.print(TAG, "button click:" + button.getId());
                 break;
             case Test2:
                 break;
