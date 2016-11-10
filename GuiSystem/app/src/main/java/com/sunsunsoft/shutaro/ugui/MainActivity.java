@@ -17,16 +17,14 @@ public class MainActivity extends AppCompatActivity {
             bundle.putString("URL", "http://hogehoge.com");
 
             // Fragmentを生成し、setArgumentsで先ほどのbundleをセットする
-            FragmentTop fragment = new FragmentTop();
+            FragmentMenu fragment = new FragmentMenu();
             fragment.setArguments(bundle);
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             // コンテナにMainFragmentを格納
-            transaction.add(R.id.fragment_container, fragment, FragmentTop.FRAMGMENT_NAME);
+            transaction.add(R.id.fragment_container, fragment, FragmentMenu.FRAMGMENT_NAME);
             // 画面に表示
             transaction.commit();
-
-            DrawManager.getInstance().init();
         }
     }
 }
