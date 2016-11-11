@@ -26,6 +26,7 @@ enum IconType {
 abstract public class UIcon extends Drawable implements AutoMovable {
 
     private static final String TAG = "UIcon";
+    private static final int DRAW_PRIORITY = 200;
     private static int count;
 
     public int id;
@@ -44,7 +45,7 @@ abstract public class UIcon extends Drawable implements AutoMovable {
     public UIcon(UIconWindow parentWindow, IconType type, float x, float y, int width, int
             height)
     {
-        super(x, y, width, height);
+        super(DRAW_PRIORITY, x, y, width, height);
         this.parentWindow = parentWindow;
         this.mCallbacks = parentWindow.getIconCallbacks();
         this.id = count;

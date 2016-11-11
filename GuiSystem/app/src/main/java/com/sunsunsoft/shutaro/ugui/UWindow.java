@@ -90,8 +90,8 @@ abstract public class UWindow extends Drawable implements AutoMovable, Touchable
      * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する
      * インスタンス生成には createWindow を使うべし
      */
-    protected UWindow(float x, float y, int width, int height, int color) {
-        super(x,y,width,height);
+    protected UWindow(int priority, float x, float y, int width, int height, int color) {
+        super(priority, x,y,width,height);
         pos.x = x;
         pos.y = y;
         size.width = width;

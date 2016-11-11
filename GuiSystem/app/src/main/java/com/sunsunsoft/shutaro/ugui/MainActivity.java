@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
             // 画面に表示
             transaction.commit();
 
-            DrawManager.getInstance().init();
+            UDrawManager.getInstance().init();
             ULog.init();
         }
     }

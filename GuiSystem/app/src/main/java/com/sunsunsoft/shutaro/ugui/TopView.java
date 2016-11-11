@@ -124,7 +124,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
         }
 
         // マネージャに登録した描画オブジェクトをまとめて描画
-        if (DrawManager.getInstance().draw(canvas, paint)){
+        if (UDrawManager.getInstance().draw(canvas, paint)){
             invalidate();
         }
     }

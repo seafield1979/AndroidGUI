@@ -45,9 +45,9 @@ public class UButton extends Drawable implements Touchable {
         this.textColor = textColor;
     }
 
-    public UButton(UButtonCallbacks callbacks, int id, String text, float x, float y, int width, int height, int color)
+    public UButton(UButtonCallbacks callbacks, int priority, int id, String text, float x, float y, int width, int height, int color)
     {
-        super(x, y, width, height);
+        super(priority, x, y, width, height);
         this.id = id;
         this.mCallbacks = callbacks;
         this.color = color;
@@ -55,7 +55,7 @@ public class UButton extends Drawable implements Touchable {
         this.textColor = Color.WHITE;
         this.pressedColor = UColor.addBrightness(color, 2.0f);
 
-        DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
+        UDrawManager.getInstance().addDrawable(this);
     }
 
     /**

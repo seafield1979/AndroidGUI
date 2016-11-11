@@ -15,12 +15,12 @@ import java.util.TreeMap;
  * 描画するオブジェクトを登録すると一括で描画を行ってくれる
  * ※シングルトンなので getInstance() でインスタンスを取得する
  */
-public class DrawManager {
-    public static final String TAG = "DrawManager";
+public class UDrawManager {
+    public static final String TAG = "UDrawManager";
 
-    private static DrawManager singleton = new DrawManager();
+    private static UDrawManager singleton = new UDrawManager();
 
-    public static DrawManager getInstance() { return singleton; }
+    public static UDrawManager getInstance() { return singleton; }
 
     // 同じプライオリティーのDrawableリストを管理するリスト
     TreeMap<Integer, DrawList> lists;
@@ -35,17 +35,16 @@ public class DrawManager {
 
     /**
      * 描画オブジェクトを追加
-     * @param priority
      * @param obj
      * @return
      */
-    public DrawList addDrawable(int priority, Drawable obj) {
+    public DrawList addDrawable(Drawable obj) {
         // 挿入するリストを探す
-        Integer _priority = new Integer(priority);
+        Integer _priority = new Integer(obj.getDrawPriority());
         DrawList list = lists.get(_priority);
         if (list == null) {
             // まだ存在していないのでリストを生成
-            list = new DrawList(priority);
+            list = new DrawList(obj.getDrawPriority());
             lists.put(_priority, list);
         }
         list.add(obj);
@@ -55,12 +54,11 @@ public class DrawManager {
 
     /**
      * リストに登録済みの描画オブジェクトを削除
-     * @param priority
      * @param obj
      * @return
      */
-    public boolean removeDrawable(int priority, Drawable obj) {
-        Integer _priority = new Integer(priority);
+    public boolean removeDrawable(Drawable obj) {
+        Integer _priority = new Integer(obj.getDrawPriority());
         DrawList list = lists.get(_priority);
         if (list != null) {
             return list.remove(obj);
@@ -104,7 +102,7 @@ public class DrawManager {
                 }
                 else {
                     list.remove(obj);
-                    addDrawable(priority, obj);
+                    addDrawable(obj);
                     return;
                 }
             }
@@ -192,13 +190,13 @@ class DrawList
             if (obj.animate()) {
                 allDone = false;
             }
-            ULog.count(DrawManager.TAG);
+            ULog.count(UDrawManager.TAG);
             PointF offset = obj.getDrawOffset();
             obj.draw(canvas, paint, offset);
             drawId(canvas, paint, obj.getRect(), priority);
 
             if (priority == UIconWindow.DRAG_ICON_PRIORITY) {
-                ULog.print(DrawManager.TAG, "" + obj.getRect().bottom);
+                ULog.print(UDrawManager.TAG, "" + obj.getRect().bottom);
             }
 
             if (UDebug.drawIconId) {

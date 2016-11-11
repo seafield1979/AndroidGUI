@@ -47,7 +47,7 @@ public class FragmentMenu extends Fragment implements OnClickListener{
 
     public void onClick(View v) {
         // 描画オブジェクトをクリア
-        DrawManager.getInstance().init();
+        UDrawManager.getInstance().init();
 
         switch(v.getId()) {
             case R.id.button:

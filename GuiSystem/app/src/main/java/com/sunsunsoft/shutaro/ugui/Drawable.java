@@ -22,6 +22,7 @@ abstract public class Drawable {
     protected Size size = new Size();
     protected Rect rect;
     protected int color;
+    protected int drawPriority;     // DrawManagerに渡す描画優先度
 
     // 移動用
     protected boolean isMoving;
@@ -36,12 +37,13 @@ abstract public class Drawable {
     protected int animeFrame;
     protected int animeFrameMax;
 
-    public Drawable(float x, float y, int width, int height)
+    public Drawable(int priority, float x, float y, int width, int height)
     {
         this.setPos(x, y);
         this.setSize(width, height);
         updateRect();
 
+        this.drawPriority = priority;
         this.color = Color.rgb(0,0,0);
     }
 
@@ -191,6 +193,14 @@ abstract public class Drawable {
     public DrawList getDrawList() {
         return drawList;
     }
+
+    public int getDrawPriority() {
+        return drawPriority;
+    }
+    public void setDrawPriority(int drawPriority) {
+        this.drawPriority = drawPriority;
+    }
+
 
 
     /**

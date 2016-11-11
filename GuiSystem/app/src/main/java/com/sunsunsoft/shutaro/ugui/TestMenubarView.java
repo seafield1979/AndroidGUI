@@ -20,6 +20,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
     }
 
     public static final String TAG = "TestButtonView";
+    private static final int BUTTON_PRIORITY = 100;
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -55,7 +56,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         // buttons
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
-            buttons[i] = new UButton(this, i, "test" + (i+1), 100, y, width -
+            buttons[i] = new UButton(this, BUTTON_PRIORITY, i, "test" + (i+1), 100, y, width -
                     100*2,
                     120,
                     Color.rgb(0,128,0));
@@ -85,7 +86,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         }
 
         // 描画オブジェクトをまとめて描画
-        if (DrawManager.getInstance().draw(canvas, paint)){
+        if (UDrawManager.getInstance().draw(canvas, paint)){
             invalidate();
         }
     }

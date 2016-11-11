@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +20,7 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
     }
 
     public static final String TAG = "TestButtonView";
+    private static final int BUTTON_PRIORITY = 100;
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -53,7 +53,8 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            buttons[i] = new UButton(this, id.ordinal(), "test" + (i+1), 100, y, width -
+            buttons[i] = new UButton(this, id.ordinal(), BUTTON_PRIORITY, "test" + (i+1), 100, y,
+                    width -
                     100*2,
                     120,
                     Color.rgb(0,128,0));
@@ -75,7 +76,7 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
         paint.setAntiAlias(true);
 
         // マネージャに登録した描画オブジェクトをまとめて描画
-        if (DrawManager.getInstance().draw(canvas, paint)){
+        if (UDrawManager.getInstance().draw(canvas, paint)){
             invalidate();
         }
     }

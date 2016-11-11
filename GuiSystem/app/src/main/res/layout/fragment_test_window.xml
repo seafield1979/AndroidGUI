@@ -4,10 +4,9 @@
              android:layout_height="match_parent"
              tools:context="com.sunsunsoft.shutaro.ugui.FragmentTestWindow">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.sunsunsoft.shutaro.ugui.TestWindowView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"/>
+        android:id="@+id/testView"/>
 
 </FrameLayout>

@@ -15,21 +15,26 @@ import android.view.View.OnTouchListener;
 
 public class TestLogView extends View implements OnTouchListener, UButtonCallbacks{
     enum ButtonId {
-        ShowToggle,
-        AddLog,
-        Clear,
-        MoveUp,
-        MoveDown
+        ShowToggle("show/hide"),
+        AddLog("add log"),
+        Clear("clear"),
+        MoveUp("move up"),
+        MoveDown("move down")
+        ;
+
+        private final String text;
+
+        private ButtonId(final String text) {
+            this.text = text;
+        }
+
+        public String getString() {
+            return this.text;
+        }
     }
 
     public static final String TAG = "TestButtonView";
-    private static final String[] buttonTitles = {
-            "show/hide",
-            "add log",
-            "clear",
-            "move up",
-            "move down"
-    };
+    private static final int BUTTON_PRIORITY = 100;
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -66,8 +71,8 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            String title = buttonTitles[i];
-            buttons[i] = new UButton(this, id.ordinal(), title, 100, y, width -
+            String title = id.getString();
+            buttons[i] = new UButton(this, BUTTON_PRIORITY, id.ordinal(), title, 100, y, width -
                     100*2,
                     120,
                     Color.rgb(0,128,0));
@@ -97,7 +102,7 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
         paint.setAntiAlias(true);
 
         // マネージャに登録した描画オブジェクトをまとめて描画
-        if (DrawManager.getInstance().draw(canvas, paint)){
+        if (UDrawManager.getInstance().draw(canvas, paint)){
             invalidate();
         }
     }

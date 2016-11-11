@@ -114,17 +114,18 @@ public class UIconWindow extends UWindow implements AutoMovable{
     public void setDragedIcon(UIcon dragedIcon) {
         if (dragedIcon == null) {
             if (this.dragedIcon != null) {
-                DrawManager.getInstance().removeDrawable(DRAG_ICON_PRIORITY, this.dragedIcon);
+                UDrawManager.getInstance().removeDrawable(this.dragedIcon);
             }
         }
         else {
-            DrawManager.getInstance().addDrawable(DRAG_ICON_PRIORITY, dragedIcon);
+            dragedIcon.setDrawPriority(DRAG_ICON_PRIORITY);
+            UDrawManager.getInstance().addDrawable(dragedIcon);
         }
         this.dragedIcon = dragedIcon;
     }
 
     private UIconWindow(View parent, UIconCallbacks iconCallbacks, float x, float y, int width, int height, int color) {
-        super(x, y, width, height, color);
+        super(DRAW_PRIORITY, x, y, width, height, color);
         this.mParentView = parent;
         this.mIconCallbacks = iconCallbacks;
     }
@@ -191,7 +192,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
             }
         }
         // 描画はDrawManagerに任せるのでDrawManagerに登録
-        mDrawList = DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
+        mDrawList = UDrawManager.getInstance().addDrawable(this);
 
         sortRects(false);
     }

@@ -33,7 +33,7 @@ public class ULogWindow extends UWindow {
 
     private ULogWindow(Context context, View parentView, float x, float y, int width, int height, int color)
     {
-        super(x, y, width, height, color);
+        super(DRAW_PRIORITY, x, y, width, height, color);
         this.parentView = parentView;
         this.context = context;
         setShow(false);
@@ -59,7 +59,7 @@ public class ULogWindow extends UWindow {
 
     private void init() {
         // 描画はDrawManagerに任せるのでDrawManagerに登録
-        mDrawList = DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
+        mDrawList = UDrawManager.getInstance().addDrawable(this);
     }
 
     /**

@@ -32,6 +32,7 @@ enum MenuItemId {
  * アイコンを表示してタップされたらIDを返すぐらいの機能しか持たない
  */
 abstract public class UMenuItem extends Drawable implements Animatable{
+    public static final int DRAW_PRIORITY = 200;
     public static final int ITEM_W = 120;
     public static final int ITEM_H = 120;
     public static final int ANIME_FRAME = 15;
@@ -50,7 +51,7 @@ abstract public class UMenuItem extends Drawable implements Animatable{
     }
 
     public UMenuItem(UMenuBar parent, MenuItemId id, Bitmap icon) {
-        super(0,0,0,0);
+        super(DRAW_PRIORITY, 0,0,0,0);
         this.parent = parent;
         this.id = id;
         this.icon = icon;

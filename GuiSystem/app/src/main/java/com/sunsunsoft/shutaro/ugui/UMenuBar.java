@@ -44,7 +44,7 @@ public class UMenuBar extends UWindow {
 
     private UMenuBar(View parentView, UMenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
     {
-        super(0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
+        super(DRAW_PRIORITY, 0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
         mParentView = parentView;
         mCallbackClass = callbackClass;
     }
@@ -90,7 +90,7 @@ public class UMenuBar extends UWindow {
         addChildMenuItem(TopMenu.Debug, MenuItemId.Debug2, R.drawable.debug);
         addChildMenuItem(TopMenu.Debug, MenuItemId.Debug3, R.drawable.debug);
 
-        DrawManager.getInstance().addDrawable(DRAW_PRIORITY, this);
+        UDrawManager.getInstance().addDrawable(this);
         updateBGSize();
     }
 
