@@ -30,7 +30,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
     private UIconWindow[] mIconWindows = new UIconWindow[2];
 
     // MessageWindow
-    private LogWindow mLogWin;
+    private ULogWindow mLogWin;
 
     // メニューバー
     private UMenuBar mMenuBar;
@@ -88,18 +88,15 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
 
         // UMenuBar
         if (mMenuBar == null) {
-            View hoge = (View)this;
-            UMenuItemCallbacks call = (UMenuItemCallbacks)this;
-            mMenuBar = UMenuBar.createInstance((View)this, (UMenuItemCallbacks)this, width, height,
+            mMenuBar = UMenuBar.createInstance(this, this, width, height,
                     Color.BLACK);
             mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
 
-        // LogWindow
+        // ULogWindow
         if (mLogWin == null) {
-            mLogWin = LogWindow.createInstance(getContext(), this,
-                    width / 2, height,
-                    Color.argb(128,0,0,0));
+            mLogWin = ULogWindow.createInstance(getContext(), this,
+                    0, 0, width / 2, height);
             mWindows[WindowType.Log.ordinal()] = mLogWin;
         }
     }
@@ -205,7 +202,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
     /**
      * メニューアイテムをタップした時のコールバック
      */
-    public void callback1(MenuItemId id) {
+    public void menuItemCallback1(MenuItemId id) {
         switch (id) {
             case AddTop:
                 break;
@@ -239,7 +236,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
                 invalidate();
                 break;
             case Debug2:
-                mLogWin.addMessage("hoge", UColor.getRandomColor());
+                mLogWin.addLog("hoge", UColor.getRandomColor());
                 break;
             case Debug3:
                 break;
@@ -247,7 +244,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
         ULog.print(TAG, "menu item clicked " + id);
     }
 
-    public void callback2() {
+    public void menuItemCallback2() {
         ULog.print(TAG, "menu item moved");
     }
 

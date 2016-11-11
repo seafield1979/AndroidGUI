@@ -102,7 +102,7 @@ public class UMenuItemTop extends UMenuItem {
 
                 // タッチされた時の処理
                 if (mCallbacks != null) {
-                    mCallbacks.callback1(id);
+                    mCallbacks.menuItemCallback1(id);
                 }
                 // アニメーション
                 startAnim();

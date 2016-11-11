@@ -50,7 +50,7 @@ public class UMenuItemChild extends UMenuItem implements AutoMovable{
                 ULog.print("UMenuItem", "clicked");
                 // タッチされた時の処理
                 if (mCallbacks != null) {
-                    mCallbacks.callback1(id);
+                    mCallbacks.menuItemCallback1(id);
                 }
                 // アニメーション
                 startAnim();

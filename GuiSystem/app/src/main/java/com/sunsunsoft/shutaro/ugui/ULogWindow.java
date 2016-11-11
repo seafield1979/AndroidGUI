@@ -4,6 +4,7 @@ package com.sunsunsoft.shutaro.ugui;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -18,7 +19,7 @@ import java.util.TimerTask;
  * メッセージをリストで保持する
  * 古いメッセージが一定時間で削除される
  */
-public class LogWindow extends UWindow {
+public class ULogWindow extends UWindow {
     public static final int SHOW_TIME = 3000;
     public static final int MESSAGE_MAX = 30;
     public static final int DRAW_PRIORITY = 5;
@@ -30,9 +31,9 @@ public class LogWindow extends UWindow {
     private Context context;
     private int count = 1;
 
-    private LogWindow(Context context, View parentView, float x, float y, int width, int height, int color)
+    private ULogWindow(Context context, View parentView, float x, float y, int width, int height, int color)
     {
-        super(0, 0, width, height, color);
+        super(x, y, width, height, color);
         this.parentView = parentView;
         this.context = context;
         setShow(false);
@@ -45,13 +46,12 @@ public class LogWindow extends UWindow {
      * @param parentView
      * @param width
      * @param height
-     * @param bgColor
      * @return
      */
-    public static LogWindow createInstance(Context context, View parentView, int width, int
-            height, int bgColor)
+    public static ULogWindow createInstance(Context context, View parentView,
+                                            float x, float y, int width, int height)
     {
-        LogWindow instance = new LogWindow(context, parentView, 0, 0, width, height, bgColor);
+        ULogWindow instance = new ULogWindow(context, parentView, x, y, width, height, Color.argb(128,0,0,0));
         instance.init();
 
         return instance;
@@ -67,7 +67,7 @@ public class LogWindow extends UWindow {
      * @param text
      * @param color
      */
-    public void addMessage(String text, int color) {
+    public void addLog(String text, int color) {
         LogData msg = new LogData("" + count + ": " + text, color);
         logs.push(msg);
         if (logs.size() > MESSAGE_MAX) {
@@ -76,6 +76,13 @@ public class LogWindow extends UWindow {
         setShow(true);
         startTimer(SHOW_TIME);
         count++;
+    }
+
+    /**
+     * ログをクリアする
+     */
+    public void clear() {
+        logs.clear();
     }
 
     /**
@@ -92,6 +99,12 @@ public class LogWindow extends UWindow {
      * @return true:描画を行う
      */
     public boolean doAction() {
+        // 自動移動
+        if (isMoving) {
+            if (move()) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -12,7 +12,7 @@ import android.view.View;
  * UMenuBarのテスト用フラグメント
  */
 
-public class TestMenubarView extends View implements View.OnTouchListener, UButtonCallbacks{
+public class TestMenubarView extends View implements View.OnTouchListener, UButtonCallbacks, UMenuItemCallbacks{
     enum ButtonId {
         Test1,
         Test2,
@@ -32,6 +32,9 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
     // UButton
     private UButton[] buttons = new UButton[3];
 
+    // MenuBar
+    private UMenuBar menuBar;
+
     // get/set
     public TestMenubarView(Context context) {
         this(context, null);
@@ -49,6 +52,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
      */
     private void initDrawables(int width, int height) {
 
+        // buttons
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             buttons[i] = new UButton(this, i, "test" + (i+1), 100, y, width -
@@ -57,6 +61,9 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
                     Color.rgb(0,128,0));
             y += 150;
         }
+
+        // MenuBar
+        menuBar = UMenuBar.createInstance(this, this, getWidth(), getHeight(), Color.BLACK);
     }
 
     @Override
@@ -72,7 +79,12 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         // アンチエリアシング(境界のぼかし)
         paint.setAntiAlias(true);
 
-        // マネージャに登録した描画オブジェクトをまとめて描画
+        // Windowアクション(手前から順に処理する)
+        if (menuBar.doAction()) {
+            invalidate();
+        }
+
+        // 描画オブジェクトをまとめて描画
         if (DrawManager.getInstance().draw(canvas, paint)){
             invalidate();
         }
@@ -89,10 +101,16 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
 
         viewTouch.checkTouchType(e);
 
+        // Buttons
         for (UButton button : buttons) {
             if (button.touchEvent(viewTouch)) {
                 invalidate();
             }
+        }
+
+        // MenuBar
+        if (menuBar.touchEvent(viewTouch)) {
+            invalidate();
         }
 
         switch(e.getAction()) {
@@ -131,6 +149,25 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         }
     }
     public void longClick(UButton button) {
+
+    }
+
+    /**
+     * UMenuItemCallbacksインターフェース
+     */
+    /**
+     *
+     * @param id
+     */
+    public void menuItemCallback1(MenuItemId id)
+    {
+
+    }
+
+    /**
+     *
+     */
+    public void menuItemCallback2() {
 
     }
 }
