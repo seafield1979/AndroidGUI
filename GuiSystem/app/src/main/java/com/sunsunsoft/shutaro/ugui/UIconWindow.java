@@ -16,7 +16,7 @@ import java.util.List;
  * アイコンのリストを表示するWindow
  */
 
-public class IconWindow extends Window implements AutoMovable{
+public class UIconWindow extends UWindow implements AutoMovable{
     enum viewState {
         none,
         drag,               // アイコンのドラッグ中
@@ -31,7 +31,7 @@ public class IconWindow extends Window implements AutoMovable{
         Sub
     }
 
-    public static final String TAG = "IconWindow";
+    public static final String TAG = "UIconWindow";
 
     public static final int DRAW_PRIORITY = 100;
     public static final int DRAG_ICON_PRIORITY = 10;
@@ -42,7 +42,7 @@ public class IconWindow extends Window implements AutoMovable{
 
     private static final int ICON_W = 200;
     private static final int ICON_H = 150;
-    private static final int MARGIN_D = MenuBar.MENU_BAR_H;
+    private static final int MARGIN_D = UMenuBar.MENU_BAR_H;
 
     private static final int MOVING_TIME = 10;
 
@@ -53,20 +53,20 @@ public class IconWindow extends Window implements AutoMovable{
     // メンバ変数
     private WindowType type;
     private View mParentView;
-    private IconCallbacks mIconCallbacks;
-    private IconManager mIconManager;
+    private UIconCallbacks mIconCallbacks;
+    private UIconManager mIconManager;
     private DrawList mDrawList;
 
     // 他のIconWindow
     // ドラッグで他のWindowにアイコンを移動するのに使用する
-    private IconWindow[] windows;
+    private UIconWindow[] windows;
 
     // ドラッグ中のアイコン
-    private Icon dragedIcon;
+    private UIcon dragedIcon;
     // ドロップ中のアイコン
-    private Icon dropedIcon;
+    private UIcon dropedIcon;
     // 選択中のアイコン
-    private Icon selectedIcon;
+    private UIcon selectedIcon;
 
     // アニメーション用
     private viewState state = viewState.none;
@@ -85,23 +85,23 @@ public class IconWindow extends Window implements AutoMovable{
     public void setType(WindowType type) {
         this.type = type;
     }
-    public IconManager getIconManager() {
+    public UIconManager getIconManager() {
         return mIconManager;
     }
-    public void setIconManager(IconManager mIconManager) {
+    public void setIconManager(UIconManager mIconManager) {
         this.mIconManager = mIconManager;
     }
 
-    public LinkedList<Icon> getIcons() {
+    public LinkedList<UIcon> getIcons() {
         if (mIconManager == null) return null;
         return mIconManager.getIcons();
     }
 
-    public void setWindows(IconWindow[] windows) {
+    public void setWindows(UIconWindow[] windows) {
         this.windows = windows;
     }
 
-    public IconWindow[] getWindows() { return this.windows; }
+    public UIconWindow[] getWindows() { return this.windows; }
 
     public void setParentView(View mParentView) {
         this.mParentView = mParentView;
@@ -111,11 +111,11 @@ public class IconWindow extends Window implements AutoMovable{
         isAnimating = animating;
     }
 
-    public IconCallbacks getIconCallbacks() {
+    public UIconCallbacks getIconCallbacks() {
         return mIconCallbacks;
     }
 
-    public void setDragedIcon(Icon dragedIcon) {
+    public void setDragedIcon(UIcon dragedIcon) {
         if (dragedIcon == null) {
             if (this.dragedIcon != null) {
                 DrawManager.getInstance().removeDrawable(DRAG_ICON_PRIORITY, this.dragedIcon);
@@ -127,7 +127,7 @@ public class IconWindow extends Window implements AutoMovable{
         this.dragedIcon = dragedIcon;
     }
 
-    private IconWindow(View parent, IconCallbacks iconCallbacks, float x, float y, int width, int height, int color) {
+    private UIconWindow(View parent, UIconCallbacks iconCallbacks, float x, float y, int width, int height, int color) {
         super(x, y, width, height, color);
         this.mParentView = parent;
         this.mIconCallbacks = iconCallbacks;
@@ -137,13 +137,13 @@ public class IconWindow extends Window implements AutoMovable{
      * Homeタイプが２つできないように自動でHome、Subのタイプ分けがされる
      * @return
      */
-    public static IconWindow createInstance(View parent, IconCallbacks iconCallbacks, float x, float y, int width, int height, int bgColor)
+    public static UIconWindow createInstance(View parent, UIconCallbacks iconCallbacks, float x, float y, int width, int height, int bgColor)
     {
-        IconWindow instance = new IconWindow(parent, iconCallbacks, x, y, width, height, bgColor);
+        UIconWindow instance = new UIconWindow(parent, iconCallbacks, x, y, width, height, bgColor);
         if (!createdHome) {
             createdHome = true;
             instance.type = WindowType.Home;
-            instance.mIconManager = IconManager.createInstance(parent, instance);
+            instance.mIconManager = UIconManager.createInstance(parent, instance);
         } else {
             instance.type = WindowType.Sub;
         }
@@ -159,7 +159,7 @@ public class IconWindow extends Window implements AutoMovable{
         if (type == WindowType.Home) {
             for (int i = 0; i < RECT_ICON_NUM; i++) {
 
-                Icon icon = mIconManager.addIcon(IconType.RECT, AddPos.Tail);
+                UIcon icon = mIconManager.addIcon(IconType.RECT, AddPos.Tail);
                 int color = 0;
                 switch (i % 3) {
                     case 0:
@@ -176,7 +176,7 @@ public class IconWindow extends Window implements AutoMovable{
             }
 
             for (int i = 0; i < CIRCLE_ICON_NUM; i++) {
-                Icon icon = mIconManager.addIcon(IconType.CIRCLE, AddPos.Tail);
+                UIcon icon = mIconManager.addIcon(IconType.CIRCLE, AddPos.Tail);
                 int color = 0;
                 switch (i % 3) {
                     case 0:
@@ -192,7 +192,7 @@ public class IconWindow extends Window implements AutoMovable{
                 icon.setColor(color);
             }
             for (int i = 0; i < BOX_ICON_NUM; i++) {
-                Icon icon = mIconManager.addIcon(IconType.BOX, AddPos.Tail);
+                UIcon icon = mIconManager.addIcon(IconType.BOX, AddPos.Tail);
             }
         }
         // 描画はDrawManagerに任せるのでDrawManagerに登録
@@ -208,7 +208,7 @@ public class IconWindow extends Window implements AutoMovable{
     public boolean doAction() {
         boolean redraw = false;
         boolean allFinished = true;
-        List<Icon> icons = getIcons();
+        List<UIcon> icons = getIcons();
 
         // Windowの移動
         if (isMoving) {
@@ -223,7 +223,7 @@ public class IconWindow extends Window implements AutoMovable{
         if (icons != null) {
             if (state == viewState.icon_moving) {
                 allFinished = true;
-                for (Icon icon : icons) {
+                for (UIcon icon : icons) {
                     if (icon.move()) {
                         allFinished = false;
                     }
@@ -251,7 +251,7 @@ public class IconWindow extends Window implements AutoMovable{
     public void draw(Canvas canvas, Paint paint, PointF offset)
     {
         if (!isShow) return;
-        List<Icon> icons = getIcons();
+        List<UIcon> icons = getIcons();
         if (icons == null) return;
 
         // 背景を描画
@@ -270,7 +270,7 @@ public class IconWindow extends Window implements AutoMovable{
         canvas.clipRect(rect);
 
         int clipCount = 0;
-        for (Icon icon : mIconManager.getIcons()) {
+        for (UIcon icon : mIconManager.getIcons()) {
             if (icon == dragedIcon) continue;
             // 矩形範囲外なら描画しない
             if (URect.intersect(windowRect, icon.getRect())) {
@@ -330,7 +330,7 @@ public class IconWindow extends Window implements AutoMovable{
      * Viewのサイズが確定した時点で呼び出す
      */
     public void sortRects(boolean animate) {
-        List<Icon> icons = getIcons();
+        List<UIcon> icons = getIcons();
         if (icons == null) return;
 
         int column = size.width / (ICON_W + 20);
@@ -341,7 +341,7 @@ public class IconWindow extends Window implements AutoMovable{
         int maxHeight = 0;
         if (animate) {
             int i=0;
-            for (Icon icon : icons) {
+            for (UIcon icon : icons) {
                 int x = (i%column) * (ICON_W + 20);
                 int y = (i/column) * (ICON_H + 20);
                 int height = y + (ICON_H + 20);
@@ -355,7 +355,7 @@ public class IconWindow extends Window implements AutoMovable{
         }
         else {
             int i=0;
-            for (Icon icon : icons) {
+            for (UIcon icon : icons) {
                 int x = (i%column) * (ICON_W + 20);
                 int y = (i/column) * (ICON_H + 20);
                 int height = y + (ICON_H + 20);
@@ -389,10 +389,10 @@ public class IconWindow extends Window implements AutoMovable{
      * @return
      */
     private boolean touchIcons(ViewTouch vt) {
-        List<Icon> icons = getIcons();
+        List<UIcon> icons = getIcons();
         if (icons == null) return false;
 
-        for (Icon icon : icons) {
+        for (UIcon icon : icons) {
             if (icon.checkTouch(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
                 return true;
             }
@@ -406,11 +406,11 @@ public class IconWindow extends Window implements AutoMovable{
      * @return アイコンがクリックされたらtrue
      */
     private boolean clickIcons(ViewTouch vt) {
-        List<Icon> icons = getIcons();
+        List<UIcon> icons = getIcons();
         if (icons == null) return false;
 
         // どのアイコンがクリックされたかを判定
-        for (Icon icon : icons) {
+        for (UIcon icon : icons) {
             if (icon.checkClick(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
                 if (icon.type == IconType.BOX) {
                     selectedIcon = icon;
@@ -434,14 +434,14 @@ public class IconWindow extends Window implements AutoMovable{
      * @param vt
      */
     private boolean dragStart(ViewTouch vt) {
-        List<Icon> icons = getIcons();
+        List<UIcon> icons = getIcons();
         if (icons == null) return false;
 
         // タッチされたアイコンを選択する
         // 一番上のアイコンからタッチ判定したいのでリストを逆順（一番手前から）で参照する
         boolean ret = false;
         Collections.reverse(icons);
-        for (Icon icon : icons) {
+        for (UIcon icon : icons) {
             // 座標判定
             if (icon.checkTouch(toWinX(vt.touchX()), toWinY(vt.touchY()))) {
                 setDragedIcon(icon);
@@ -473,14 +473,14 @@ public class IconWindow extends Window implements AutoMovable{
                 dropedIcon.isDroping = false;
             }
 
-            for (IconWindow window : windows) {
+            for (UIconWindow window : windows) {
                 // ドラッグ中のアイコンが別のアイコンの上にあるかをチェック
                 Point dragPos = new Point((int)window.toWinX(vt.getX()), (int) window.toWinY(vt.getY()));
 
-                IconManager manager = window.getIconManager();
+                UIconManager manager = window.getIconManager();
                 if (manager == null) continue;
 
-                Icon icon = manager.getOverlappedIcon(dragPos, dragedIcon);
+                UIcon icon = manager.getOverlappedIcon(dragPos, dragedIcon);
                 if (icon != null) {
                     isDone = true;
                     dropedIcon = icon;
@@ -516,14 +516,14 @@ public class IconWindow extends Window implements AutoMovable{
         }
 
         // 全てのWindowの全ての
-        for (IconWindow window : windows) {
+        for (UIconWindow window : windows) {
             // Windowの領域外ならスキップ
             if (!(window.rect.contains((int)vt.getX(),(int)vt.getY()))){
                 continue;
             }
 
-            LinkedList<Icon> srcIcons = getIcons();
-            LinkedList<Icon> dstIcons = window.getIcons();
+            LinkedList<UIcon> srcIcons = getIcons();
+            LinkedList<UIcon> dstIcons = window.getIcons();
 
             if (dstIcons == null) continue;
 
@@ -531,7 +531,7 @@ public class IconWindow extends Window implements AutoMovable{
             float winX = window.toWinX(vt.getX());
             float winY = window.toWinY(vt.getY());
 
-            for (Icon icon : dstIcons) {
+            for (UIcon icon : dstIcons) {
                 if (icon == dragedIcon) continue;
 
                 if (icon.checkDrop(winX, winY)) {
@@ -549,12 +549,12 @@ public class IconWindow extends Window implements AutoMovable{
                             break;
                         case BOX:
                             if (dragedIcon.type != IconType.BOX) {
-                                IconBox box = (IconBox) icon;
+                                UIconBox box = (UIconBox) icon;
                                 if (box.getIcons() != null) {
                                     moveIconIntoBox(srcIcons, box.getIcons(), dragedIcon, icon);
                                     mIconManager.updateBlockRect();
-                                    for (IconWindow win : windows) {
-                                        IconManager manager = win.getIconManager();
+                                    for (UIconWindow win : windows) {
+                                        UIconManager manager = win.getIconManager();
                                         if (manager != null) {
                                             manager.updateBlockRect();
                                         }
@@ -571,7 +571,7 @@ public class IconWindow extends Window implements AutoMovable{
             // その他の場所にドロップされた場合
             if (!isDroped && dstIcons != null ) {
                 if (dstIcons.size() > 0) {
-                    Icon lastIcon = dstIcons.getLast();
+                    UIcon lastIcon = dstIcons.getLast();
                     if ((lastIcon.getY() <= winY &&
                             winY <= lastIcon.getBottom() &&
                             lastIcon.getRight() <= winX) ||
@@ -681,8 +681,8 @@ public class IconWindow extends Window implements AutoMovable{
      * @param icon2
      * @param window
      */
-    private void changeIcons(List<Icon> srcIcons, List<Icon> dstIcons, Icon
-            icon1, Icon icon2, IconWindow window )
+    private void changeIcons(List<UIcon> srcIcons, List<UIcon> dstIcons, UIcon
+            icon1, UIcon icon2, UIconWindow window )
     {
         // アイコンの位置を交換
         // 並び順も重要！
@@ -698,11 +698,11 @@ public class IconWindow extends Window implements AutoMovable{
         // 再配置
         if (srcIcons != dstIcons) {
             // ドロップアイコンの座標系を変換
-            // アイコン1 Window -> アイコン2 Window
+            // アイコン1 UWindow -> アイコン2 UWindow
             dragedIcon.setPos(dragedIcon.pos.x + this.pos.x - window.pos.x,
                     dragedIcon.pos.y + this.pos.y - window.pos.y);
 
-            // アイコン2 Window -> アイコン1 Window
+            // アイコン2 UWindow -> アイコン1 UWindow
             icon2.setPos(icon2.pos.x + window.pos.x - this.pos.x,
                     icon2.pos.y + window.pos.y - this.pos.y);
             window.sortRects(true);
@@ -718,7 +718,7 @@ public class IconWindow extends Window implements AutoMovable{
      * @param dstIcon  挿入先のアイコン
      * @param window
      */
-    private void insertIcons(List<Icon> srcIcons, List<Icon> dstIcons, Icon srcIcon, Icon dstIcon, IconWindow window, boolean animate)
+    private void insertIcons(List<UIcon> srcIcons, List<UIcon> dstIcons, UIcon srcIcon, UIcon dstIcon, UIconWindow window, boolean animate)
     {
         int index = dstIcons.indexOf(dstIcon);
         if (index == -1) return;
@@ -746,14 +746,14 @@ public class IconWindow extends Window implements AutoMovable{
      * @param srcIcon ドロップ元のIcon
      * @param dstIcon ドロップ先のIcon
      */
-    private void moveIconIntoBox(List<Icon> srcIcons, List<Icon> dstIcons, Icon srcIcon, Icon dstIcon)
+    private void moveIconIntoBox(List<UIcon> srcIcons, List<UIcon> dstIcons, UIcon srcIcon, UIcon dstIcon)
     {
         srcIcons.remove(srcIcon);
         dstIcons.add(srcIcon);
 
-        if (dstIcon instanceof IconBox) {
-            IconBox box = (IconBox)dstIcon;
-            IconWindow parentWindow = box.getSubWindow();
+        if (dstIcon instanceof UIconBox) {
+            UIconBox box = (UIconBox)dstIcon;
+            UIconWindow parentWindow = box.getSubWindow();
             if (parentWindow != null) {
                 parentWindow.sortRects(false);
                 srcIcon.setParentWindow(parentWindow);
@@ -797,11 +797,11 @@ public class IconWindow extends Window implements AutoMovable{
     public boolean animate() {
         boolean allFinished = true;
 
-        List<Icon> icons = getIcons();
+        List<UIcon> icons = getIcons();
         if (isAnimating) {
             if (icons != null) {
                 allFinished = true;
-                for (Icon icon : icons) {
+                for (UIcon icon : icons) {
                     if (icon.animate()) {
                         allFinished = false;
                     }

@@ -31,13 +31,13 @@ enum MenuItemId {
  * メニューに表示する項目
  * アイコンを表示してタップされたらIDを返すぐらいの機能しか持たない
  */
-abstract public class MenuItem extends Drawable implements Animatable{
+abstract public class UMenuItem extends Drawable implements Animatable{
     public static final int ITEM_W = 120;
     public static final int ITEM_H = 120;
     public static final int ANIME_FRAME = 15;
 
-    protected MenuBar parent;
-    protected MenuItemCallbacks mCallbacks;
+    protected UMenuBar parent;
+    protected UMenuItemCallbacks mCallbacks;
     protected MenuItemId id;
 
     // アイコン用画像
@@ -45,11 +45,11 @@ abstract public class MenuItem extends Drawable implements Animatable{
     protected int animeColor;
 
     // Get/Set
-    public void setCallbacks(MenuItemCallbacks callbacks){
+    public void setCallbacks(UMenuItemCallbacks callbacks){
         mCallbacks = callbacks;
     }
 
-    public MenuItem(MenuBar parent, MenuItemId id, Bitmap icon) {
+    public UMenuItem(UMenuBar parent, MenuItemId id, Bitmap icon) {
         super(0,0,0,0);
         this.parent = parent;
         this.id = id;

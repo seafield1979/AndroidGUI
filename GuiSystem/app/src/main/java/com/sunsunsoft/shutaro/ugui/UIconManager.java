@@ -19,36 +19,36 @@ enum AddPos {
  * Rect判定の高速化のためにいくつかのアイコンをまとめたブロックのRectを作成し、個々のアイコンのRect判定前に
  * ブロックのRectと判定を行う
  */
-public class IconManager {
+public class UIconManager {
 
     private View mParentView;
-    private IconWindow mParentWindow;
-    private LinkedList<Icon> icons;
-    private IconsBlockManager mBlockManager;
+    private UIconWindow mParentWindow;
+    private LinkedList<UIcon> icons;
+    private UIconsBlockManager mBlockManager;
 
     // Get/Set
-    public LinkedList<Icon> getIcons() {
+    public LinkedList<UIcon> getIcons() {
         return icons;
     }
 
-    public void setIcons(LinkedList<Icon> icons) {
+    public void setIcons(LinkedList<UIcon> icons) {
         this.icons = icons;
     }
 
-    public IconWindow getParentWindow() {
+    public UIconWindow getParentWindow() {
         return mParentWindow;
     }
 
-    public IconsBlockManager getBlockManager() {
+    public UIconsBlockManager getBlockManager() {
         return mBlockManager;
     }
 
-    public static IconManager createInstance(View parentView, IconWindow parentWindow) {
-        IconManager instance = new IconManager();
+    public static UIconManager createInstance(View parentView, UIconWindow parentWindow) {
+        UIconManager instance = new UIconManager();
         instance.mParentView = parentView;
         instance.mParentWindow = parentWindow;
         instance.icons = new LinkedList<>();
-        instance.mBlockManager = IconsBlockManager.createInstance(instance.icons);
+        instance.mBlockManager = UIconsBlockManager.createInstance(instance.icons);
         return instance;
     }
 
@@ -58,23 +58,23 @@ public class IconManager {
      * @param addPos
      * @return
      */
-    public Icon addIcon(IconType type, AddPos addPos) {
+    public UIcon addIcon(IconType type, AddPos addPos) {
 
-        Icon icon = null;
+        UIcon icon = null;
         switch (type) {
             case RECT:
-                icon = new IconRect(mParentWindow);
+                icon = new UIconRect(mParentWindow);
                 break;
             case CIRCLE:
-                icon = new IconCircle(mParentWindow);
+                icon = new UIconCircle(mParentWindow);
                 break;
             case IMAGE: {
                 Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), R.drawable.hogeman);
-                icon = new IconBmp(mParentWindow, bmp);
+                icon = new UIconBmp(mParentWindow, bmp);
                 break;
             }
             case BOX:
-                icon = new IconBox(mParentView, mParentWindow);
+                icon = new UIconBox(mParentView, mParentWindow);
                 break;
         }
         if (icon == null) return null;
@@ -94,7 +94,7 @@ public class IconManager {
      * @param icon
      * @return
      */
-    public boolean addIcon(Icon icon) {
+    public boolean addIcon(UIcon icon) {
         // すでに追加されている場合は追加しない
         if (!icons.contains(icon)) {
             icons.add(icon);
@@ -107,7 +107,7 @@ public class IconManager {
      * アイコンを削除
      * @param icon
      */
-    public void removeIcon(Icon icon) {
+    public void removeIcon(UIcon icon) {
         icons.remove(icon);
     }
 
@@ -126,7 +126,7 @@ public class IconManager {
      * @param exceptIcon
      * @return
      */
-    public Icon getOverlappedIcon(Point pos, Icon exceptIcon) {
+    public UIcon getOverlappedIcon(Point pos, UIcon exceptIcon) {
         return mBlockManager.getOverlapedIcon(pos, exceptIcon);
     }
 }

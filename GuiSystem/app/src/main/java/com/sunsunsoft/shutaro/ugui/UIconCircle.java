@@ -9,16 +9,16 @@ import android.graphics.PointF;
  * 円形のアイコン
  */
 
-public class IconCircle extends Icon {
+public class UIconCircle extends UIcon {
     private static final int ICON_W = 150;
 
     protected int radius;
 
-    public IconCircle(IconWindow parent) {
+    public UIconCircle(UIconWindow parent) {
         this(parent, 0, 0, ICON_W);
     }
 
-    public IconCircle(IconWindow parent, int x, int y, int width) {
+    public UIconCircle(UIconWindow parent, int x, int y, int width) {
         super(parent, IconType.CIRCLE, x,y,width,width);
 
         color = Color.rgb(0,255,255);

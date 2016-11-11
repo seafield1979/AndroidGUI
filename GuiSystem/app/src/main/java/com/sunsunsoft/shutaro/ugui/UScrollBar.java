@@ -29,8 +29,8 @@ enum ScrollBarInOut {
  *  バー以外の領域をタップしてスクロール
  *  指定のViewに張り付くように配置
  */
-public class ScrollBar {
-    public static final String TAG = "ScrollBar";
+public class UScrollBar {
+    public static final String TAG = "UScrollBar";
 
     private ScrollBarType type;
     private ScrollBarInOut inOut;
@@ -90,7 +90,7 @@ public class ScrollBar {
      * @param width
      * @param contentLen
      */
-    public ScrollBar(ScrollBarType type, ScrollBarInOut inOut, PointF parentPos, int viewWidth, int viewHeight, int width, int contentLen ) {
+    public UScrollBar(ScrollBarType type, ScrollBarInOut inOut, PointF parentPos, int viewWidth, int viewHeight, int width, int contentLen ) {
         this.type = type;
         this.inOut = inOut;
         this.parentPos = parentPos;

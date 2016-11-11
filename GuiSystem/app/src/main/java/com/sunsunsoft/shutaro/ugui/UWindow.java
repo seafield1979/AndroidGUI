@@ -6,8 +6,8 @@ import android.graphics.PointF;
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
-abstract public class Window extends Drawable implements AutoMovable, Touchable {
-    public static final String TAG = "Window";
+abstract public class UWindow extends Drawable implements AutoMovable, Touchable {
+    public static final String TAG = "UWindow";
     protected static final int SCROLL_BAR_W = 100;
 
     // メンバ変数
@@ -17,7 +17,7 @@ abstract public class Window extends Drawable implements AutoMovable, Touchable 
     // スクロール用
     protected Size contentSize = new Size();     // 領域全体のサイズ
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
-    protected ScrollBar mScrollBar;
+    protected UScrollBar mScrollBar;
 
     public boolean isShow() {
         return isShow;
@@ -72,11 +72,11 @@ abstract public class Window extends Drawable implements AutoMovable, Touchable 
     }
 
     // Window1の座標系から Window2の座標系に変換
-    public float win1ToWin2X(float win1X, Window win1, Window win2) {
+    public float win1ToWin2X(float win1X, UWindow win1, UWindow win2) {
         return win1X + win1.pos.x - win1.contentTop.x - win2.pos.x + win2.contentTop.x;
     }
 
-    public float win1ToWin2Y(float win1Y, Window win1, Window win2) {
+    public float win1ToWin2Y(float win1Y, UWindow win1, UWindow win2) {
         return win1Y + win1.pos.y - win1.contentTop.y - win2.pos.y + win2.contentTop.y;
     }
 
@@ -90,7 +90,7 @@ abstract public class Window extends Drawable implements AutoMovable, Touchable 
      * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する
      * インスタンス生成には createWindow を使うべし
      */
-    protected Window(float x, float y, int width, int height, int color) {
+    protected UWindow(float x, float y, int width, int height, int color) {
         super(x,y,width,height);
         pos.x = x;
         pos.y = y;
@@ -100,7 +100,7 @@ abstract public class Window extends Drawable implements AutoMovable, Touchable 
         updateRect();
 
         // スクロールバー
-        mScrollBar = new ScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
+        mScrollBar = new UScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
         mScrollBar.setBgColor(Color.rgb(128, 128, 128));
     }
 

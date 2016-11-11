@@ -18,7 +18,7 @@ import java.util.TimerTask;
  * メッセージをリストで保持する
  * 古いメッセージが一定時間で削除される
  */
-public class LogWindow extends Window {
+public class LogWindow extends UWindow {
     public static final int SHOW_TIME = 3000;
     public static final int MESSAGE_MAX = 30;
     public static final int DRAW_PRIORITY = 5;

@@ -10,16 +10,16 @@ import android.graphics.Rect;
  * 画像のアイコン
  */
 
-public class IconBmp extends Icon {
+public class UIconBmp extends UIcon {
     private static final int ICON_W = 150;
 
     private Bitmap bmp;
 
 
-    public IconBmp(IconWindow parent, Bitmap bmp) {
+    public UIconBmp(UIconWindow parent, Bitmap bmp) {
         this(parent, 0, 0, ICON_W, ICON_W, bmp);
     }
-    public IconBmp(IconWindow parent, int x, int y, int width, int height, Bitmap bmp) {
+    public UIconBmp(UIconWindow parent, int x, int y, int width, int height, Bitmap bmp) {
         super(parent, IconType.IMAGE, x, y, width, height);
 
         this.bmp = bmp;

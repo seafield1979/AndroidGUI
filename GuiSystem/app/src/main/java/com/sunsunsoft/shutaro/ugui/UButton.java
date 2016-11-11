@@ -17,7 +17,7 @@ public class UButton extends Drawable implements Touchable {
     public static final int DRAW_PRIORITY = 100;
     private static final int PRESS_Y = 30;
 
-    private ButtonId id;
+    private int id;
     private UButtonCallbacks mCallbacks;
     private boolean isPressed;
     private String text;
@@ -25,7 +25,7 @@ public class UButton extends Drawable implements Touchable {
     private int pressedColor;
 
     // Get/Set
-    public ButtonId getId() {
+    public int getId() {
         return id;
     }
 
@@ -45,7 +45,7 @@ public class UButton extends Drawable implements Touchable {
         this.textColor = textColor;
     }
 
-    public UButton(UButtonCallbacks callbacks, ButtonId id, String text, float x, float y, int width, int height, int color)
+    public UButton(UButtonCallbacks callbacks, int id, String text, float x, float y, int width, int height, int color)
     {
         super(x, y, width, height);
         this.id = id;

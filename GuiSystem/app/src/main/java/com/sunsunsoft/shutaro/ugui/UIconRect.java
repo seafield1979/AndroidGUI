@@ -10,16 +10,16 @@ import android.graphics.Rect;
  * 四角形のアイコン
  */
 
-public class IconRect extends Icon {
-    public static final String TAG = "IconRect";
+public class UIconRect extends UIcon {
+    public static final String TAG = "UIconRect";
     private static final int ICON_W = 200;
     private static final int ICON_H = 150;
 
-    public IconRect(IconWindow parent) {
+    public UIconRect(UIconWindow parent) {
         this(parent, 0, 0, ICON_W, ICON_H);
     }
 
-    public IconRect(IconWindow parent, int x, int y, int width, int height) {
+    public UIconRect(UIconWindow parent, int x, int y, int width, int height) {
         super(parent, IconType.RECT, x,y,width,height);
 
         color = Color.rgb(0,255,255);

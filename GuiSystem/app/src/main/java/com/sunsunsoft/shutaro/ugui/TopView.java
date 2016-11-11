@@ -14,7 +14,7 @@ import android.view.View.OnTouchListener;
  * メニューバー、サブViewのサンプル
 
  */
-public class TopView extends View implements OnTouchListener, MenuItemCallbacks, IconCallbacks{
+public class TopView extends View implements OnTouchListener, UMenuItemCallbacks, UIconCallbacks {
     enum WindowType {
         Icon1,
         Icon2,
@@ -25,15 +25,15 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     public static final String TAG = "TopView";
 
     // Windows
-    private Window[] mWindows = new Window[WindowType.values().length];
-    // IconWindow
-    private IconWindow[] mIconWindows = new IconWindow[2];
+    private UWindow[] mWindows = new UWindow[WindowType.values().length];
+    // UIconWindow
+    private UIconWindow[] mIconWindows = new UIconWindow[2];
 
     // MessageWindow
     private LogWindow mLogWin;
 
     // メニューバー
-    private MenuBar mMenuBar;
+    private UMenuBar mMenuBar;
 
     // サイズ更新用
     private boolean resetSize;
@@ -58,7 +58,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     private void initWindows(int width, int height) {
         ULog.print(TAG, "w:" + width + " h:" + height);
 
-        // IconWindow
+        // UIconWindow
         PointF pos1, pos2;
         Size size1, size2;
         if (width <= height) {
@@ -74,13 +74,13 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
         }
 
         if (mIconWindows[0] == null) {
-            mIconWindows[0] = IconWindow.createInstance(this, this, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
+            mIconWindows[0] = UIconWindow.createInstance(this, this, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
             mIconWindows[0].setWindows(mIconWindows);
             mWindows[WindowType.Icon1.ordinal()] = mIconWindows[0];
         }
 
         if (mIconWindows[1] == null) {
-            mIconWindows[1] = IconWindow.createInstance(this, this, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
+            mIconWindows[1] = UIconWindow.createInstance(this, this, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
             mIconWindows[1].setWindows(mIconWindows);
             mWindows[WindowType.Icon2.ordinal()] = mIconWindows[1];
         }
@@ -88,11 +88,11 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
         mIconWindows[0].init();
         mIconWindows[1].init();
 
-        // MenuBar
+        // UMenuBar
         if (mMenuBar == null) {
             View hoge = (View)this;
-            MenuItemCallbacks call = (MenuItemCallbacks)this;
-            mMenuBar = MenuBar.createInstance((View)this, (MenuItemCallbacks)this, width, height,
+            UMenuItemCallbacks call = (UMenuItemCallbacks)this;
+            mMenuBar = UMenuBar.createInstance((View)this, (UMenuItemCallbacks)this, width, height,
                     Color.BLACK);
             mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
@@ -144,7 +144,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
         // アイコンWindow
         // アクション(手前から順に処理する)
         for (int i=mWindows.length - 1; i >= 0; i--) {
-            Window win = mWindows[i];
+            UWindow win = mWindows[i];
             if (win.doAction()) {
                 invalidate();
             }
@@ -196,7 +196,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     private boolean WindoTouchEvent(ViewTouch vt) {
         // 手前から順に処理する
         for (int i=mWindows.length - 1; i >= 0; i--) {
-            Window win = mWindows[i];
+            UWindow win = mWindows[i];
             if (!win.isShow()) continue;
 
             if (win.touchEvent(vt)) {
@@ -213,9 +213,9 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
      * @param menuItemId
      */
     private void addIcon(int windowId, IconType shape, MenuItemId menuItemId) {
-        IconWindow iconWindow = mIconWindows[windowId];
-        IconManager manager = iconWindow.getIconManager();
-        Icon icon = manager.addIcon(shape, AddPos.Top);
+        UIconWindow iconWindow = mIconWindows[windowId];
+        UIconManager manager = iconWindow.getIconManager();
+        UIcon icon = manager.addIcon(shape, AddPos.Top);
 
         // アイコンの初期座標は追加メニューアイコンの位置
         PointF menuPos = mMenuBar.getItemPos(menuItemId);
@@ -224,7 +224,7 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     }
 
     /**
-     * MenuItemCallbacks
+     * UMenuItemCallbacks
      */
     /**
      * メニューアイテムをタップした時のコールバック
@@ -276,9 +276,9 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
     }
 
     /**
-     * IconCallbacks
+     * UIconCallbacks
      */
-    public void clickIcon(Icon icon) {
+    public void clickIcon(UIcon icon) {
         ULog.print(TAG, "clickIcon");
         switch(icon.type) {
             case CIRCLE:
@@ -287,8 +287,8 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
                 break;
             case BOX: {
                 // 配下のアイコンをSubWindowに表示する
-                if (icon instanceof IconBox) {
-                    IconBox box = (IconBox)icon;
+                if (icon instanceof UIconBox) {
+                    UIconBox box = (UIconBox)icon;
                     mIconWindows[1].setIconManager(box.getIconManager());
                     mIconWindows[1].sortRects(false);
                     float posY = mIconWindows[1].pos.y;
@@ -301,10 +301,10 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
                 break;
         }
     }
-    public void longClickIcon(Icon icon) {
+    public void longClickIcon(UIcon icon) {
         ULog.print(TAG, "longClickIcon");
     }
-    public void dropToIcon(Icon icon) {
+    public void dropToIcon(UIcon icon) {
         ULog.print(TAG, "dropToIcon");
     }
 

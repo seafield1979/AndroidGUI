@@ -14,18 +14,18 @@ import java.util.List;
  * 配下のアイコンが全て収まる大きなRectを求めておき、
  * まずはこの大きなRectと判定を行い、重なっていた場合にのみ個々のアイコンと判定する
  */
-public class IconsBlockManager {
-    public static final String TAG = "IconsBlockManager";
+public class UIconsBlockManager {
+    public static final String TAG = "UIconsBlockManager";
     LinkedList<IconsBlock> blockList = new LinkedList<>();
-    List<Icon> icons;
+    List<UIcon> icons;
 
     /**
      * インスタンスを取得
      * @param icons
      * @return
      */
-    public static IconsBlockManager createInstance(List<Icon> icons) {
-        IconsBlockManager instance = new IconsBlockManager();
+    public static UIconsBlockManager createInstance(List<UIcon> icons) {
+        UIconsBlockManager instance = new UIconsBlockManager();
         instance.icons = icons;
         return instance;
     }
@@ -34,7 +34,7 @@ public class IconsBlockManager {
      * アイコンリストを設定する
      * アイコンリストはアニメーションが終わって座標が確定した時点で行う
      */
-    public void setIcons(List<Icon> icons) {
+    public void setIcons(List<UIcon> icons) {
         this.icons = icons;
         update();
     }
@@ -49,7 +49,7 @@ public class IconsBlockManager {
         }
 
         IconsBlock block = null;
-        for (Icon icon : icons) {
+        for (UIcon icon : icons) {
             if (block == null) {
                 block = new IconsBlock();
             }
@@ -74,10 +74,10 @@ public class IconsBlockManager {
      * @param pos
      * @return
      */
-    public Icon getOverlapedIcon(Point pos, Icon exceptIcon) {
+    public UIcon getOverlapedIcon(Point pos, UIcon exceptIcon) {
         //ULog.startCount(TAG);
         for (IconsBlock block : blockList) {
-            Icon icon = block.getOverlapedIcon(pos, exceptIcon);
+            UIcon icon = block.getOverlapedIcon(pos, exceptIcon);
             if (icon != null) {
                 //ULog.endCount(TAG);
                 return icon;
@@ -117,7 +117,7 @@ public class IconsBlockManager {
 class IconsBlock {
     private static final int BLOCK_ICON_MAX = 8;
 
-    private LinkedList<Icon> icons = new LinkedList<>();
+    private LinkedList<UIcon> icons = new LinkedList<>();
     private Rect rect = new Rect();
     private int color = UColor.BLACK;
 
@@ -126,7 +126,7 @@ class IconsBlock {
         return rect;
     }
 
-    public LinkedList<Icon> getIcons() {
+    public LinkedList<UIcon> getIcons() {
         return icons;
     }
 
@@ -135,7 +135,7 @@ class IconsBlock {
      * @param icon
      * @return true:リストがいっぱい
      */
-    public boolean add(Icon icon) {
+    public boolean add(UIcon icon) {
         icons.add(icon);
         if (icons.size() >= BLOCK_ICON_MAX) {
             return true;
@@ -149,7 +149,7 @@ class IconsBlock {
     public void updateRect() {
         rect.left = 1000000;
         rect.top = 1000000;
-        for (Icon icon : icons) {
+        for (UIcon icon : icons) {
             if (icon.pos.x < rect.left) {
                 rect.left = (int)icon.pos.x;
             }
@@ -172,12 +172,12 @@ class IconsBlock {
      * @param exceptIcon
      * @return null:重なるアイコンなし
      */
-    public Icon getOverlapedIcon(Point pos, Icon exceptIcon) {
-//        ULog.count(IconsBlockManager.TAG);
+    public UIcon getOverlapedIcon(Point pos, UIcon exceptIcon) {
+//        ULog.count(UIconsBlockManager.TAG);
         if (rect.contains(pos.x, pos.y)) {
-            for (Icon icon : icons) {
+            for (UIcon icon : icons) {
                 if (icon == exceptIcon) continue;
-                ULog.count(IconsBlockManager.TAG);
+                ULog.count(UIconsBlockManager.TAG);
                 if (icon.getRect().contains(pos.x, pos.y)) {
                     return icon;
                 }

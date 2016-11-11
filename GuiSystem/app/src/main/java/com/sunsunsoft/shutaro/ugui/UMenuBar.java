@@ -1,6 +1,5 @@
 package com.sunsunsoft.shutaro.ugui;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -21,7 +20,7 @@ enum TopMenu {
  * メニューバー
  * メニューに表示する項目を管理する
  */
-public class MenuBar extends Window {
+public class UMenuBar extends UWindow {
 
     public static final int DRAW_PRIORITY = 90;
     public static final int MENU_BAR_H = 150;
@@ -32,9 +31,9 @@ public class MenuBar extends Window {
 
 
     private View mParentView;
-    private MenuItemCallbacks mCallbackClass;
-    MenuItemTop[] topItems = new MenuItemTop[TOP_MENU_MAX];
-    MenuItem[] items = new MenuItem[MenuItemId.values().length];
+    private UMenuItemCallbacks mCallbackClass;
+    UMenuItemTop[] topItems = new UMenuItemTop[TOP_MENU_MAX];
+    UMenuItem[] items = new UMenuItem[MenuItemId.values().length];
     private DrawList mDrawList;
     private boolean isAnimating;
 
@@ -43,7 +42,7 @@ public class MenuBar extends Window {
         isAnimating = animating;
     }
 
-    private MenuBar(View parentView, MenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
+    private UMenuBar(View parentView, UMenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
     {
         super(0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
         mParentView = parentView;
@@ -59,9 +58,9 @@ public class MenuBar extends Window {
      * @param bgColor
      * @return
      */
-    public static MenuBar createInstance(View parentView, MenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
+    public static UMenuBar createInstance(View parentView, UMenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
     {
-        MenuBar instance = new MenuBar(parentView, callbackClass, parentW, parentH, bgColor);
+        UMenuBar instance = new UMenuBar(parentView, callbackClass, parentW, parentH, bgColor);
         instance.initMenuBar();
         return instance;
     }
@@ -96,7 +95,7 @@ public class MenuBar extends Window {
     }
 
     private void updateBGSize() {
-        size.width = MARGIN_L + TOP_MENU_MAX * (MenuItem.ITEM_W + MARGIN_LR);
+        size.width = MARGIN_L + TOP_MENU_MAX * (UMenuItem.ITEM_W + MARGIN_LR);
     }
 
     /**
@@ -107,7 +106,7 @@ public class MenuBar extends Window {
      */
     private void addTopMenuItem(TopMenu topId, MenuItemId menuId, int bmpId) {
         Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
-        MenuItemTop item = new MenuItemTop(this, menuId, bmp);
+        UMenuItemTop item = new UMenuItemTop(this, menuId, bmp);
         item.setCallbacks(mCallbackClass);
         addItem(topId, item);
 
@@ -122,7 +121,7 @@ public class MenuBar extends Window {
      */
     private void addChildMenuItem(TopMenu topId, MenuItemId menuId, int bmpId) {
         Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
-        MenuItemChild item = new MenuItemChild(this, menuId, bmp);
+        UMenuItemChild item = new UMenuItemChild(this, menuId, bmp);
         item.setCallbacks(mCallbackClass);
         addChildItem(topId, item);
 
@@ -134,13 +133,13 @@ public class MenuBar extends Window {
      * @param index   項目を追加する位置
      * @param item    追加する項目
      */
-    public void addItem(TopMenu index, MenuItemTop item) {
+    public void addItem(TopMenu index, UMenuItemTop item) {
         int pos = index.ordinal();
         if (pos >= TOP_MENU_MAX) return;
 
         // 項目の座標を設定
         // メニューバーの左上原点の相対座標、スクリーン座標は計算で求める
-        item.setPos(MARGIN_L + pos * (MenuItem.ITEM_W + MARGIN_LR), MARGIN_TOP);
+        item.setPos(MARGIN_L + pos * (UMenuItem.ITEM_W + MARGIN_LR), MARGIN_TOP);
 
         topItems[pos] = item;
     }
@@ -150,8 +149,8 @@ public class MenuBar extends Window {
      * @param index
      * @param item
      */
-    public void addChildItem(TopMenu index, MenuItemChild item) {
-        MenuItemTop topItem = topItems[index.ordinal()];
+    public void addChildItem(TopMenu index, UMenuItemChild item) {
+        UMenuItemTop topItem = topItems[index.ordinal()];
         if (topItem == null) return;
 
         topItem.addItem(item);
@@ -169,7 +168,7 @@ public class MenuBar extends Window {
         if (!isShow) return false;
 
         boolean allFinished = true;
-        for (MenuItemTop item : topItems) {
+        for (UMenuItemTop item : topItems) {
             // 移動
             if (item.moveChilds()) {
                 allFinished = false;
@@ -198,7 +197,7 @@ public class MenuBar extends Window {
 
         // 渡されるクリック座標をメニューバーの座標系に変換
         for (int i = 0; i < topItems.length; i++) {
-            MenuItemTop item = topItems[i];
+            UMenuItemTop item = topItems[i];
             if (item == null) continue;
 
             if (item.checkClick(vt, clickX, clickY)) {
@@ -231,7 +230,7 @@ public class MenuBar extends Window {
     private void closeAllMenu(int excludedIndex) {
         for (int i = 0; i < topItems.length; i++) {
             if (i == excludedIndex) continue;
-            MenuItemTop item = topItems[i];
+            UMenuItemTop item = topItems[i];
             item.closeMenu();
         }
     }
@@ -240,7 +239,7 @@ public class MenuBar extends Window {
      * メニュー項目の座標をスクリーン座標で取得する
      */
     public PointF getItemPos(MenuItemId itemId) {
-        MenuItem item = items[itemId.ordinal()];
+        UMenuItem item = items[itemId.ordinal()];
         if (item == null) {
             return new PointF();
         }
@@ -281,7 +280,7 @@ public class MenuBar extends Window {
                 pos.y + size.height,
                 paint);
 
-        for (MenuItemTop item : topItems) {
+        for (UMenuItemTop item : topItems) {
             if (item != null) {
                 item.draw(canvas, paint, pos);
             }
@@ -298,7 +297,7 @@ public class MenuBar extends Window {
         if (!isAnimating) return false;
         boolean allFinished = true;
 
-        for (MenuItemTop item : topItems) {
+        for (UMenuItemTop item : topItems) {
             if (item.animate()) {
                 allFinished = false;
             }

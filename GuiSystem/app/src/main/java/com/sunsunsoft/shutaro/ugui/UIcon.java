@@ -9,16 +9,28 @@ import android.util.Log;
 import static com.sunsunsoft.shutaro.ugui.UDebug.drawIconId;
 
 /**
+ * アイコンの形
+ */
+
+enum IconType {
+    RECT,
+    CIRCLE,
+    IMAGE,
+    BOX
+}
+
+/**
  * ViewのonDrawで描画するアイコンの情報
  */
-abstract public class Icon extends Drawable implements AutoMovable {
 
-    private static final String TAG = "Icon";
+abstract public class UIcon extends Drawable implements AutoMovable {
+
+    private static final String TAG = "UIcon";
     private static int count;
 
     public int id;
-    protected IconWindow parentWindow;
-    private IconCallbacks mCallbacks;
+    protected UIconWindow parentWindow;
+    private UIconCallbacks mCallbacks;
     protected DrawList drawList;
 
     // アニメーション用
@@ -29,7 +41,7 @@ abstract public class Icon extends Drawable implements AutoMovable {
 
     protected IconType type;
 
-    public Icon(IconWindow parentWindow, IconType type, float x, float y, int width, int
+    public UIcon(UIconWindow parentWindow, IconType type, float x, float y, int width, int
             height)
     {
         super(x, y, width, height);
@@ -47,10 +59,10 @@ abstract public class Icon extends Drawable implements AutoMovable {
     public IconType getType() { return type; }
 
 
-    public IconWindow getParentWindow() {
+    public UIconWindow getParentWindow() {
         return parentWindow;
     }
-    public void setParentWindow(IconWindow parentWindow) {
+    public void setParentWindow(UIconWindow parentWindow) {
         this.parentWindow = parentWindow;
     }
 

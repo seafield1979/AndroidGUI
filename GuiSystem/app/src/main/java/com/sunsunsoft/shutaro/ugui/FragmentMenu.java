@@ -63,6 +63,10 @@ public class FragmentMenu extends Fragment implements OnClickListener{
             }
                 break;
             case R.id.button3:
+            {
+                Fragment fragment = new FragmentTestMenubar();
+                showFragment(fragment);
+            }
                 break;
             case R.id.button4:
                 break;

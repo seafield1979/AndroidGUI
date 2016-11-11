@@ -12,22 +12,22 @@ import java.util.LinkedList;
  * アイコンをクリックすると子要素があったら子要素をOpen/Closeする
  *
  */
-public class MenuItemTop extends MenuItem{
+public class UMenuItemTop extends UMenuItem {
 
     private static final int CHILD_MARGIN_V = 30;
 
     // Member variables
-    private LinkedList<MenuItemChild> childItems;
+    private LinkedList<UMenuItemChild> childItems;
     private boolean isOpened;
 
 
     // Constructor
-    public MenuItemTop(MenuBar parent, MenuItemId id, Bitmap icon) {
+    public UMenuItemTop(UMenuBar parent, MenuItemId id, Bitmap icon) {
         super(parent, id, icon);
     }
 
     // Get/Set
-    public LinkedList<MenuItemChild> getChildItems() {
+    public LinkedList<UMenuItemChild> getChildItems() {
         return childItems;
     }
 
@@ -44,13 +44,13 @@ public class MenuItemTop extends MenuItem{
      * 子要素を追加する
      * @param child
      */
-    public void addItem(MenuItemChild child) {
+    public void addItem(UMenuItemChild child) {
         if (childItems == null) {
             childItems = new LinkedList<>();
         }
 
         // 座標を設定する
-        child.setBasePos( pos.x, pos.y - ((childItems.size() + 1) * (MenuItem.ITEM_H + CHILD_MARGIN_V)));
+        child.setBasePos( pos.x, pos.y - ((childItems.size() + 1) * (UMenuItem.ITEM_H + CHILD_MARGIN_V)));
         child.setParentPos( pos );
 
         childItems.add(child);
@@ -66,7 +66,7 @@ public class MenuItemTop extends MenuItem{
         // 子要素をまとめて描画
         if (childItems != null) {
             for (int i=0; i<childItems.size(); i++) {
-                MenuItemChild child = childItems.get(i);
+                UMenuItemChild child = childItems.get(i);
                 if (isOpened || child.isMoving()) {
                     child.draw(canvas, paint, parentPos);
                 }
@@ -86,7 +86,7 @@ public class MenuItemTop extends MenuItem{
         if (pos.x <= clickX && clickX <= pos.x + ITEM_W &&
                 pos.y <= clickY && clickY <= pos.y + ITEM_H)
         {
-            ULog.print("MenuItem", "clicked");
+            ULog.print("UMenuItem", "clicked");
             if (vt.type == TouchType.Click) {
                 // 子要素を持っていたら Open/Close
                 if (childItems != null) {
@@ -97,7 +97,7 @@ public class MenuItemTop extends MenuItem{
                         isOpened = true;
                         openMenu();
                     }
-                    ULog.print("MenuItem", "isOpened " + isOpened);
+                    ULog.print("UMenuItem", "isOpened " + isOpened);
                 }
 
                 // タッチされた時の処理
@@ -114,7 +114,7 @@ public class MenuItemTop extends MenuItem{
         // 子要素
         if (isOpened()) {
             if (childItems != null) {
-                for (MenuItemChild child : childItems) {
+                for (UMenuItemChild child : childItems) {
                     if (child.checkClick(vt, clickX, clickY)) {
                         return true;
                     }
@@ -135,7 +135,7 @@ public class MenuItemTop extends MenuItem{
         if (childItems == null) return;
 
         isOpened = true;
-        for (MenuItemChild item : childItems) {
+        for (UMenuItemChild item : childItems) {
             item.openMenu();
         }
     }
@@ -147,7 +147,7 @@ public class MenuItemTop extends MenuItem{
         if (childItems == null) return;
 
         isOpened = false;
-        for (MenuItemChild item : childItems) {
+        for (UMenuItemChild item : childItems) {
             item.closeMenu();
         }
     }
@@ -162,7 +162,7 @@ public class MenuItemTop extends MenuItem{
         // 移動中のものが１つでもあったら false になる
         boolean allFinished = true;
 
-        for (MenuItemChild item : childItems) {
+        for (UMenuItemChild item : childItems) {
             if (item.move()) {
                 allFinished = false;
             }
@@ -184,7 +184,7 @@ public class MenuItemTop extends MenuItem{
 
         // 子要素
         if (childItems != null) {
-            for (MenuItemChild item : childItems) {
+            for (UMenuItemChild item : childItems) {
                 if (item.animate()) {
                     allFinished = false;
                 }

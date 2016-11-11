@@ -8,7 +8,7 @@ import android.graphics.PointF;
  * メニューバーのトップ要素をクリックすると表示される
  */
 
-public class MenuItemChild extends MenuItem implements AutoMovable{
+public class UMenuItemChild extends UMenuItem implements AutoMovable{
     private static final int MOVING_FRAME = 10;
 
     // ベースの座標、移動アニメーション時にはこの座標に向かって移動する
@@ -38,7 +38,7 @@ public class MenuItemChild extends MenuItem implements AutoMovable{
         return isMoving;
     }
 
-    public MenuItemChild(MenuBar parent, MenuItemId id, Bitmap icon) {
+    public UMenuItemChild(UMenuBar parent, MenuItemId id, Bitmap icon) {
         super(parent, id, icon);
     }
 
@@ -47,7 +47,7 @@ public class MenuItemChild extends MenuItem implements AutoMovable{
                 pos.y <= clickY && clickY <= pos.y + ITEM_H)
         {
             if (vt.type == TouchType.Click) {
-                ULog.print("MenuItem", "clicked");
+                ULog.print("UMenuItem", "clicked");
                 // タッチされた時の処理
                 if (mCallbacks != null) {
                     mCallbacks.callback1(id);

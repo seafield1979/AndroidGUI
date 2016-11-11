@@ -13,41 +13,41 @@ import java.util.List;
  * 子要素を持つことができるIcon
  */
 
-public class IconBox extends Icon {
+public class UIconBox extends UIcon {
     public static final int ICON_W = 150;
     public static final int DUMMY_ICON_NUM = 10;
 
     private View mParentView;
-    private IconManager mIconManager;
+    private UIconManager mIconManager;
 
     // ボックスの中身を表示しているウィンドウ
-    private IconWindow subWindow;
+    private UIconWindow subWindow;
 
     // Get/Set
-    public IconManager getIconManager() {
+    public UIconManager getIconManager() {
         return mIconManager;
     }
-    public List<Icon> getIcons() {
+    public List<UIcon> getIcons() {
         return mIconManager.getIcons();
     }
 
-    public IconWindow getSubWindow() {
+    public UIconWindow getSubWindow() {
         return subWindow;
     }
 
-    public IconBox(View parentView, IconWindow parentWindow) {
+    public UIconBox(View parentView, UIconWindow parentWindow) {
         super(parentWindow, IconType.BOX, 0, 0, ICON_W, ICON_W);
         mParentView = parentView;
 
         color = UColor.getRandomColor();
 
         // ダミーで子要素を追加
-        IconWindow[] windows = parentWindow.getWindows();
-        subWindow = windows[IconWindow.WindowType.Sub.ordinal()];
+        UIconWindow[] windows = parentWindow.getWindows();
+        subWindow = windows[UIconWindow.WindowType.Sub.ordinal()];
 
-        mIconManager = IconManager.createInstance(parentView, subWindow);
+        mIconManager = UIconManager.createInstance(parentView, subWindow);
         for (int i=0; i<DUMMY_ICON_NUM; i++) {
-            Icon icon = mIconManager.addIcon(IconType.RECT, AddPos.Tail);
+            UIcon icon = mIconManager.addIcon(IconType.RECT, AddPos.Tail);
             icon.setColor(color);
         }
 

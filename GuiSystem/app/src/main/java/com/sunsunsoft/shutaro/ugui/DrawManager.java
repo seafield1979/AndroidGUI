@@ -197,7 +197,7 @@ class DrawList
             obj.draw(canvas, paint, offset);
             drawId(canvas, paint, obj.getRect(), priority);
 
-            if (priority == IconWindow.DRAG_ICON_PRIORITY) {
+            if (priority == UIconWindow.DRAG_ICON_PRIORITY) {
                 ULog.print(DrawManager.TAG, "" + obj.getRect().bottom);
             }
 

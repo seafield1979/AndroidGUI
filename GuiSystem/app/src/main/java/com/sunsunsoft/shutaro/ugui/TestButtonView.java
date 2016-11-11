@@ -10,16 +10,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-enum ButtonId {
-    Test1,
-    Test2,
-    Test3
-}
-
 /**
  * メニューバー、サブViewのサンプル
  */
 public class TestButtonView extends View implements OnTouchListener, UButtonCallbacks{
+    enum ButtonId {
+        Test1,
+        Test2,
+        Test3
+    }
 
     public static final String TAG = "TestButtonView";
 
@@ -54,7 +53,7 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            buttons[i] = new UButton(this, id, "test" + (i+1), 100, y, width -
+            buttons[i] = new UButton(this, id.ordinal(), "test" + (i+1), 100, y, width -
                     100*2,
                     120,
                     Color.rgb(0,128,0));
@@ -123,7 +122,8 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
     public void click(UButton button) {
         ULog.print(TAG, "button click:" + button.getId());
 
-        switch(button.getId()) {
+        ButtonId buttonId = ButtonId.values()[button.getId()];
+        switch(buttonId) {
             case Test1:
                 break;
             case Test2:
