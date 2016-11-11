@@ -18,7 +18,8 @@ public class FragmentMenu extends Fragment implements OnClickListener{
         R.id.button2,
         R.id.button3,
         R.id.button4,
-        R.id.button5
+        R.id.button5,
+            R.id.button6
     };
 
     public FragmentMenu() {
@@ -74,6 +75,12 @@ public class FragmentMenu extends Fragment implements OnClickListener{
             case R.id.button5:
             {
                 Fragment fragment = new FragmentTestWindow();
+                showFragment(fragment);
+            }
+            break;
+            case R.id.button6:
+            {
+                Fragment fragment = new FragmentTestTouch();
                 showFragment(fragment);
             }
             break;

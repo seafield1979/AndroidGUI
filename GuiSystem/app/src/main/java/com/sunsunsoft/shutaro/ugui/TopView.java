@@ -102,7 +102,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
 
         // ULogWindow
         if (mLogWin == null) {
-            mLogWin = ULogWindow.createInstance(getContext(), this,
+            mLogWin = ULogWindow.createInstance(getContext(), this, LogWindowType.AutoDisappear,
                     0, 0, width / 2, height);
             mWindows[WindowType.Log.ordinal()] = mLogWin;
         }

@@ -14,6 +14,12 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+enum LogWindowType {
+    Movable,        // ドラッグで移動可能(クリックで表示切り替え)
+    Fix,            // 固定位置に表示(ドラッグ移動不可、クリックで非表示にならない)
+    AutoDisappear   // ログが追加されてから一定時間で消える
+}
+
 /**
  * メッセージを表示するWindow
  * メッセージをリストで保持する
@@ -29,15 +35,16 @@ public class ULogWindow extends UWindow {
     private Timer timer;
     private View parentView;
     private Context context;
+    private LogWindowType type;
     private int count = 1;
 
-    private ULogWindow(Context context, View parentView, float x, float y, int width, int height, int color)
+    private ULogWindow(float x, float y, int width, int height, int color)
     {
         super(DRAW_PRIORITY, x, y, width, height, color);
-        this.parentView = parentView;
-        this.context = context;
         setShow(false);
-        startTimer(SHOW_TIME);
+        if (type == LogWindowType.AutoDisappear) {
+            startTimer(SHOW_TIME);
+        }
     }
 
     /**
@@ -49,19 +56,29 @@ public class ULogWindow extends UWindow {
      * @return
      */
     public static ULogWindow createInstance(Context context, View parentView,
+                                            LogWindowType type,
                                             float x, float y, int width, int height)
     {
-        ULogWindow instance = new ULogWindow(context, parentView, x, y, width, height, Color.argb(128,0,0,0));
+        ULogWindow instance = new ULogWindow( x, y, width, height, Color.argb(128,0,0,0));
+        instance.parentView = parentView;
+        instance.context = context;
+        instance.type = type;
         instance.init();
 
         return instance;
     }
 
     private void init() {
+        if (type == LogWindowType.Fix) {
+            isShow = true;
+        }
         // 描画はDrawManagerに任せるのでDrawManagerに登録
         mDrawList = UDrawManager.getInstance().addDrawable(this);
     }
 
+    public void addLog(String test) {
+        addLog(test, Color.WHITE);
+    }
     /**
      * メッセージを追加する
      * @param text
@@ -74,7 +91,9 @@ public class ULogWindow extends UWindow {
             logs.removeLast();
         }
         setShow(true);
-        startTimer(SHOW_TIME);
+        if (type == LogWindowType.AutoDisappear) {
+            startTimer(SHOW_TIME);
+        }
         count++;
     }
 
@@ -83,6 +102,7 @@ public class ULogWindow extends UWindow {
      */
     public void clear() {
         logs.clear();
+        count = 1;
     }
 
     /**
@@ -132,14 +152,18 @@ public class ULogWindow extends UWindow {
 
         switch (vt.type) {
             case Click:
-                setShow(false);
+                if (type != LogWindowType.Fix) {
+                    setShow(false);
+                }
                 break;
             case Moving:
-                if (vt.isMoveStart()) {
+                if (type == LogWindowType.Movable) {
+                    if (vt.isMoveStart()) {
+                    }
+                    pos.x += vt.moveX;
+                    pos.y += vt.moveY;
+                    updateRect();
                 }
-                pos.x += vt.moveX;
-                pos.y += vt.moveY;
-                updateRect();
                 break;
         }
 
@@ -199,45 +223,6 @@ public class ULogWindow extends UWindow {
             canvas.drawText(msg.text, pos.x + drawX, pos.y + drawY, paint);
             drawY += 30;
         }
-    }
-
-    /**
-     * 描画範囲の矩形を取得
-     * @return
-     */
-    public Rect getRect() {
-        return rect;
-    }
-
-    public void setDrawList(DrawList drawList) {
-        mDrawList = drawList;
-    }
-    public DrawList getDrawList() {
-        return mDrawList;
-    }
-
-    /**
-     * アニメーション開始
-     */
-    public void startAnim() {
-
-    }
-
-    /**
-     * アニメーション処理
-     * onDrawからの描画処理で呼ばれる
-     * @return true:アニメーション中
-     */
-    public boolean animate() {
-        return false;
-    }
-
-    /**
-     * アニメーション中かどうか
-     * @return
-     */
-    public boolean isAnimating() {
-        return false;
     }
 }
 

@@ -13,7 +13,6 @@ public class UTestWindow extends UWindow {
 
     private UTestWindow(float x, float y, int width, int height, int color) {
         super(DRAW_PRIORITY, x, y, width, height, color);
-
     }
 
     /**

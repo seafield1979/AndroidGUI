@@ -88,8 +88,8 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         }
 
         // LogWindow
-        logWindow = ULogWindow.createInstance(getContext(), this, 0, 500, getWidth(), getHeight()
-                - 500);
+        logWindow = ULogWindow.createInstance(getContext(), this,LogWindowType.AutoDisappear,
+                0, 500, getWidth(), getHeight() - 500);
 
         // UWindows
         float x = 0;
