@@ -208,4 +208,14 @@ abstract public class UIcon extends Drawable implements AutoMovable {
     public boolean isAnimating() {
         return isAnimating;
     }
+
+    /**
+     * タッチイベント処理
+     * 親のUIconWindowで処理するのでここでは何もしない
+     * @param vt
+     * @return
+     */
+    public boolean touchEvent(ViewTouch vt) {
+        return false;
+    }
 }

@@ -11,15 +11,49 @@ import java.util.LinkedList;
  */
 
 public class UWindowList {
+    public static final String TAG = "UWindowList";
+
+    // シングルトン
+    private static UWindowList singleton = new UWindowList();
     // UWindowのリスト
     // 後のリストの方が描画優先度が高い
     LinkedList<UWindow> lists = new LinkedList<>();
 
-    public void add(UWindow window) {
-        // すでにリストに登録されていたら最前面に移動
-        lists.add(window);
+    private UWindowList() {
+    }
 
-        // 描画優先度も変更する
-        int priority = window.getDrawPriority();
+    public static UWindowList getInstance() {
+        return singleton;
+    }
+
+    /**
+     * リストに追加
+     * @param window
+     */
+    public void add(UWindow window) {
+        // 描画優先度を変更する
+        UDrawManager.getInstance().addDrawable(window);
+    }
+
+    /**
+     * リストから削除
+     * @param window
+     */
+    public void remove(UWindow window) {
+        lists.remove(window);
+    }
+
+    /**
+     * アクション
+     * @return true:再描画
+     */
+    public boolean doAction() {
+        boolean redraw = false;
+        for (UWindow window : lists) {
+            if (window.doAction()) {
+                redraw = true;
+            }
+        }
+        return redraw;
     }
 }

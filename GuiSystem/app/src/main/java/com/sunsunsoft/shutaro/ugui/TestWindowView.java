@@ -37,6 +37,7 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
 
     public static final String TAG = "TestButtonView";
     private static final int BUTTON_PRIORITY = 100;
+    private static final int WINDOW_NUM = 4;
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -53,7 +54,7 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
     private ULogWindow logWindow;
 
     // UWindows
-    private UWindow[] windows = new UWindow[2];
+    private UWindowList windows = UWindowList.getInstance();
 
     // get/set
     public TestWindowView(Context context) {
@@ -91,11 +92,17 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         // UWindows
         float x = 0;
         y = 0;
+        int windowW = width / 2;
         int windowH = height / 2;
-        for (int i=0; i<windows.length; i++) {
-            windows[i] = UTestWindow.createInstance(x, y, width, windowH, UColor
+        for (int i=0; i<WINDOW_NUM; i++) {
+            UWindow window = UTestWindow.createInstance(x, y, windowW, windowH, UColor
                     .getRandomColor());
-            y += windowH;
+            windows.add(window);
+            x += windowW;
+            if (x >= width) {
+                x = 0;
+                y += windowH;
+            }
         }
     }
 
@@ -108,12 +115,6 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         // 毎フレームの処理
         if (logWindow.doAction()) {
             invalidate();
-        }
-
-        for (UWindow window : windows) {
-            if (window.doAction()) {
-                invalidate();
-            }
         }
 
         // 背景塗りつぶし
@@ -140,20 +141,11 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
 
         viewTouch.checkTouchType(e);
 
-        // Buttons
-        for (UButton button : buttons) {
-            if (button.touchEvent(viewTouch)) {
-                refresh = true;
-            }
+        // Windows
+        if (UDrawManager.getInstance().touchEvent(viewTouch)) {
+            refresh = true;
         }
 
-        // Windows
-        for (UWindow window : windows) {
-            if (window.touchEvent(viewTouch)) {
-                refresh = true;
-                break;
-            }
-        }
         if (refresh) {
             invalidate();
         }

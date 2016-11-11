@@ -125,7 +125,7 @@ abstract public class Drawable {
      * @param canvas
      * @param paint
      */
-    abstract void draw(Canvas canvas, Paint paint, PointF offset );
+    abstract void draw(Canvas canvas, Paint paint, PointF offset);
 
     // 移動
     public void move(float moveX, float moveY) {
@@ -252,4 +252,11 @@ abstract public class Drawable {
         double v1 = ((double)animeFrame / (double)animeFrameMax) * 180;
         return (int)((1.0 -  Math.sin(v1 * RAD)) * 255);
     }
+
+    /**
+     * タッチ処理
+     * @param vt
+     * @return
+     */
+    abstract public boolean touchEvent(ViewTouch vt);
 }

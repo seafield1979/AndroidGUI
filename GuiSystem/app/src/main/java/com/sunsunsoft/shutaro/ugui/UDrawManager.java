@@ -8,6 +8,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.TreeMap;
 
 /**
@@ -22,8 +23,23 @@ public class UDrawManager {
 
     public static UDrawManager getInstance() { return singleton; }
 
+    // タッチ中のDrawableオブジェクト
+    // タッチを放すまで他のオブジェクトのタッチ処理はしない
+    private Drawable touchingObj;
+
     // 同じプライオリティーのDrawableリストを管理するリスト
     TreeMap<Integer, DrawList> lists;
+
+
+    // Get/Set
+
+    public Drawable getTouchingObj() {
+        return touchingObj;
+    }
+
+    public void setTouchingObj(Drawable touchingObj) {
+        this.touchingObj = touchingObj;
+    }
 
     /**
      * 初期化
@@ -126,6 +142,21 @@ public class UDrawManager {
         ULog.endCount(TAG);
         return redraw;
     }
+
+    /**
+     * タッチイベント処理
+     * 描画優先度の高い順に処理を行う
+     * @param vt
+     * @return true:再描画
+     */
+    public boolean touchEvent(ViewTouch vt) {
+        for (DrawList list : lists.descendingMap().values()) {
+            if (list.touchEvent(vt) ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 /**
@@ -148,7 +179,13 @@ class DrawList
         return priority;
     }
 
+    /**
+     * リストに追加
+     * すでにリストにあった場合は末尾に移動
+     * @param obj
+     */
     public void add(Drawable obj) {
+        list.remove(obj);
         list.add(obj);
     }
 
@@ -224,5 +261,38 @@ class DrawList
 
         canvas.drawText("" + priority, rect.centerX() - textRect.width() / 2, rect.centerY() - textRect.height() / 2, paint);
 
+    }
+
+    /**
+     * タッチイベント処理
+     * リストの末尾(手前に表示されている)から順に処理する
+     * @param vt
+     * @return true:再描画
+     */
+    protected boolean touchEvent(ViewTouch vt) {
+        UDrawManager manager = UDrawManager.getInstance();
+
+        // タッチを放すまではタッチしたオブジェクトのみ処理する
+        if (manager.getTouchingObj() != null &&
+                vt.type != TouchType.Touch)
+        {
+            if (manager.getTouchingObj().touchEvent(vt)) {
+                return true;
+            }
+            return false;
+        }
+
+        for(ListIterator it = list.listIterator(list.size()); it.hasPrevious();){
+            Drawable obj = (Drawable)it.previous();
+            if (obj.touchEvent(vt)) {
+                if (vt.type == TouchType.Touch) {
+                    UDrawManager.getInstance().setTouchingObj(obj);
+                } else if (vt.type == TouchType.TouchUp) {
+                    UDrawManager.getInstance().setTouchingObj(null);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }

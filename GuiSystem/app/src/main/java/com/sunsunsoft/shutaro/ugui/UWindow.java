@@ -6,7 +6,7 @@ import android.graphics.PointF;
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
-abstract public class UWindow extends Drawable implements AutoMovable, Touchable {
+abstract public class UWindow extends Drawable implements AutoMovable {
     public static final String TAG = "UWindow";
     protected static final int SCROLL_BAR_W = 100;
 
@@ -166,5 +166,22 @@ abstract public class UWindow extends Drawable implements AutoMovable, Touchable
         mScrollBar.updateScroll(contentTop);
 
         return true;
+    }
+
+    /**
+     * タッチイベント処理
+     * @param vt
+     * @return true:再描画
+     */
+    public boolean touchEvent(ViewTouch vt) {
+        switch (vt.type) {
+            case Touch:
+                if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {
+                    UWindowList.getInstance().add(this);
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 }

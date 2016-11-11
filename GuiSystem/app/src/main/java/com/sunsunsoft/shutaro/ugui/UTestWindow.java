@@ -48,15 +48,13 @@ public class UTestWindow extends UWindow {
     public boolean touchEvent(ViewTouch vt) {
         if (!isShow) return false;
 
-        // 範囲外なら除外
-        if (!(rect.contains((int)vt.getX(), (int)vt.getY()))) {
-            return false;
-        }
+        boolean redraw = super.touchEvent(vt);
 
         switch (vt.type) {
             case Click:
                 // BGの色を変更する
                 bgColor = UColor.getRandomColor();
+                redraw = true;
                 break;
             case Moving:
                 if (vt.isMoveStart()) {
@@ -64,10 +62,11 @@ public class UTestWindow extends UWindow {
                 pos.x += vt.moveX;
                 pos.y += vt.moveY;
                 updateRect();
+                redraw = true;
                 break;
         }
 
-        return true;
+        return redraw;
     }
 
     /**

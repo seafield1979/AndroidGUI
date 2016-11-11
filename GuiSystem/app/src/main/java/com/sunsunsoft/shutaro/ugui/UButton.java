@@ -12,7 +12,7 @@ import android.util.Log;
  * 生成後ViewのonDraw内で draw メソッドを呼ぶと表示される
  */
 
-public class UButton extends Drawable implements Touchable {
+public class UButton extends Drawable {
     public static final String TAG = "UButton";
     public static final int DRAW_PRIORITY = 100;
     private static final int PRESS_Y = 30;

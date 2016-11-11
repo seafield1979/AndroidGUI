@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.view.View;
 
 // メニューをタッチした時に返されるID
 enum MenuItemId {
@@ -109,6 +110,16 @@ abstract public class UMenuItem extends Drawable implements Animatable{
 
         animeFrame++;
         return true;
+    }
+
+    /**
+     * タッチイベント
+     * MenuBarクラスで処理するのでここでは何もしない
+     * @param vt
+     * @return
+     */
+    public boolean touchEvent(ViewTouch vt) {
+        return false;
     }
 
     /**
