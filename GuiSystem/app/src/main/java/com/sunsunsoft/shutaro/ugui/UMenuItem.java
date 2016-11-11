@@ -8,54 +8,88 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.view.View;
 
-// メニューをタッチした時に返されるID
-enum MenuItemId {
-    AddTop,
-    AddCard,
-    AddBook,
-    AddBox,
-    SortTop,
-    Sort1,
-    Sort2,
-    Sort3,
-    ListTypeTop,
-    ListType1,
-    ListType2,
-    ListType3,
-    DebugTop,
-    Debug1,
-    Debug2,
-    Debug3
-};
+import java.util.LinkedList;
 
 /**
  * メニューに表示する項目
  * アイコンを表示してタップされたらIDを返すぐらいの機能しか持たない
  */
-abstract public class UMenuItem extends Drawable implements Animatable{
+public class UMenuItem extends Drawable{
     public static final int DRAW_PRIORITY = 200;
     public static final int ITEM_W = 120;
     public static final int ITEM_H = 120;
-    public static final int ANIME_FRAME = 15;
+    public static final int ANIME_FRAME = 10;
 
-    protected UMenuBar parent;
+    private static final int CHILD_MARGIN_V = 30;
+    private static final int CHILD_MARGIN_H = 30;
+
+
+    protected UMenuBar menuBar;
     protected UMenuItemCallbacks mCallbacks;
     protected MenuItemId id;
+    protected int nestCount;
+
+    // 親アイテム
+    protected UMenuItem parentItem;
+    // 子アイテムリスト
+    protected LinkedList<UMenuItem> childItems;
+
+    // 開いた状態、子アイテムを表示中かどうか
+    protected boolean isOpened;
 
     // アイコン用画像
     protected Bitmap icon;
     protected int animeColor;
 
     // Get/Set
+    public LinkedList<UMenuItem> getChildItems() {
+        return childItems;
+    }
+
+    public boolean isOpened() {
+        return isOpened;
+    }
+
+    public void setOpened(boolean opened) {
+        isOpened = opened;
+    }
+
+    public int getNestCount() {
+        return nestCount;
+    }
+
+    public void setNestCount(int nestCount) {
+        this.nestCount = nestCount;
+    }
+
     public void setCallbacks(UMenuItemCallbacks callbacks){
         mCallbacks = callbacks;
     }
 
-    public UMenuItem(UMenuBar parent, MenuItemId id, Bitmap icon) {
+    public UMenuItem(UMenuBar menuBar, MenuItemId id, Bitmap icon) {
         super(DRAW_PRIORITY, 0,0,0,0);
-        this.parent = parent;
+        this.menuBar = menuBar;
         this.id = id;
         this.icon = icon;
+    }
+
+    public void setParentItem(UMenuItem parentItem) {
+        this.parentItem = parentItem;
+    }
+
+    /**
+     * 子要素を追加する
+     * @param child
+     */
+    public void addItem(UMenuItem child) {
+        if (childItems == null) {
+            childItems = new LinkedList<>();
+        }
+        // 親を設定する
+        parentItem = this;
+        child.setNestCount(this.nestCount + 1);
+
+        childItems.add(child);
     }
 
     public void draw(Canvas canvas, Paint paint, PointF parentPos) {
@@ -83,13 +117,20 @@ abstract public class UMenuItem extends Drawable implements Animatable{
                     new Rect((int)drawPos.x, (int)drawPos.y, (int)drawPos.x + ITEM_W,(int)drawPos.y + ITEM_H),
                     paint);
         }
+
+        // 子要素
+        if (childItems != null) {
+            for (UMenuItem item : childItems) {
+                item.draw(canvas, paint, drawPos);
+            }
+        }
     }
 
     /**
      * アニメーション開始
      */
     public void startAnim() {
-        parent.setAnimating(true);
+        menuBar.setAnimating(true);
         isAnimating = true;
         animeFrame = 0;
         animeFrameMax = ANIME_FRAME;
@@ -123,10 +164,163 @@ abstract public class UMenuItem extends Drawable implements Animatable{
     }
 
     /**
-     * クリックをチェック
-     * @param vt
+     * クリック処理
      * @param clickX
      * @param clickY
+     * @return
      */
-    abstract public boolean checkClick(ViewTouch vt, float clickX, float clickY);
+    public boolean checkClick(ViewTouch vt, float clickX, float clickY) {
+        if (pos.x <= clickX && clickX <= pos.x + ITEM_W &&
+                pos.y <= clickY && clickY <= pos.y + ITEM_H)
+        {
+            if (vt.type != TouchType.Click) return false;
+
+            // 子要素を持っていたら Open/Close
+            if (childItems != null) {
+                if (isOpened) {
+                    isOpened = false;
+                    closeMenu();
+                } else {
+                    isOpened = true;
+                    openMenu();
+                }
+                ULog.print("UMenuItem", "isOpened " + isOpened);
+            }
+
+            // タッチされた時の処理
+            if (mCallbacks != null) {
+                mCallbacks.menuItemClicked(id);
+            }
+            // アニメーション
+            startAnim();
+
+            return true;
+        }
+
+        // 子要素
+        if (isOpened() && childItems != null) {
+            for (UMenuItem child : childItems) {
+                // この座標系(親原点)に変換
+                float _clickX = clickX - pos.x;
+                float _clickY = clickY - pos.y;
+                if (child.checkClick(vt, _clickX, _clickY)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * メニューをOpenしたときの処理
+     */
+    public void openMenu() {
+        if (childItems == null) return;
+
+        isOpened = true;
+
+        int count = 1;
+        for (UMenuItem item : childItems) {
+            item.setPos(0, 0);
+            // 親の階層により開く方向が変わる
+            if (nestCount == 0) {
+                // 縦方向
+                item.startMoving(0, -count * (ITEM_H + CHILD_MARGIN_V), ANIME_FRAME);
+            } else if (nestCount == 1) {
+                // 横方向
+                item.startMoving(count * (ITEM_W + CHILD_MARGIN_H), 0, ANIME_FRAME);
+            }
+            count++;
+        }
+    }
+
+    /**
+     * メニューをCloseしたときの処理
+     */
+    public void closeMenu() {
+        if (childItems == null) return;
+
+        isOpened = false;
+
+        for (UMenuItem item : childItems) {
+            item.startMoving(0, 0, ANIME_FRAME);
+            if (item.isOpened) {
+                item.closeMenu();
+            }
+        }
+    }
+
+    /**
+     * 毎フレームの処理
+     * @return true:処理中(再描画あり)
+     */
+    public boolean doAction() {
+        boolean allFinished = true;
+
+        // 自分の処理
+        // 移動
+        if (move()) {
+            allFinished = false;
+        }
+        // アニメーション
+        if (animate()) {
+           allFinished = false;
+        }
+
+        // 子要素のdoAction
+        if (childItems != null) {
+            for (UMenuItem item : childItems) {
+                if (item.doAction()) {
+                    allFinished = false;
+                }
+            }
+        }
+        return !allFinished;
+    }
+
+    /**
+     * 子要素の移動処理
+     * @return  true:移動中 / false:移動完了
+     */
+//    public boolean moveChilds() {
+//        if (childItems == null) return false;
+//
+//        // 移動中のものが１つでもあったら false になる
+//        boolean allFinished = true;
+//
+//        for (UMenuItem item : childItems) {
+//            if (item.move()) {
+//                allFinished = false;
+//            }
+//        }
+//
+//        return !allFinished;
+//    }
+//
+//    /**
+//     * 子要素のアニメーション
+//     * @return
+//     */
+//    public boolean animateChilds() {
+//        if (childItems == null) return false;
+//
+//        // 移動中のものが１つでもあったら false になる
+//        boolean allFinished = true;
+//
+//        for (UMenuItem item : childItems) {
+//            if (item.move()) {
+//                allFinished = false;
+//            }
+//        }
+//
+//        return !allFinished;
+//    }
+
+
+    /**
+     * Drawableインターフェース
+     */
+    public PointF getDrawOffset() {
+        return null;
+    }
 }

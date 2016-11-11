@@ -5,6 +5,6 @@ package com.sunsunsoft.shutaro.ugui;
  */
 
 public interface UMenuItemCallbacks {
-    void menuItemCallback1(MenuItemId id);
+    void menuItemClicked(MenuItemId id);
     void menuItemCallback2();
 }

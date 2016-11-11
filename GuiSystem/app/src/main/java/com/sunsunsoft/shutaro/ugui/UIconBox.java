@@ -43,7 +43,7 @@ public class UIconBox extends UIcon {
 
         // ダミーで子要素を追加
         UIconWindow[] windows = parentWindow.getWindows();
-        subWindow = windows[UIconWindow.WindowType.Sub.ordinal()];
+        subWindow = windows[WindowType.Sub.ordinal()];
 
         mIconManager = UIconManager.createInstance(parentView, subWindow);
         for (int i=0; i<DUMMY_ICON_NUM; i++) {

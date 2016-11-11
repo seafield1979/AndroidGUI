@@ -52,6 +52,8 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
      * @param height
      */
     private void initDrawables(int width, int height) {
+        // 描画オブジェクトクリア
+        UDrawManager.getInstance().init();
 
         // buttons
         float y = 100;
@@ -160,9 +162,39 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
      *
      * @param id
      */
-    public void menuItemCallback1(MenuItemId id)
+    public void menuItemClicked(MenuItemId id)
     {
-
+        ULog.print(TAG, "clicked:" + id);
+        switch (id) {
+            case AddCard1:
+                break;
+            case AddCard2:
+                break;
+            case AddCard3:
+                break;
+            case AddBook:
+                break;
+            case AddBox:
+                break;
+            case Sort1:
+                break;
+            case Sort2:
+                break;
+            case Sort3:
+                break;
+            case ListType1:
+                break;
+            case ListType2:
+                break;
+            case ListType3:
+                break;
+            case Debug1:
+                break;
+            case Debug2:
+                break;
+            case Debug3:
+                break;
+        }
     }
 
     /**

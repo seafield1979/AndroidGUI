@@ -24,7 +24,7 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
 
         private final String text;
 
-        private ButtonId(final String text) {
+        ButtonId(final String text) {
             this.text = text;
         }
 
@@ -66,6 +66,8 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
      * @param height
      */
     private void initDrawables(int width, int height) {
+        // 描画オブジェクトクリア
+        UDrawManager.getInstance().init();
 
         // Buttons
         float y = 100;
@@ -160,10 +162,10 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
                 logWindow.clear();
                 break;
             case MoveUp:
-                logWindow.startMove(0,0, 20);
+                logWindow.startMoving(0,0, 20);
                 break;
             case MoveDown:
-                logWindow.startMove(0,500, 20);
+                logWindow.startMoving(0,500, 20);
                 break;
         }
     }

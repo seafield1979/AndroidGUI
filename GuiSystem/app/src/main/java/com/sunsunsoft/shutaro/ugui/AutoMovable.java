@@ -12,7 +12,7 @@ public interface AutoMovable {
      * @param dstY  目的位置y
      * @param frame  移動にかかるフレーム数
      */
-    void startMove(float dstX, float dstY, int frame);
+    void startMoving(float dstX, float dstY, int frame);
 
     /**
      * 移動

@@ -20,6 +20,7 @@ public class ULog {
     // 初期化、アプリ起動時に１回だけ呼ぶ
     public static void init() {
         setEnable(ViewTouch.TAG, false);
+        setEnable(UDrawManager.TAG, false);
         setEnable("UMenuBar", false);
         setEnable(UScrollBar.TAG, false);
         setEnable(UIconWindow.TAG, true);
@@ -53,6 +54,12 @@ public class ULog {
         counters.put(tag, count);
     }
     public static void endCount(String tag) {
-        Log.d(tag, "count:" + counters.get(tag));
+        // 有効無効判定
+        Boolean enable = enables.get(tag);
+        if (enable != null && !enable) {
+            // 出力しない
+        } else {
+            Log.d(tag, "count:" + counters.get(tag));
+        }
     }
 }

@@ -49,6 +49,8 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
      * @param height
      */
     private void initDrawables(int width, int height) {
+        // 描画オブジェクトクリア
+        UDrawManager.getInstance().init();
 
         float y = 100;
         for (int i=0; i<buttons.length; i++) {

@@ -72,6 +72,8 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
      * @param height
      */
     private void initDrawables(int width, int height) {
+        // 描画オブジェクトクリア
+        UDrawManager.getInstance().init();
 
         // Buttons
         float y = 100;

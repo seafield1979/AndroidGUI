@@ -23,6 +23,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
     }
 
     public static final String TAG = "TopView";
+    public static final int SUB_WINDOW_MOVE_FRAME = 10;
 
     // Windows
     private UWindow[] mWindows = new UWindow[WindowType.values().length];
@@ -54,31 +55,37 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
     }
 
     private void initWindows(int width, int height) {
+        // 描画オブジェクトクリア
+        UDrawManager.getInstance().init();
+
         ULog.print(TAG, "w:" + width + " h:" + height);
 
         // UIconWindow
         PointF pos1, pos2;
         Size size1, size2;
+        WindowDir winDir;
         if (width <= height) {
             pos1 = new PointF(0, 0);
             size1 = new Size(width, height/2);
             pos2 = new PointF(0, height/2);
             size2 = new Size(width, height/2);
+            winDir = WindowDir.Vertical;
         } else {
             pos1 = new PointF(0, 0);
             size1 = new Size(width / 2, height);
             pos2 = new PointF(width / 2, 0);
             size2 = new Size(width / 2, height);
+            winDir = WindowDir.Horizontal;
         }
 
         if (mIconWindows[0] == null) {
-            mIconWindows[0] = UIconWindow.createInstance(this, this, true, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
+            mIconWindows[0] = UIconWindow.createInstance(this, this, true, winDir, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
             mIconWindows[0].setWindows(mIconWindows);
             mWindows[WindowType.Icon1.ordinal()] = mIconWindows[0];
         }
 
         if (mIconWindows[1] == null) {
-            mIconWindows[1] = UIconWindow.createInstance(this, this, false, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
+            mIconWindows[1] = UIconWindow.createInstance(this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
             mIconWindows[1].setWindows(mIconWindows);
             mWindows[WindowType.Icon2.ordinal()] = mIconWindows[1];
         }
@@ -202,7 +209,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
     /**
      * メニューアイテムをタップした時のコールバック
      */
-    public void menuItemCallback1(MenuItemId id) {
+    public void menuItemClicked(MenuItemId id) {
         switch (id) {
             case AddTop:
                 break;
@@ -264,9 +271,22 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
                     UIconBox box = (UIconBox)icon;
                     mIconWindows[1].setIconManager(box.getIconManager());
                     mIconWindows[1].sortRects(false);
-                    float posY = mIconWindows[1].pos.y;
-                    mIconWindows[1].setPos(0, getHeight(), true);
-                    mIconWindows[1].startMove(0, posY, 10);
+
+                    // SubWindowを画面外から移動させる
+                    float sx, sy, dx, dy;
+                    if (mIconWindows[1].getDir() == WindowDir.Vertical) {
+                        sx = 0;
+                        sy = getHeight();
+                        dx = 0;
+                        dy = mIconWindows[1].getBasePos().y;
+                    } else {
+                        sx = getWidth();
+                        sy = 0;
+                        dx = mIconWindows[1].getBasePos().x;
+                        dy = 0;
+                    }
+                    mIconWindows[1].setPos(sx, sy, true);
+                    mIconWindows[1].startMoving(dx, dy, SUB_WINDOW_MOVE_FRAME);
                 }
             }
                 break;

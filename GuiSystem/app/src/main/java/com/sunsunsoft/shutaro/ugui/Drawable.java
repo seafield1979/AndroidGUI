@@ -148,7 +148,7 @@ abstract public class Drawable {
      * @param dstY  目的位置y
      * @param frame  移動にかかるフレーム数
      */
-    public void startMove(float dstX, float dstY, int frame) {
+    public void startMoving(float dstX, float dstY, int frame) {
         if (pos.x == dstX && pos.y == dstY) {
             return;
         }
@@ -159,6 +159,8 @@ abstract public class Drawable {
         movingFrame = 0;
         movingFrameMax = frame;
         isMoving = true;
+
+        ULog.print(TAG, "startMoving:" + dstPos.x + " " + dstPos.y);
     }
 
     /**

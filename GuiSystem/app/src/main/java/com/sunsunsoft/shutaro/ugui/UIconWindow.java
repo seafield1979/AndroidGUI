@@ -15,21 +15,29 @@ import java.util.List;
 /**
  * アイコンのリストを表示するWindow
  */
+enum viewState {
+    none,
+    drag,               // アイコンのドラッグ中
+    icon_moving,        // アイコンの一変更後の移動中
+}
+
+// アイコンウィンドウの種類
+// Homeはデスクトップのアイコンを表示するウィンドウ
+// サブはHome以下のBoxアイコンを開いた時のウィンドウ
+enum WindowType {
+    Home,
+    Sub
+}
+
+// ウィンドウの向き
+// 画面が横長の場合はHorizontal
+// 画面が縦長の場合はVertical
+enum WindowDir {
+    Horizontal,
+    Vertical
+}
 
 public class UIconWindow extends UWindow implements AutoMovable{
-    enum viewState {
-        none,
-        drag,               // アイコンのドラッグ中
-        icon_moving,        // アイコンの一変更後の移動中
-    }
-
-    // アイコンウィンドウの種類
-    // Homeはデスクトップのアイコンを表示するウィンドウ
-    // サブはHome以下のBoxアイコンを開いた時のウィンドウ
-    enum WindowType {
-        Home,
-        Sub
-    }
 
     public static final String TAG = "UIconWindow";
 
@@ -52,6 +60,8 @@ public class UIconWindow extends UWindow implements AutoMovable{
     private UIconCallbacks mIconCallbacks;
     private UIconManager mIconManager;
     private DrawList mDrawList;
+    private PointF basePos;
+    private WindowDir dir;
 
     // 他のIconWindow
     // ドラッグで他のWindowにアイコンを移動するのに使用する
@@ -73,14 +83,23 @@ public class UIconWindow extends UWindow implements AutoMovable{
     private int skipFrame = 3;  // n回に1回描画
     private int skipCount;
 
+
+
+
+
+
     // Get/Set
     public WindowType getType() {
         return type;
     }
-
     public void setType(WindowType type) {
         this.type = type;
     }
+
+    public PointF getBasePos() {
+        return basePos;
+    }
+
     public UIconManager getIconManager() {
         return mIconManager;
     }
@@ -91,6 +110,14 @@ public class UIconWindow extends UWindow implements AutoMovable{
     public LinkedList<UIcon> getIcons() {
         if (mIconManager == null) return null;
         return mIconManager.getIcons();
+    }
+
+    public WindowDir getDir() {
+        return dir;
+    }
+
+    public void setDir(WindowDir dir) {
+        this.dir = dir;
     }
 
     public void setWindows(UIconWindow[] windows) {
@@ -124,25 +151,34 @@ public class UIconWindow extends UWindow implements AutoMovable{
         this.dragedIcon = dragedIcon;
     }
 
-    private UIconWindow(View parent, UIconCallbacks iconCallbacks, float x, float y, int width, int height, int color) {
+
+
+    /**
+     * コンストラクタ
+     */
+    private UIconWindow(float x, float y, int width, int height, int color) {
         super(DRAW_PRIORITY, x, y, width, height, color);
-        this.mParentView = parent;
-        this.mIconCallbacks = iconCallbacks;
+        basePos = new PointF(x,y);
     }
     /**
      * インスタンスを生成する
      * Homeタイプが２つできないように自動でHome、Subのタイプ分けがされる
      * @return
      */
-    public static UIconWindow createInstance(View parent, UIconCallbacks iconCallbacks, boolean isHome, float x, float y, int width, int height, int bgColor)
+    public static UIconWindow createInstance(View parent, UIconCallbacks iconCallbacks,
+                                             boolean isHome, WindowDir dir,
+                                             float x, float y, int width, int height, int bgColor)
     {
-        UIconWindow instance = new UIconWindow(parent, iconCallbacks, x, y, width, height, bgColor);
+        UIconWindow instance = new UIconWindow(x, y, width, height, bgColor);
         if (isHome) {
             instance.type = WindowType.Home;
             instance.mIconManager = UIconManager.createInstance(parent, instance);
         } else {
             instance.type = WindowType.Sub;
         }
+        instance.mParentView = parent;
+        instance.mIconCallbacks = iconCallbacks;
+        instance.dir = dir;
         return instance;
     }
 
@@ -344,7 +380,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 if ( height >= maxHeight ) {
                     maxHeight = height;
                 }
-                icon.startMove(x,y,MOVING_TIME);
+                icon.startMoving(x,y,MOVING_TIME);
                 i++;
             }
             state = viewState.icon_moving;
