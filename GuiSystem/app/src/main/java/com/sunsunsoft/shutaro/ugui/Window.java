@@ -1,29 +1,18 @@
 package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Color;
 import android.graphics.PointF;
-import android.graphics.Rect;
 
 /**
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
-abstract public class Window implements AutoMovable, Drawable {
+abstract public class Window extends Drawable implements AutoMovable, Touchable {
     public static final String TAG = "Window";
     protected static final int SCROLL_BAR_W = 100;
 
     // メンバ変数
     protected boolean isShow = true;
-    protected PointF pos = new PointF();
-    protected Size size = new Size();
-    protected Rect rect = new Rect();
     protected int bgColor;
-
-    // Window移動用
-    protected boolean isMoving;
-    protected int movingFrame;
-    protected int movingFrameMax;
-    protected PointF srcPos = new PointF();
-    protected PointF dstPos = new PointF();
 
     // スクロール用
     protected Size contentSize = new Size();     // 領域全体のサイズ
@@ -44,22 +33,6 @@ abstract public class Window implements AutoMovable, Drawable {
         if (update) {
             updateRect();
         }
-    }
-
-    protected void updateRect() {
-        rect.left = (int)pos.x;
-        rect.right = (int)pos.x + size.width;
-        rect.top = (int)pos.y;
-        rect.bottom = (int)pos.y + size.height;
-        if (rect.top < 0) {
-            ULog.print(TAG, "" + rect.top);
-        }
-    }
-
-    protected void setSize(int width, int height) {
-        size.width = width;
-        size.height = height;
-        ULog.print("Window", "size:" + size.width + " " + size.height);
     }
 
     public PointF getContentTop() {
@@ -118,6 +91,7 @@ abstract public class Window implements AutoMovable, Drawable {
      * インスタンス生成には createWindow を使うべし
      */
     protected Window(float x, float y, int width, int height, int color) {
+        super(x,y,width,height);
         pos.x = x;
         pos.y = y;
         size.width = width;
@@ -157,22 +131,6 @@ abstract public class Window implements AutoMovable, Drawable {
     abstract public boolean doAction();
 
     /**
-     * 描画処理
-     *
-     * @param canvas
-     * @param paint
-     * @return trueなら描画継続
-     */
-//    abstract public boolean draw(Canvas canvas, Paint paint);
-
-    /**
-     * タッチ処理
-     * @param vt
-     * @return trueならViewを再描画
-     */
-    abstract public boolean touchEvent(ViewTouch vt);
-
-    /**
      * Viewをスクロールする処理
      * Viewの空きスペースをドラッグすると表示領域をスクロールすることができる
      * @param vt
@@ -208,51 +166,5 @@ abstract public class Window implements AutoMovable, Drawable {
         mScrollBar.updateScroll(contentTop);
 
         return true;
-    }
-
-    /**
-     * 自動移動開始
-     * @param dstX  目的位置x
-     * @param dstY  目的位置y
-     * @param frame  移動にかかるフレーム数
-     */
-    public void startMove(float dstX, float dstY, int frame) {
-        if (pos.x == dstX && pos.y == dstY) {
-            return;
-        }
-        srcPos.x = pos.x;
-        srcPos.y = pos.y;
-        dstPos.x = dstX;
-        dstPos.y = dstY;
-        movingFrame = 0;
-        movingFrameMax = frame;
-        isMoving = true;
-    }
-
-    /**
-     * 移動
-     * 移動開始位置、終了位置、経過フレームから現在位置を計算する
-     * @return true:移動中
-     */
-    public boolean move() {
-        if (!isMoving) return false;
-
-        boolean ret = true;
-
-        float ratio = (float)movingFrame / (float)movingFrameMax;
-        pos.x = srcPos.x + ((dstPos.x - srcPos.x) * ratio);
-        pos.y = srcPos.y + ((dstPos.y - srcPos.y) * ratio);
-
-        movingFrame++;
-        if (movingFrame >= movingFrameMax) {
-            isMoving = false;
-            pos.x = dstPos.x;
-            pos.y = dstPos.y;
-
-            ret = false;
-        }
-        updateRect();
-        ULog.print(TAG, "move");
-        return ret;
     }
 }

@@ -90,7 +90,10 @@ public class TopView extends View implements OnTouchListener, MenuItemCallbacks,
 
         // MenuBar
         if (mMenuBar == null) {
-            mMenuBar = MenuBar.createInstance(this, this, width, height, Color.BLACK);
+            View hoge = (View)this;
+            MenuItemCallbacks call = (MenuItemCallbacks)this;
+            mMenuBar = MenuBar.createInstance((View)this, (MenuItemCallbacks)this, width, height,
+                    Color.BLACK);
             mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
 

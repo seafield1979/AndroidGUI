@@ -124,6 +124,10 @@ public class MenuItemTop extends MenuItem{
         return false;
     }
 
+    public PointF getDrawOffset() {
+        return null;
+    }
+
     /**
      * メニューをOpenしたときの処理
      */
@@ -159,7 +163,7 @@ public class MenuItemTop extends MenuItem{
         boolean allFinished = true;
 
         for (MenuItemChild item : childItems) {
-            if (item.move() == false) {
+            if (item.move()) {
                 allFinished = false;
             }
         }

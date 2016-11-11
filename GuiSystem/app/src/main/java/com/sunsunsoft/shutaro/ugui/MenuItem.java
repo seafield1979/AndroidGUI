@@ -31,40 +31,26 @@ enum MenuItemId {
  * メニューに表示する項目
  * アイコンを表示してタップされたらIDを返すぐらいの機能しか持たない
  */
-abstract public class MenuItem implements Animatable{
+abstract public class MenuItem extends Drawable implements Animatable{
     public static final int ITEM_W = 120;
     public static final int ITEM_H = 120;
     public static final int ANIME_FRAME = 15;
 
     protected MenuBar parent;
     protected MenuItemCallbacks mCallbacks;
-
-    protected PointF pos = new PointF();
     protected MenuItemId id;
 
     // アイコン用画像
     protected Bitmap icon;
-
-    // アニメーション用
-    private boolean isAnimating;
-    private int animeFrame;
-    private int animeFrameMax;
-    private int animeColor;
+    protected int animeColor;
 
     // Get/Set
     public void setCallbacks(MenuItemCallbacks callbacks){
         mCallbacks = callbacks;
     }
 
-    public void setPos(float x, float y) {
-        pos.x = x;
-        pos.y = y;
-    }
-    public PointF getPos() {
-        return pos;
-    }
-
     public MenuItem(MenuBar parent, MenuItemId id, Bitmap icon) {
+        super(0,0,0,0);
         this.parent = parent;
         this.id = id;
         this.icon = icon;
@@ -84,8 +70,7 @@ abstract public class MenuItem implements Animatable{
             // アニメーション処理
             // フラッシュする
             if (isAnimating) {
-                double v1 = ((double)animeFrame / (double)animeFrameMax) * 180;
-                int alpha = (int)((1.0 -  Math.sin(v1 * RAD)) * 255);
+                int alpha = getAnimeAlpha();
                 paint.setColor((alpha << 24) | animeColor);
             } else {
                 paint.setColor(0xff000000);

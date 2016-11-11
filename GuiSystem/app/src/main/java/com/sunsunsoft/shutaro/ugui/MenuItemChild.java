@@ -17,14 +17,6 @@ public class MenuItemChild extends MenuItem implements AutoMovable{
     // 親項目の座標。メニューが閉じるときはこの座標に向かって移動する
     private PointF parentPos;
 
-    // 移動用
-    private boolean isMoving;
-    private int movingFrame;
-    private int movingFrameMax;
-    private float srcX, srcY;
-    private float dstX, dstY;
-
-
     // Get/Set
     public PointF getBasePos() {
         return basePos;
@@ -83,44 +75,7 @@ public class MenuItemChild extends MenuItem implements AutoMovable{
         startMove(parentPos.x, parentPos.y, MOVING_FRAME);
     }
 
-    /**
-     * 自動移動開始
-     * @param dstX  目的位置x
-     * @param dstY  目的位置y
-     * @param frame  移動にかかるフレーム数
-     */
-    public void startMove(float dstX, float dstY, int frame) {
-        if (pos.x == dstX && pos.y == dstY) {
-            return;
-        }
-        srcX = pos.x;
-        srcY = pos.y;
-        this.dstX = dstX;
-        this.dstY = dstY;
-        movingFrame = 0;
-        movingFrameMax = frame;
-        isMoving = true;
-    }
-
-    /**
-     * 移動
-     * 移動開始位置、終了位置、経過フレームから現在位置を計算する
-     * @return 移動完了したらtrue
-     */
-    public boolean move() {
-        if (!isMoving) return true;
-
-        float ratio = (float)movingFrame / (float)movingFrameMax;
-        pos.x = srcX + ((dstX - srcX) * ratio);
-        pos.y = srcY + ((dstY - srcY) * ratio);
-
-        movingFrame++;
-        if (movingFrame >= movingFrameMax) {
-            isMoving = false;
-            pos.x = dstX;
-            pos.y = dstY;
-            return true;
-        }
-        return false;
+    public PointF getDrawOffset() {
+        return null;
     }
 }

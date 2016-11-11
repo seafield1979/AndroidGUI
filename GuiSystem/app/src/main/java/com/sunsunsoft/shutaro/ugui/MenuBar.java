@@ -39,14 +39,6 @@ public class MenuBar extends Window {
     private boolean isAnimating;
 
     // Get/Set
-    public boolean isShow() {
-        return isShow;
-    }
-
-    public void setShow(boolean show) {
-        isShow = show;
-    }
-
     public void setAnimating(boolean animating) {
         isAnimating = animating;
     }
@@ -172,6 +164,7 @@ public class MenuBar extends Window {
      *
      * @return true:処理中 / false:完了
      */
+    @Override
     public boolean doAction() {
         if (!isShow) return false;
 
@@ -297,35 +290,6 @@ public class MenuBar extends Window {
     }
 
     /**
-     * 描画オフセットを取得する
-     * @return
-     */
-    public PointF getDrawOffset() {
-        return null;
-    }
-
-    /**
-     * 描画範囲の矩形を取得
-     * @return
-     */
-    public Rect getRect() {
-        return rect;
-    }
-
-    public void setDrawList(DrawList drawList) {
-        mDrawList = drawList;
-    }
-    public DrawList getDrawList() {
-        return mDrawList;
-    }
-
-    /**
-     * アニメーション開始
-     */
-    public void startAnim() {
-    }
-
-    /**
      * アニメーション処理
      * onDrawからの描画処理で呼ばれる
      * @return true:アニメーション中
@@ -346,10 +310,11 @@ public class MenuBar extends Window {
     }
 
     /**
-     * アニメーション中かどうか
+     * 描画オフセットを取得する
      * @return
      */
-    public boolean isAnimating() {
-        return isAnimating;
+    public PointF getDrawOffset() {
+        return null;
     }
+
 }
