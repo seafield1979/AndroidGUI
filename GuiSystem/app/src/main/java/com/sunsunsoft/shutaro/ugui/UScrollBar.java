@@ -35,7 +35,7 @@ public class UScrollBar {
     private ScrollBarType type;
     private ScrollBarInOut inOut;
 
-    private float x, y;
+    private PointF pos = new PointF();
     private int contentLen;       // コンテンツ領域のサイズ
     private int viewLen;          // 表示画面のサイズ
     private float topPos;         // スクロールの現在の位置
@@ -44,7 +44,7 @@ public class UScrollBar {
 
     private int bgLength, bgWidth;
 
-    private float barPos;       // バーの座標
+    private float barPos;        // バーの座標（縦ならy,横ならx)
     private int barLength;       // バーの長さ(縦バーなら高さ、横バーなら幅)
 
     private int bgColor, barColor;
@@ -58,7 +58,9 @@ public class UScrollBar {
         return (type == ScrollBarType.Top || type == ScrollBarType.Bottom);
     }
 
-    // Get/Set
+    /**
+     * Get/Set
+     */
     public void setBgColor(int bgColor) {
         this.bgColor = bgColor;
     }
@@ -80,6 +82,9 @@ public class UScrollBar {
         }
     }
 
+    public int getBgWidth() {
+        return bgWidth;
+    }
 
     /**
      * コンストラクタ
@@ -126,39 +131,39 @@ public class UScrollBar {
 
         switch (type) {
             case Top:
-                x = 0;
+                pos.x = 0;
                 bgLength = viewWidth;
                 if (inOut == ScrollBarInOut.In) {
-                    y = 0;
+                    pos.y = 0;
                 } else {
-                    y = -bgWidth;
+                    pos.y = -bgWidth;
                 }
                 break;
             case Bottom:
-                x = 0;
+                pos.x = 0;
                 bgLength = viewWidth;
                 if (inOut == ScrollBarInOut.In) {
-                    y = viewHeight - bgWidth;
+                    pos.y = viewHeight - bgWidth;
                 } else {
-                    y = viewHeight;
+                    pos.y = viewHeight;
                 }
                 break;
             case Left:
-                y = 0;
+                pos.y = 0;
                 bgLength = viewHeight;
                 if (inOut == ScrollBarInOut.In) {
-                    x = 0;
+                    pos.x = 0;
                 } else {
-                    x = -bgWidth;
+                    pos.x = -bgWidth;
                 }
                 break;
             case Right:
-                y = 0;
+                pos.y = 0;
                 bgLength = viewHeight;
                 if (inOut == ScrollBarInOut.In) {
-                    x = viewWidth - bgWidth;
+                    pos.x = viewWidth - bgWidth;
                 } else {
-                    x = viewWidth;
+                    pos.x = viewWidth;
                 }
                 break;
         }
@@ -222,8 +227,8 @@ public class UScrollBar {
         RectF bgRect = new RectF();
         RectF barRect = new RectF();
 
-        float baseX = x + parentPos.x;
-        float baseY = y + parentPos.y;
+        float baseX = pos.x + parentPos.x;
+        float baseY = pos.y + parentPos.y;
 
         if (isHorizontal()) {
             bgRect.left = baseX;
@@ -338,15 +343,15 @@ public class UScrollBar {
         float ey = vt.touchY() - parentPos.y;
 
         if (isVertical()) {
-            if (x <= ex && ex < x + bgWidth &&
-                y <= ey && ey < y + bgLength)
+            if (pos.x <= ex && ex < pos.x + bgWidth &&
+                    pos.y <= ey && ey < pos.y + bgLength)
             {
                 if (ey < barPos) {
                     // 上にスクロール
                     ULog.print(TAG, "Scroll Up");
                     scrollUp();
                     return true;
-                } else if (ey > y + barPos + barLength) {
+                } else if (ey > pos.y + barPos + barLength) {
                     // 下にスクロール
                     ULog.print(TAG, "Scroll Down");
                     scrollDown();
@@ -359,15 +364,15 @@ public class UScrollBar {
                 }
             }
         } else {
-            if (x <= ex && ex < x + bgLength &&
-                    y <= ey && ey < y + bgWidth)
+            if (pos.x <= ex && ex < pos.x + bgLength &&
+                    pos.y <= ey && ey < pos.y + bgWidth)
             {
                 if (ex < barPos) {
                     // 上にスクロール
                     ULog.print(TAG, "Scroll Up");
                     scrollUp();
                     return true;
-                } else if (ex > x + barPos + barLength) {
+                } else if (ex > pos.x + barPos + barLength) {
                     // 下にスクロール
                     ULog.print(TAG, "Scroll Down");
                     scrollDown();

@@ -13,11 +13,13 @@ abstract public class UWindow extends Drawable implements AutoMovable {
     // メンバ変数
     protected boolean isShow = true;
     protected int bgColor;
+    protected Size clientSize = new Size();       // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
 
     // スクロール用
     protected Size contentSize = new Size();     // 領域全体のサイズ
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
-    protected UScrollBar mScrollBar;
+    protected UScrollBar mScrollBarH;
+    protected UScrollBar mScrollBarV;
 
     public boolean isShow() {
         return isShow;
@@ -92,16 +94,17 @@ abstract public class UWindow extends Drawable implements AutoMovable {
      */
     protected UWindow(int priority, float x, float y, int width, int height, int color) {
         super(priority, x,y,width,height);
-        pos.x = x;
-        pos.y = y;
-        size.width = width;
-        size.height = height;
         this.bgColor = color;
+        clientSize.width = size.width - SCROLL_BAR_W;
+        clientSize.height = size.height - SCROLL_BAR_W;
         updateRect();
 
-        // スクロールバー
-        mScrollBar = new UScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
-        mScrollBar.setBgColor(Color.rgb(128, 128, 128));
+        // ScrollBar
+        mScrollBarV = new UScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
+        mScrollBarV.setBgColor(Color.rgb(128, 128, 128));
+
+        mScrollBarH = new UScrollBar(ScrollBarType.Bottom, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
+        mScrollBarH.setBgColor(Color.rgb(128, 128, 128));
     }
 
     public void setContentSize(int width, int height) {
@@ -163,7 +166,7 @@ abstract public class UWindow extends Drawable implements AutoMovable {
             }
         }
         // スクロールバーの表示を更新
-        mScrollBar.updateScroll(contentTop);
+        mScrollBarV.updateScroll(contentTop);
 
         return true;
     }

@@ -44,6 +44,8 @@ public class UIconWindow extends UWindow implements AutoMovable{
     public static final int DRAW_PRIORITY = 100;
     public static final int DRAG_ICON_PRIORITY = 10;
 
+    public static final int ICON_MARGIN = 30;
+
     private static final int RECT_ICON_NUM = 10;
     private static final int CIRCLE_ICON_NUM = 10;
     private static final int BOX_ICON_NUM = 10;
@@ -230,7 +232,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
         // 描画はDrawManagerに任せるのでDrawManagerに登録
         mDrawList = UDrawManager.getInstance().addDrawable(this);
 
-        sortRects(false);
+        sortIcons(false);
     }
 
     /**
@@ -318,7 +320,11 @@ public class UIconWindow extends UWindow implements AutoMovable{
         }
 
         // スクロールバー
-        mScrollBar.draw(canvas, paint);
+        if (dir == WindowDir.Vertical) {
+            mScrollBarV.draw(canvas, paint);
+        } else {
+            mScrollBarH.draw(canvas, paint);
+        }
 
         if (UDebug.DRAW_ICON_BLOCK_RECT) {
             mIconManager.getBlockManager().draw(canvas, paint, getWin2ScreenPos());
@@ -350,59 +356,82 @@ public class UIconWindow extends UWindow implements AutoMovable{
     public void updateSize(int width, int height) {
         super.updateSize(width, height);
         // アイコンの整列
-        sortRects(false);
+        sortIcons(false);
 
         // スクロールバー
-        mScrollBar.updateSize(width, height);
-        mScrollBar.updateContent(contentSize);
+        if (dir == WindowDir.Vertical) {
+            mScrollBarV.updateSize(width, height);
+            mScrollBarV.updateContent(contentSize);
+        } else {
+            mScrollBarH.updateSize(width, height);
+            mScrollBarH.updateContent(contentSize);
+        }
     }
 
     /**
      * アイコンを整列する
      * Viewのサイズが確定した時点で呼び出す
      */
-    public void sortRects(boolean animate) {
+    public void sortIcons(boolean animate) {
         List<UIcon> icons = getIcons();
         if (icons == null) return;
 
-        int column = size.width / (ICON_W + 20);
+        int column = (clientSize.width - ICON_MARGIN) / (ICON_W + ICON_MARGIN);
         if (column <= 0) {
             return;
         }
 
-        int maxHeight = 0;
-        if (animate) {
-            int i=0;
+        int maxSize = 0;
+
+        int i=0;
+        if (dir == WindowDir.Vertical) {
+            int margin = (clientSize.width - ICON_W * column) / (column + 1);
             for (UIcon icon : icons) {
-                int x = (i%column) * (ICON_W + 20);
-                int y = (i/column) * (ICON_H + 20);
-                int height = y + (ICON_H + 20);
-                if ( height >= maxHeight ) {
-                    maxHeight = height;
+                int x = margin + (i % column) * (ICON_W + margin);
+                int y = margin + (i / column) * (ICON_H + margin);
+                int height = y + (ICON_H + margin);
+                if (height >= maxSize) {
+                    maxSize = height;
                 }
-                icon.startMoving(x,y,MOVING_TIME);
+                if (animate) {
+                    icon.startMoving(x, y, MOVING_TIME);
+                } else {
+                    icon.setPos(x, y);
+                }
                 i++;
             }
-            state = viewState.icon_moving;
+        } else {
+            int margin = (clientSize.height - ICON_H * column) / (column + 1);
+            for (UIcon icon : icons) {
+                int x = margin + (i / column) * (ICON_W + margin);
+                int y = margin + (i % column) * (ICON_H + margin);
+                int width = x + (ICON_W + margin);
+                if (width >= maxSize) {
+                    maxSize = width;
+                }
+                if (animate) {
+                    icon.startMoving(x, y, MOVING_TIME);
+                } else {
+                    icon.setPos(x, y);
+                }
+                i++;
+            }
         }
-        else {
-            int i=0;
-            for (UIcon icon : icons) {
-                int x = (i%column) * (ICON_W + 20);
-                int y = (i/column) * (ICON_H + 20);
-                int height = y + (ICON_H + 20);
-                if ( height >= maxHeight ) {
-                    maxHeight = height;
-                }
-                icon.setPos(x, y);
-                i++;
-            }
+
+        if (!animate) {
             IconsPosFixed();
         }
-        // メニューバーに重ならないように下にマージンを設ける
-        setContentSize(size.width, maxHeight + MARGIN_D);
+        state = viewState.icon_moving;
 
-        mScrollBar.updateContent(contentSize);
+        // メニューバーに重ならないように下にマージンを設ける
+        if (dir == WindowDir.Vertical) {
+            setContentSize(size.width, maxSize + MARGIN_D);
+            mScrollBarV.updateContent(contentSize);
+        } else {
+            setContentSize(maxSize + MARGIN_D, size.height);
+            mScrollBarH.updateContent(contentSize);
+        }
+
 
         mParentView.invalidate();
     }
@@ -632,11 +661,11 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 if (isDroped) {
                     dragedIcon.setPos(win1ToWin2X(dragedIcon.pos.x, this, window), win1ToWin2Y(dragedIcon.pos.y, this, window));
                 }
-                window.sortRects(true);
+                window.sortIcons(true);
             }
             if (isDroped) break;
         }
-        this.sortRects(true);
+        this.sortIcons(true);
 
         return true;
     }
@@ -654,9 +683,16 @@ public class UIconWindow extends UWindow implements AutoMovable{
         boolean done = false;
 
         // スクロールバーのタッチ処理
-        if (mScrollBar.touchEvent(vt)) {
-            contentTop.y = mScrollBar.getTopPos();
-            return true;
+        if (dir == WindowDir.Vertical) {
+            if (mScrollBarV.touchEvent(vt)) {
+                contentTop.y = mScrollBarV.getTopPos();
+                return true;
+            }
+        } else {
+            if (mScrollBarH.touchEvent(vt)) {
+                contentTop.x = mScrollBarH.getTopPos();
+                return true;
+            }
         }
 
         // 範囲外なら除外
@@ -696,7 +732,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                     }
                     break;
                 case MoveCancel:
-                    sortRects(false);
+                    sortIcons(false);
                     setDragedIcon(null);
                     break;
             }
@@ -749,9 +785,9 @@ public class UIconWindow extends UWindow implements AutoMovable{
             // アイコン2 UWindow -> アイコン1 UWindow
             icon2.setPos(icon2.pos.x + window2.pos.x - this.pos.x,
                     icon2.pos.y + window2.pos.y - this.pos.y);
-            window2.sortRects(true);
+            window2.sortIcons(true);
         }
-        window1.sortRects(true);
+        window1.sortIcons(true);
     }
 
     /**
@@ -783,10 +819,10 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 // ドロップアイコンの座標系を変換
                 dragedIcon.setPos(icon1.pos.x + window2.pos.x - window1.pos.x,
                         icon1.pos.y + window2.pos.y - window1.pos.y);
-                window2.sortRects(animate);
+                window2.sortIcons(animate);
             }
         }
-        window1.sortRects(animate);
+        window1.sortIcons(animate);
     }
 
     /**
@@ -810,12 +846,12 @@ public class UIconWindow extends UWindow implements AutoMovable{
             icons2.add(icon1);
 
             if (window2 != null) {
-                window2.sortRects(false);
+                window2.sortIcons(false);
                 icon1.setParentWindow(window2);
             }
         }
 
-        sortRects(true);
+        sortIcons(true);
     }
 
     /**

@@ -200,7 +200,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
         // アイコンの初期座標は追加メニューアイコンの位置
         PointF menuPos = mMenuBar.getItemPos(menuItemId);
         icon.setPos(iconWindow.toWinX(menuPos.x), iconWindow.toWinY(menuPos.y));
-        mIconWindows[windowId].sortRects(true);
+        mIconWindows[windowId].sortIcons(true);
     }
 
     /**
@@ -270,7 +270,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
                 if (icon instanceof UIconBox) {
                     UIconBox box = (UIconBox)icon;
                     mIconWindows[1].setIconManager(box.getIconManager());
-                    mIconWindows[1].sortRects(false);
+                    mIconWindows[1].sortIcons(false);
 
                     // SubWindowを画面外から移動させる
                     float sx, sy, dx, dy;
