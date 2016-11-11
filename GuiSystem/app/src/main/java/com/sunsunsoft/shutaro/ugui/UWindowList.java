@@ -15,13 +15,33 @@ public class UWindowList {
 
     // シングルトン
     private static UWindowList singleton = new UWindowList();
+
+
+    /**
+     * メンバ変数
+     */
     // UWindowのリスト
     // 後のリストの方が描画優先度が高い
     LinkedList<UWindow> lists = new LinkedList<>();
 
+
+    /**
+     * Get/Set
+     */
+    public LinkedList<UWindow> getLists() {
+        return lists;
+    }
+
+    /**
+     * コンストラクタ
+     */
     private UWindowList() {
     }
 
+    /**
+     * シングルトンのインスタンスを取得
+     * @return
+     */
     public static UWindowList getInstance() {
         return singleton;
     }
@@ -31,6 +51,8 @@ public class UWindowList {
      * @param window
      */
     public void add(UWindow window) {
+        lists.remove(window);
+        lists.add(window);
         // 描画優先度を変更する
         UDrawManager.getInstance().addDrawable(window);
     }

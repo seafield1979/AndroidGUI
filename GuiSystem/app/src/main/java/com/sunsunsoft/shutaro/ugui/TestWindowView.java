@@ -169,6 +169,25 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         return ret;
     }
 
+    /**
+     * ウィンドウを整列
+     */
+    public void sortWindows(int width, int height) {
+        float x = 0;
+        float y = 0;
+        int windowW = width / 2;
+        int windowH = height / 2;
+        for (UWindow window : windows.getLists()) {
+            window.setPos(x, y);
+            ULog.print(TAG, "pos:" + x + " " + y);
+            x += windowW;
+            if (x >= width) {
+                x = 0;
+                y += windowH;
+            }
+        }
+    }
+
 
     /**
      * UButtonCallbacks
@@ -179,6 +198,8 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         ButtonId buttonId = ButtonId.values()[button.getId()];
         switch(buttonId) {
             case Sort:
+                sortWindows(getWidth(), getHeight());
+                invalidate();
                 break;
         }
     }
