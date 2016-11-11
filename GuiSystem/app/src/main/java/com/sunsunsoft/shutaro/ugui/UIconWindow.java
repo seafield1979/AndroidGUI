@@ -46,10 +46,6 @@ public class UIconWindow extends UWindow implements AutoMovable{
 
     private static final int MOVING_TIME = 10;
 
-    // ホームWindowを作成したかどうか
-    // ホームWindowは１つしか存在できないため、最初のインスタンスはホーム、それ以降はサブになる
-    private static boolean createdHome;
-
     // メンバ変数
     private WindowType type;
     private View mParentView;
@@ -137,11 +133,10 @@ public class UIconWindow extends UWindow implements AutoMovable{
      * Homeタイプが２つできないように自動でHome、Subのタイプ分けがされる
      * @return
      */
-    public static UIconWindow createInstance(View parent, UIconCallbacks iconCallbacks, float x, float y, int width, int height, int bgColor)
+    public static UIconWindow createInstance(View parent, UIconCallbacks iconCallbacks, boolean isHome, float x, float y, int width, int height, int bgColor)
     {
         UIconWindow instance = new UIconWindow(parent, iconCallbacks, x, y, width, height, bgColor);
-        if (!createdHome) {
-            createdHome = true;
+        if (isHome) {
             instance.type = WindowType.Home;
             instance.mIconManager = UIconManager.createInstance(parent, instance);
         } else {

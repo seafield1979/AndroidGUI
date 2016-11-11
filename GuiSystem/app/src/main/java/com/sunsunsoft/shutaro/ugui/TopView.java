@@ -36,8 +36,6 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
     private UMenuBar mMenuBar;
 
     // サイズ更新用
-    private boolean resetSize;
-    private int newWidth, newHeight;
     private boolean isFirst = true;
 
     // クリック判定の仕組み
@@ -74,13 +72,13 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
         }
 
         if (mIconWindows[0] == null) {
-            mIconWindows[0] = UIconWindow.createInstance(this, this, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
+            mIconWindows[0] = UIconWindow.createInstance(this, this, true, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
             mIconWindows[0].setWindows(mIconWindows);
             mWindows[WindowType.Icon1.ordinal()] = mIconWindows[0];
         }
 
         if (mIconWindows[1] == null) {
-            mIconWindows[1] = UIconWindow.createInstance(this, this, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
+            mIconWindows[1] = UIconWindow.createInstance(this, this, false, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
             mIconWindows[1].setWindows(mIconWindows);
             mWindows[WindowType.Icon2.ordinal()] = mIconWindows[1];
         }
@@ -103,28 +101,6 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
                     width / 2, height,
                     Color.argb(128,0,0,0));
             mWindows[WindowType.Log.ordinal()] = mLogWin;
-        }
-    }
-
-    /**
-     * Viewのサイズを指定する
-     * @param widthMeasureSpec
-     * @param heightMeasureSpec
-     */
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int viewW = MeasureSpec.getSize(widthMeasureSpec);
-        int viewH = MeasureSpec.getSize(heightMeasureSpec);
-        int modeW = MeasureSpec.getMode(widthMeasureSpec);
-        int modeH = MeasureSpec.getMode(heightMeasureSpec);
-        ULog.print(TAG, "measure w:" + viewW + " h:" + viewH + " wm:" + (modeW >> 30) + " wh:" + (modeH >> 30));
-
-        if (resetSize) {
-            int width = MeasureSpec.EXACTLY | newWidth;
-            int height = MeasureSpec.EXACTLY | newHeight;
-            setMeasuredDimension(width, height);
-        } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
 
