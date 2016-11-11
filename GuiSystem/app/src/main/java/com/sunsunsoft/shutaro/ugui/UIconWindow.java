@@ -534,20 +534,20 @@ public class UIconWindow extends UWindow implements AutoMovable{
                     switch (icon.getType()) {
                         case CIRCLE:
                             // ドラッグ位置のアイコンと場所を交換する
-                            changeIcons(srcIcons, dstIcons, dragedIcon, icon, window);
+                            changeIcons(dragedIcon, icon);
                             isDroped = true;
                             break;
                         case RECT:
                         case IMAGE:
                             // ドラッグ位置にアイコンを挿入する
-                            insertIcons(srcIcons, dstIcons, dragedIcon, icon, window, true);
+                            insertIcons(dragedIcon, icon, true);
                             isDroped = true;
                             break;
                         case BOX:
                             if (dragedIcon.type != IconType.BOX) {
                                 UIconBox box = (UIconBox) icon;
                                 if (box.getIcons() != null) {
-                                    moveIconIntoBox(srcIcons, box.getIcons(), dragedIcon, icon);
+                                    moveIconIntoBox(dragedIcon, icon);
                                     mIconManager.updateBlockRect();
                                     for (UIconWindow win : windows) {
                                         UIconManager manager = win.getIconManager();
@@ -566,22 +566,28 @@ public class UIconWindow extends UWindow implements AutoMovable{
 
             // その他の場所にドロップされた場合
             if (!isDroped && dstIcons != null ) {
+                boolean isMoved = false;
                 if (dstIcons.size() > 0) {
                     UIcon lastIcon = dstIcons.getLast();
                     if ((lastIcon.getY() <= winY &&
                             winY <= lastIcon.getBottom() &&
                             lastIcon.getRight() <= winX) ||
-                            (lastIcon.getBottom() <= winY)) {
-                        // 最後のアイコンの後の空きスペースにドロップされた場合
-                        // ドラッグ中のアイコンをリストの最後に移動
-                        srcIcons.remove(dragedIcon);
-                        dstIcons.add(dragedIcon);
+                            (lastIcon.getBottom() <= winY))
+                    {
+                        isMoved = true;
                         isDroped = true;
                     }
                 } else {
+                    isMoved = true;
+                }
+
+                if (isMoved) {
+                    // 最後のアイコンの後の空きスペースにドロップされた場合
                     // ドラッグ中のアイコンをリストの最後に移動
                     srcIcons.remove(dragedIcon);
                     dstIcons.add(dragedIcon);
+                    // 親の付け替え
+                    dragedIcon.setParentWindow(window);
                 }
             }
             // 再配置
@@ -671,88 +677,105 @@ public class UIconWindow extends UWindow implements AutoMovable{
 
     /**
      * ２つのアイコンの位置を交換する
-     * @param srcIcons
-     * @param dstIcons
      * @param icon1
      * @param icon2
-     * @param window
      */
-    private void changeIcons(List<UIcon> srcIcons, List<UIcon> dstIcons, UIcon
-            icon1, UIcon icon2, UIconWindow window )
+    private void changeIcons(UIcon icon1, UIcon icon2 )
     {
         // アイコンの位置を交換
         // 並び順も重要！
-        int index = dstIcons.indexOf(icon2);
-        int index2 = srcIcons.indexOf(icon1);
+        UIconWindow window1 = icon1.parentWindow;
+        UIconWindow window2 = icon2.parentWindow;
+        List<UIcon> icons1 = window1.getIcons();
+        List<UIcon> icons2 = window2.getIcons();
+
+        int index = icons2.indexOf(icon2);
+        int index2 = icons1.indexOf(icon1);
         if (index == -1 || index2 == -1) return;
 
-        srcIcons.remove(icon1);
-        dstIcons.add(index, icon1);
-        dstIcons.remove(icon2);
-        srcIcons.add(index2, icon2);
+
+        icons1.remove(icon1);
+        icons2.add(index, icon1);
+        icons2.remove(icon2);
+        icons1.add(index2, icon2);
 
         // 再配置
-        if (srcIcons != dstIcons) {
+        if (window1 != window2) {
+            // 親の付け替え
+            icon1.setParentWindow(window2);
+            icon2.setParentWindow(window1);
+
             // ドロップアイコンの座標系を変換
             // アイコン1 UWindow -> アイコン2 UWindow
-            dragedIcon.setPos(dragedIcon.pos.x + this.pos.x - window.pos.x,
-                    dragedIcon.pos.y + this.pos.y - window.pos.y);
+            icon1.setPos(icon1.pos.x + this.pos.x - window2.pos.x,
+                    icon1.pos.y + this.pos.y - window2.pos.y);
 
             // アイコン2 UWindow -> アイコン1 UWindow
-            icon2.setPos(icon2.pos.x + window.pos.x - this.pos.x,
-                    icon2.pos.y + window.pos.y - this.pos.y);
-            window.sortRects(true);
+            icon2.setPos(icon2.pos.x + window2.pos.x - this.pos.x,
+                    icon2.pos.y + window2.pos.y - this.pos.y);
+            window2.sortRects(true);
         }
-        this.sortRects(true);
+        window1.sortRects(true);
     }
 
     /**
      * アイコンを挿入する
-     * @param srcIcons
-     * @param dstIcons
-     * @param srcIcon  挿入元のアイコン
-     * @param dstIcon  挿入先のアイコン
-     * @param window
+     * @param icon1  挿入元のアイコン
+     * @param icon2  挿入先のアイコン
+     * @param animate
      */
-    private void insertIcons(List<UIcon> srcIcons, List<UIcon> dstIcons, UIcon srcIcon, UIcon dstIcon, UIconWindow window, boolean animate)
+    private void insertIcons(UIcon icon1, UIcon icon2, boolean animate)
     {
-        int index = dstIcons.indexOf(dstIcon);
+        UIconWindow window1 = icon1.parentWindow;
+        UIconWindow window2 = icon2.parentWindow;
+        List<UIcon> icons1 = window1.getIcons();
+        List<UIcon> icons2 = window2.getIcons();
+
+        int index = icons2.indexOf(icon2);
         if (index == -1) return;
 
-        srcIcons.remove(srcIcon);
-        dstIcons.add(index, srcIcon);
+        icons1.remove(icon1);
+        icons2.add(index, icon1);
 
         // 再配置
         if (animate) {
-            if (srcIcons != dstIcons) {
+            if (window1 != window2) {
+                // 親の付け替え
+                icon1.setParentWindow(window2);
+                icon2.setParentWindow(window1);
+
                 // ドロップアイコンの座標系を変換
-                dragedIcon.setPos(srcIcon.pos.x + this.pos.x - window.pos.x,
-                        srcIcon.pos.y + this.pos.y - window.pos.y);
-                window.sortRects(animate);
+                dragedIcon.setPos(icon1.pos.x + window2.pos.x - window1.pos.x,
+                        icon1.pos.y + window2.pos.y - window1.pos.y);
+                window2.sortRects(animate);
             }
-            sortRects(animate);
         }
+        window1.sortRects(animate);
     }
 
     /**
      * アイコンを移動する
      * アイコンを別のボックスタイプのアイコンにドロップした時に使用する
-     * @param srcIcons ドラッグ元のIcons
-     * @param dstIcons ドロップ先のIcons
-     * @param srcIcon ドロップ元のIcon
-     * @param dstIcon ドロップ先のIcon
+     * @param icon1 ドロップ元のIcon
+     * @param icon2 ドロップ先のIcon
      */
-    private void moveIconIntoBox(List<UIcon> srcIcons, List<UIcon> dstIcons, UIcon srcIcon, UIcon dstIcon)
+    private void moveIconIntoBox(UIcon icon1, UIcon icon2)
     {
-        srcIcons.remove(srcIcon);
-        dstIcons.add(srcIcon);
 
-        if (dstIcon instanceof UIconBox) {
-            UIconBox box = (UIconBox)dstIcon;
-            UIconWindow parentWindow = box.getSubWindow();
-            if (parentWindow != null) {
-                parentWindow.sortRects(false);
-                srcIcon.setParentWindow(parentWindow);
+        if (icon2 instanceof UIconBox) {
+            UIconBox box = (UIconBox)icon2;
+
+            UIconWindow window1 = icon1.parentWindow;
+            UIconWindow window2 = box.getSubWindow();
+            List<UIcon> icons1 = window1.getIcons();
+            List<UIcon> icons2 = box.getIcons();
+
+            icons1.remove(icon1);
+            icons2.add(icon1);
+
+            if (window2 != null) {
+                window2.sortRects(false);
+                icon1.setParentWindow(window2);
             }
         }
 
