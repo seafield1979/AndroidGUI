@@ -9,7 +9,7 @@ import android.util.Log;
 
 
 enum UButtonType {
-    BGColor,      // color changing
+    BGColor,    // color changing
     Press       // pressed down
 }
 
@@ -73,12 +73,10 @@ public class UButton extends Drawable {
         this.text = text;
         this.textColor = Color.WHITE;
         if (type == UButtonType.BGColor) {
-            this.pressedColor = UColor.mulBrightness(color, 2.0f);
+            this.pressedColor = UColor.mulBrightness(color, 3.0f);
         } else {
-            this.pressedColor = UColor.mulBrightness(color, 0.5f);
+            this.pressedColor = UColor.mulBrightness(color, 0.3f);
         }
-
-        UDrawManager.getInstance().addDrawable(this);
     }
 
     /**
@@ -101,22 +99,31 @@ public class UButton extends Drawable {
         paint.setColor(_color);
 
         PointF _pos = new PointF(pos.x, pos.y);
+        if (offset != null) {
+            _pos.x += offset.x;
+            _pos.y += offset.y;
+        }
+
+        int _height = size.height;
 
         if (type == UButtonType.Press) {
+            // 押したら凹むボタン
             if (isPressed) {
                 _pos.y += PRESS_Y;
             } else {
                 // ボタンの影用に下に矩形を描画
-                UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y + PRESS_Y,
-                        _pos.x + size.width, _pos.y + size.height + PRESS_Y, BUTTON_RADIUS, pressedColor);
+                UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y,
+                        _pos.x + size.width, _pos.y + size.height, BUTTON_RADIUS, pressedColor);
             }
+            _height -= PRESS_Y;
+
         } else {
+            // 押したら色が変わるボタン
             if (isPressed) {
                 _color = pressedColor;
             }
         }
-        UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y, _pos.x + size.width, _pos.y + size
-                .height, BUTTON_RADIUS, _color);
+        UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y, _pos.x + size.width, _pos.y + _height, BUTTON_RADIUS, _color);
 
         // テキスト
         if (text != null) {
@@ -127,7 +134,7 @@ public class UButton extends Drawable {
             // センタリング
             paint.getTextBounds(text, 0, text.length(), bound);
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            float baseY = _pos.y + size.height / 2 - (fontMetrics.ascent + fontMetrics
+            float baseY = _pos.y + _height / 2 - (fontMetrics.ascent + fontMetrics
                     .descent) / 2;
 
             canvas.drawText(text, _pos.x + (size.width - bound.width()) / 2, baseY, paint);
@@ -151,13 +158,20 @@ public class UButton extends Drawable {
      * @return true:イベントを処理した(再描画が必要)
      */
     public boolean touchEvent(ViewTouch vt) {
+        return touchEvent(vt, null);
+    }
+
+    public boolean touchEvent(ViewTouch vt, PointF offset) {
         boolean done = false;
-//        ULog.print(TAG, "vt:" + vt.type);
+        if (offset == null) {
+            offset = new PointF();
+        }
+
         switch(vt.type) {
             case None:
                 break;
             case Touch:
-                if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {
+                if (rect.contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
                     isPressed = true;
                     done = true;
                 }
@@ -165,9 +179,9 @@ public class UButton extends Drawable {
             case Click:
             case LongClick:
                 isPressed = false;
-                done = true;
-                if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {
+                if (rect.contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
                     mCallbacks.click(this);
+                    done = true;
                 }
                 break;
             case TouchUp:

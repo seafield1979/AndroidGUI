@@ -59,6 +59,8 @@ public class ViewTouch {
     public float getY(float offset) { return y + offset; }
     public float touchX() {return this.touchX;}
     public float touchY() {return this.touchY;}
+    public float touchX(float offset) {return this.touchX + offset;}
+    public float touchY(float offset) {return this.touchY + offset;}
     public boolean isMoveStart() { return isMoveStart; }
 
     public ViewTouch() {
