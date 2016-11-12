@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.view.SurfaceView;
 import android.view.View;
 
 import java.util.Collections;
@@ -128,7 +129,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
 
     public UIconWindows getWindows() { return this.windows; }
 
-    public void setParentView(View mParentView) {
+    public void setParentView(SurfaceView mParentView) {
         this.mParentView = mParentView;
     }
 
@@ -432,8 +433,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
             mScrollBarH.updateContent(contentSize);
         }
 
-
-        mParentView.invalidate();
+//        mParentView.invalidate();
     }
 
     /**

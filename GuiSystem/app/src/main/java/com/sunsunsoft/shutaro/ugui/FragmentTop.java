@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 public class FragmentTop extends Fragment implements View.OnTouchListener {
     public static final String FRAMGMENT_NAME = FragmentTop.class.getName();
     private final static String BACKGROUND_COLOR = "background_color";
-    private TopView myView;
 
     public static FragmentTop newInstance(@ColorRes int IdRes) {
         FragmentTop frag = new FragmentTop();
@@ -36,17 +35,15 @@ public class FragmentTop extends Fragment implements View.OnTouchListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top, null);
 
-        myView = (TopView)view.findViewById(R.id.TopView);
+        // SurfaceViewを追加
+        TopSurfaceView topView = new TopSurfaceView(getContext());
+        LinearLayout containerView = (LinearLayout)view.findViewById(R.id.view_container);
+        containerView.addView(topView);
 
         return view;
     }
 
     public boolean onTouch(View v, MotionEvent e) {
         return true;
-    }
-
-    //TouchEventCallbacks
-    // 子Viewをタッチしている最中はスクロールしないようにする
-    public void touchCallback(int action) {
     }
 }

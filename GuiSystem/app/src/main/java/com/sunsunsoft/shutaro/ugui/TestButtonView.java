@@ -5,14 +5,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
 /**
  * メニューバー、サブViewのサンプル
  */
-public class TestButtonView extends View implements OnTouchListener, UButtonCallbacks{
+public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolder.Callback, UButtonCallbacks {
     enum ButtonId {
         Test1,
         Test2,
@@ -22,6 +25,12 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
 
     public static final String TAG = "TestButtonView";
     private static final int BUTTON_PRIORITY = 100;
+
+    // SurfaceView用
+    SurfaceHolder surfaceHolder;
+    Thread thread;
+    private boolean isInvalidate = true;
+    int screen_width, screen_height;
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -45,9 +54,10 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
 
     public TestButtonView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.setOnTouchListener(this);
-    }
 
+        surfaceHolder = getHolder();
+        surfaceHolder.addCallback(this);
+    }
     /**
      * 画面に表示するオブジェクトを生成
      * @param width
@@ -96,8 +106,72 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
         buttons3.addFull(200, "hoge");
     }
 
+    // Surfaceが作られた時のイベント処理
     @Override
-    public void onDraw(Canvas canvas) {
+    public void surfaceCreated(SurfaceHolder holder) {
+        initDrawables(getWidth(), getHeight());
+
+        thread = new Thread(this);
+        thread.start();
+    }
+
+    // Surfaceが変更された時の処理
+    @Override
+    public void surfaceChanged(
+            SurfaceHolder holder,
+            int format,
+            int width,
+            int height) {
+        screen_width = width;
+        screen_height = height;
+
+        Log.i("myLog", "surfaceChanged");
+    }
+
+    // Surfaceが破棄された時の処理
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        thread = null;
+        Log.i("myLog", "surfaceDestroyed");
+    }
+
+    @Override
+    public void run() {
+        Canvas canvas = null;
+
+        long loopCount = 0;
+        while(thread != null){
+            try{
+                synchronized(this) {
+                    loopCount++;
+
+                    if (isInvalidate) {
+                        isInvalidate = false;
+
+                        canvas = surfaceHolder.lockCanvas();
+                        myDraw(canvas);
+                        surfaceHolder.unlockCanvasAndPost(canvas);
+                    }
+
+                    // 次のinvalidateが実行されるまで待ち(すでにinvalidate済みなら待たない)
+                    if (!isInvalidate) {
+                        wait();
+                    }
+                }
+            }
+            catch(Exception e){
+                Log.d(TAG, "exception:" + e.getMessage());
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+        }
+    }
+
+    public synchronized void invalidate() {
+        isInvalidate = true;
+        notify();
+    }
+
+    public void myDraw(Canvas canvas) {
         if (isFirst) {
             isFirst = false;
             initDrawables(getWidth(), getHeight());
@@ -117,11 +191,10 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
 
     /**
      * タッチイベント処理
-     * @param v
      * @param e
      * @return
      */
-    public boolean onTouch(View v, MotionEvent e) {
+    public boolean onTouchEvent(MotionEvent e) {
         boolean ret = true;
 
         vt.checkTouchType(e);

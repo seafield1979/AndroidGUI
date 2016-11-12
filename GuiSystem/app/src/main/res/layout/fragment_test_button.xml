@@ -5,10 +5,12 @@
               android:orientation="vertical"
              tools:context="com.sunsunsoft.shutaro.ugui.FragmentTestButton">
 
-
-    <com.sunsunsoft.shutaro.ugui.TestButtonView
+    <LinearLayout
+        android:id="@+id/view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/testView"/>
+        android:orientation="vertical"
+        >
+    </LinearLayout>
 
 </LinearLayout>
