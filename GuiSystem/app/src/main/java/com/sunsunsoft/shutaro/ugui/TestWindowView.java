@@ -79,9 +79,14 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            buttons[i] = new UButton(this, id.ordinal(), id.toString(), 100, y,
+            buttons[i] = new UButton(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
+                    id.toString(),
+                    100, y,
                     width - 100*2, 120,
                     Color.rgb(0,128,0));
+            if (buttons[i] != null) {
+                UDrawManager.getInstance().addDrawable(buttons[i]);
+            }
             y += 150;
         }
 
@@ -191,14 +196,17 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
      * UButtonCallbacks
      */
     public void click(UButton button) {
-        ULog.print(TAG, "button click:" + button.getId());
+        int id = button.getId();
+        ULog.print(TAG, "button click:" + id);
 
-        ButtonId buttonId = ButtonId.values()[button.getId()];
-        switch(buttonId) {
-            case Sort:
-                sortWindows(getWidth(), getHeight());
-                invalidate();
-                break;
+        if (id < ButtonId.values().length) {
+            ButtonId buttonId = ButtonId.values()[id];
+            switch (buttonId) {
+                case Sort:
+                    sortWindows(getWidth(), getHeight());
+                    invalidate();
+                    break;
+            }
         }
     }
     public void longClick(UButton button) {

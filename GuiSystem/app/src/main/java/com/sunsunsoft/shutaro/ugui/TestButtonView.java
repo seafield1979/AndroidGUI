@@ -27,12 +27,16 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
     private boolean isFirst = true;
 
     // タッチ情報
-    private ViewTouch viewTouch = new ViewTouch();
+    private ViewTouch vt = new ViewTouch();
 
     private Paint paint = new Paint();
 
     // UButton
     private UButton[] buttons = new UButton[ButtonId.values().length];
+
+    // UButtons
+    private UButtons buttons2;
+    private UButtons buttons3;
 
     // get/set
     public TestButtonView(Context context) {
@@ -53,6 +57,7 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 
+        // UButton
         float y = 100;
         UButtonType buttonType;
 
@@ -68,8 +73,27 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
                     (i+1), 100, y,
                     width - 100*2, 120,
                     Color.rgb(0,128,0));
+
+
+            UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
         }
+
+        // UButtons
+        int row = 2;
+        int column = 2;
+        buttons2 = new UButtons(this, UButtonType.Press, BUTTON_PRIORITY, Color.BLUE,
+                Color.WHITE, row, column, 0, y, width, 300);
+        for (int i=0; i < row * column; i++) {
+            buttons2.add(100 + i, "button " + (100+i));
+        }
+        y += 300 + 50;
+
+        row = 4;
+        column = 1;
+        buttons3 = new UButtons(this, UButtonType.Press, BUTTON_PRIORITY, Color.rgb(255, 80, 80),
+                Color.WHITE, row, column, 0, y, width, 300);
+        buttons3.addFull(200, "hoge");
     }
 
     @Override
@@ -100,13 +124,29 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
     public boolean onTouch(View v, MotionEvent e) {
         boolean ret = true;
 
-        viewTouch.checkTouchType(e);
+        vt.checkTouchType(e);
 
-        for (UButton button : buttons) {
-            if (button.touchEvent(viewTouch)) {
+        // Button
+        if (buttons != null) {
+            for (UButton button : buttons) {
+                if (button != null && button.touchEvent(vt)) {
+                    invalidate();
+                }
+            }
+        }
+
+        // Buttons
+        if (buttons2 != null) {
+            if (buttons2.touchEvent(vt)) {
                 invalidate();
             }
         }
+        if (buttons3 != null) {
+            if (buttons3.touchEvent(vt)) {
+                invalidate();
+            }
+        }
+
 
         switch(e.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -133,16 +173,22 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
     public void click(UButton button) {
         ULog.print(TAG, "button click:" + (button.getId() + 1));
 
-        ButtonId buttonId = ButtonId.values()[button.getId()];
-        switch(buttonId) {
-            case Test1:
-                break;
-            case Test2:
-                break;
-            case Test3:
-                break;
-            case Test4:
-                break;
+        int id = button.getId();
+
+        if (id < ButtonId.values().length) {
+            ButtonId buttonId = ButtonId.values()[id];
+            switch (buttonId) {
+                case Test1:
+                    break;
+                case Test2:
+                    break;
+                case Test3:
+                    break;
+                case Test4:
+                    break;
+            }
+        } else {
+
         }
     }
     public void longClick(UButton button) {
