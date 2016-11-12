@@ -53,8 +53,11 @@ public class UColor extends Color {
         int B = (int)(1.164 * (Y-16) + 2.018 * (Cb-128));
 
         if (R > 255) R = 255;
+        if (R < 0) R = 0;
         if (G > 255) G = 255;
+        if (G < 0) G = 0;
         if (B > 255) B = 255;
+        if (B < 0) B = 0;
 
         return R << 16 | G << 8 | B;
     }
@@ -62,10 +65,10 @@ public class UColor extends Color {
     /**
      * RGBの輝度を上げる
      * @param argb
-     * @param addP  輝度の増量 100% = 1.0
+     * @param brightness  輝度 100% = 1.0 / 50% = 0.5
      * @return
      */
-    public static int addBrightness(int argb, float addP) {
+    public static int mulBrightness(int argb, float brightness) {
         ULog.print(TAG, String.format("RGB:%06x", argb));
 
         int yuv = toYUV(argb);
@@ -73,7 +76,7 @@ public class UColor extends Color {
         ULog.print(TAG, String.format("YUV:%06x", yuv));
 
         int Y = yuv >> 16;
-        int Y2 = (int)(Y * addP) & 0xff;
+        int Y2 = (int)(Y * brightness) & 0xff;
         int _argb = (argb & 0xff000000) | toRGB( (Y2 << 16) | (yuv & 0x00ffff));
 
         ULog.print(TAG, String.format("RGB2:%06x", _argb));

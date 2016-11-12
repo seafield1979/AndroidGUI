@@ -79,10 +79,8 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            buttons[i] = new UButton(this, BUTTON_PRIORITY, id.ordinal(), id.toString(), 100, y,
-                    width -
-                    100*2,
-                    120,
+            buttons[i] = new UButton(this, id.ordinal(), id.toString(), 100, y,
+                    width - 100*2, 120,
                     Color.rgb(0,128,0));
             y += 150;
         }

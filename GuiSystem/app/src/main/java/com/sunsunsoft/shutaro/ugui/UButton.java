@@ -7,17 +7,28 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
 
+
+enum UButtonType {
+    BGColor,      // color changing
+    Press       // pressed down
+}
+
 /**
  * 自前のボタン
  * 生成後ViewのonDraw内で draw メソッドを呼ぶと表示される
+ * ボタンが押されたときの動作はtypeで指定できる
+ *   BGColor ボタンの背景色が変わる
+ *   Press   ボタンがへこむ
  */
 
 public class UButton extends Drawable {
     public static final String TAG = "UButton";
     public static final int DRAW_PRIORITY = 100;
-    private static final int PRESS_Y = 30;
+    private static final int PRESS_Y = 20;
+    private static final int BUTTON_RADIUS = 20;
 
     private int id;
+    protected UButtonType type;
     private UButtonCallbacks mCallbacks;
     private boolean isPressed;
     private String text;
@@ -45,15 +56,27 @@ public class UButton extends Drawable {
         this.textColor = textColor;
     }
 
-    public UButton(UButtonCallbacks callbacks, int priority, int id, String text, float x, float y, int width, int height, int color)
+    public UButton(UButtonCallbacks callbacks, int id, String text,
+                   float x, float y, int width, int height, int color)
+    {
+        this(callbacks, UButtonType.BGColor, DRAW_PRIORITY, id, text, x, y, width, height, color);
+    }
+
+    public UButton(UButtonCallbacks callbacks, UButtonType type, int id, int priority, String text,
+                   float x, float y, int width, int height, int color)
     {
         super(priority, x, y, width, height);
         this.id = id;
         this.mCallbacks = callbacks;
+        this.type = type;
         this.color = color;
         this.text = text;
         this.textColor = Color.WHITE;
-        this.pressedColor = UColor.addBrightness(color, 2.0f);
+        if (type == UButtonType.BGColor) {
+            this.pressedColor = UColor.mulBrightness(color, 2.0f);
+        } else {
+            this.pressedColor = UColor.mulBrightness(color, 0.5f);
+        }
 
         UDrawManager.getInstance().addDrawable(this);
     }
@@ -74,30 +97,26 @@ public class UButton extends Drawable {
         // 色
         // 押されていたら明るくする
         int _color = color;
-        if (isPressed) {
-            _color = pressedColor;
-        }
 
-        if (isAnimating) {
-            double v1 = ((double)animeFrame / (double)animeFrameMax) * 180;
-            int alpha = (int)((1.0 -  Math.sin(v1 * RAD)) * 255);
-            paint.setColor((alpha << 24) | (_color & 0xffffff));
-        } else {
-            paint.setColor(_color);
-        }
+        paint.setColor(_color);
 
         PointF _pos = new PointF(pos.x, pos.y);
 
-//        if (isPressed) {
-//            _pos.y += PRESS_Y;
-//        }
-//
-//        if (offset != null) {
-//            _pos.x += offset.x;
-//            _pos.y += offset.y;
-//        }
+        if (type == UButtonType.Press) {
+            if (isPressed) {
+                _pos.y += PRESS_Y;
+            } else {
+                // ボタンの影用に下に矩形を描画
+                UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y + PRESS_Y,
+                        _pos.x + size.width, _pos.y + size.height + PRESS_Y, BUTTON_RADIUS, pressedColor);
+            }
+        } else {
+            if (isPressed) {
+                _color = pressedColor;
+            }
+        }
         UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y, _pos.x + size.width, _pos.y + size
-                .height, 20, _color);
+                .height, BUTTON_RADIUS, _color);
 
         // テキスト
         if (text != null) {
@@ -108,7 +127,7 @@ public class UButton extends Drawable {
             // センタリング
             paint.getTextBounds(text, 0, text.length(), bound);
             Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            float baseY = pos.y + size.height / 2 - (fontMetrics.ascent + fontMetrics
+            float baseY = _pos.y + size.height / 2 - (fontMetrics.ascent + fontMetrics
                     .descent) / 2;
 
             canvas.drawText(text, _pos.x + (size.width - bound.width()) / 2, baseY, paint);

@@ -58,9 +58,8 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         // buttons
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
-            buttons[i] = new UButton(this, BUTTON_PRIORITY, i, "test" + (i+1), 100, y, width -
-                    100*2,
-                    120,
+            buttons[i] = new UButton(this, i, "test" + (i+1), 100, y, width -
+                    100*2, 120,
                     Color.rgb(0,128,0));
             y += 150;
         }

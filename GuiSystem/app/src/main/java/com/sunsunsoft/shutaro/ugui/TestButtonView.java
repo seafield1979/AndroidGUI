@@ -16,7 +16,8 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
     enum ButtonId {
         Test1,
         Test2,
-        Test3
+        Test3,
+        Test4
     }
 
     public static final String TAG = "TestButtonView";
@@ -31,7 +32,7 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
     private Paint paint = new Paint();
 
     // UButton
-    private UButton[] buttons = new UButton[3];
+    private UButton[] buttons = new UButton[ButtonId.values().length];
 
     // get/set
     public TestButtonView(Context context) {
@@ -53,12 +54,19 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
         UDrawManager.getInstance().init();
 
         float y = 100;
+        UButtonType buttonType;
+
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            buttons[i] = new UButton(this, id.ordinal(), BUTTON_PRIORITY, "test" + (i+1), 100, y,
-                    width -
-                    100*2,
-                    120,
+            if (i < 2) {
+                buttonType = UButtonType.BGColor;
+            } else {
+                buttonType = UButtonType.Press;
+            }
+
+            buttons[i] = new UButton(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
+                    (i+1), 100, y,
+                    width - 100*2, 120,
                     Color.rgb(0,128,0));
             y += 150;
         }
@@ -123,7 +131,7 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
      */
 
     public void click(UButton button) {
-        ULog.print(TAG, "button click:" + button.getId());
+        ULog.print(TAG, "button click:" + (button.getId() + 1));
 
         ButtonId buttonId = ButtonId.values()[button.getId()];
         switch(buttonId) {
@@ -132,6 +140,8 @@ public class TestButtonView extends View implements OnTouchListener, UButtonCall
             case Test2:
                 break;
             case Test3:
+                break;
+            case Test4:
                 break;
         }
     }

@@ -70,9 +70,8 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
             String title = id.getString();
-            buttons[i] = new UButton(this, BUTTON_PRIORITY, id.ordinal(), title, 100, y, width -
-                    100*2,
-                    120,
+            buttons[i] = new UButton(this, id.ordinal(), title, 100, y, width -
+                    100*2, 120,
                     Color.rgb(0,128,0));
             y += 150;
         }

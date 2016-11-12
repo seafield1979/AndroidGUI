@@ -209,7 +209,9 @@ abstract public class Drawable {
      * 描画オフセットを取得する
      * @return
      */
-    abstract public PointF getDrawOffset();
+    public PointF getDrawOffset() {
+        return null;
+    }
 
     /**
      * アニメーション開始
