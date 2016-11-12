@@ -73,9 +73,9 @@ public class UButton extends Drawable {
         this.text = text;
         this.textColor = Color.WHITE;
         if (type == UButtonType.BGColor) {
-            this.pressedColor = UColor.mulBrightness(color, 3.0f);
+            this.pressedColor = UColor.addBrightness(color, 0.5f);
         } else {
-            this.pressedColor = UColor.mulBrightness(color, 0.3f);
+            this.pressedColor = UColor.addBrightness(color, -0.5f);
         }
     }
 

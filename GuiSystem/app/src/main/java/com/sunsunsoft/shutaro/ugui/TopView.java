@@ -28,7 +28,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
     // Windows
     private UWindow[] mWindows = new UWindow[WindowType.values().length];
     // UIconWindow
-    private UIconWindow[] mIconWindows = new UIconWindow[2];
+    private UIconWindows mIconWindows;
 
     // MessageWindow
     private ULogWindow mLogWin;
@@ -78,20 +78,21 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
             winDir = WindowDir.Horizontal;
         }
 
-        if (mIconWindows[0] == null) {
-            mIconWindows[0] = UIconWindow.createInstance(this, this, true, winDir, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
-            mIconWindows[0].setWindows(mIconWindows);
-            mWindows[WindowType.Icon1.ordinal()] = mIconWindows[0];
-        }
+        // Main
+        UIconWindow mainWindow = UIconWindow.createInstance(this, this, true, winDir, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
+        mWindows[WindowType.Icon1.ordinal()] = mainWindow;
 
-        if (mIconWindows[1] == null) {
-            mIconWindows[1] = UIconWindow.createInstance(this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
-            mIconWindows[1].setWindows(mIconWindows);
-            mWindows[WindowType.Icon2.ordinal()] = mIconWindows[1];
-        }
+        // Sub
+        UIconWindow subWindow = UIconWindow.createInstance(this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
+            mWindows[WindowType.Icon2.ordinal()] = subWindow;
+
+        mIconWindows = UIconWindows.createInstance(mainWindow, subWindow);
+        mainWindow.setWindows(mIconWindows);
+        subWindow.setWindows(mIconWindows);
+
         // アイコンの登録はMainとSubのWindowを作成後に行う必要がある
-        mIconWindows[0].init();
-        mIconWindows[1].init();
+        mainWindow.init();
+        subWindow.init();
 
         // UMenuBar
         if (mMenuBar == null) {
@@ -188,19 +189,18 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
 
     /**
      * メニューアイテムをタップしてアイコンを追加する
-     * @param windowId
+     * @param window
      * @param shape
      * @param menuItemId
      */
-    private void addIcon(int windowId, IconType shape, MenuItemId menuItemId) {
-        UIconWindow iconWindow = mIconWindows[windowId];
-        UIconManager manager = iconWindow.getIconManager();
+    private void addIcon(UIconWindow window, IconType shape, MenuItemId menuItemId) {
+        UIconManager manager = window.getIconManager();
         UIcon icon = manager.addIcon(shape, AddPos.Top);
 
         // アイコンの初期座標は追加メニューアイコンの位置
         PointF menuPos = mMenuBar.getItemPos(menuItemId);
-        icon.setPos(iconWindow.toWinX(menuPos.x), iconWindow.toWinY(menuPos.y));
-        mIconWindows[windowId].sortIcons(true);
+        icon.setPos(window.toWinX(menuPos.x), window.toWinY(menuPos.y));
+        window.sortIcons(true);
     }
 
     /**
@@ -214,10 +214,10 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
             case AddTop:
                 break;
             case AddCard:
-                addIcon(0, IconType.CIRCLE, id);
+                addIcon(mIconWindows.getMainWindow(), IconType.CIRCLE, id);
                 break;
             case AddBook:
-                addIcon(0, IconType.RECT, id);
+                addIcon(mIconWindows.getMainWindow(), IconType.RECT, id);
                 break;
             case AddBox:
                 break;
@@ -268,25 +268,26 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
             case BOX: {
                 // 配下のアイコンをSubWindowに表示する
                 if (icon instanceof UIconBox) {
+                    UIconWindow window = mIconWindows.getSubWindow();
                     UIconBox box = (UIconBox)icon;
-                    mIconWindows[1].setIconManager(box.getIconManager());
-                    mIconWindows[1].sortIcons(false);
+                    window.setIconManager(box.getIconManager());
+                    window.sortIcons(false);
 
                     // SubWindowを画面外から移動させる
                     float sx, sy, dx, dy;
-                    if (mIconWindows[1].getDir() == WindowDir.Vertical) {
+                    if (window.getDir() == WindowDir.Vertical) {
                         sx = 0;
                         sy = getHeight();
                         dx = 0;
-                        dy = mIconWindows[1].getBasePos().y;
+                        dy = window.getBasePos().y;
                     } else {
                         sx = getWidth();
                         sy = 0;
-                        dx = mIconWindows[1].getBasePos().x;
+                        dx = window.getBasePos().x;
                         dy = 0;
                     }
-                    mIconWindows[1].setPos(sx, sy, true);
-                    mIconWindows[1].startMoving(dx, dy, SUB_WINDOW_MOVE_FRAME);
+                    window.setPos(sx, sy, true);
+                    window.startMoving(dx, dy, SUB_WINDOW_MOVE_FRAME);
                 }
             }
                 break;

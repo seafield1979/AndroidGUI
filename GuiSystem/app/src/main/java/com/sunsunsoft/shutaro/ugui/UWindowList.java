@@ -5,7 +5,7 @@ import java.util.LinkedList;
 /**
  * UWindowのサブクラスを管理するクラス
  * 機能
- *   描画順を管理
+ *   描画順を管理(同じ優先度のWindowを登録した場合のみ)
  *   処理順を管理(手前のWindowからタッチ処理を行う)
  *   他のWindowで隠れていたら描画をスキップ
  */

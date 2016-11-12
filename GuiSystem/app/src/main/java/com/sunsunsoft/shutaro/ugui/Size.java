@@ -1,7 +1,7 @@
 package com.sunsunsoft.shutaro.ugui;
 
 /**
- * Created by shutaro on 2016/11/02.
+ * Size of Integer(width,height)
  */
 
 public class Size {

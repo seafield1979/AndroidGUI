@@ -9,6 +9,8 @@ import android.graphics.Rect;
 /**
  * 描画可能なクラス
  * Drawableの共通処理を実装済み
+ *
+ * このクラスのサブクラスをDrawManagerで管理できる
  */
 
 abstract public class Drawable {
@@ -16,8 +18,10 @@ abstract public class Drawable {
 
     public static double RAD = 3.1415 / 180.0;
 
+    /**
+     * メンバ変数
+     */
     protected DrawList drawList;
-
     protected PointF pos = new PointF();
     protected Size size = new Size();
     protected Rect rect;
@@ -47,7 +51,9 @@ abstract public class Drawable {
         this.color = Color.rgb(0,0,0);
     }
 
-    // 座標、サイズのGet/Set
+    /**
+     *  Get/Set
+     */
     public float getX() {
         return pos.x;
     }
@@ -120,26 +126,38 @@ abstract public class Drawable {
                 rect.right + (int)offset.x, rect.bottom + (int)offset.y);
     }
 
-    /**
-     * 描画処理
-     * @param canvas
-     * @param paint
-     */
-    abstract void draw(Canvas canvas, Paint paint, PointF offset);
-
-    // 移動
-    public void move(float moveX, float moveY) {
-        pos.x += moveX;
-        pos.y += moveY;
-        updateRect();
-    }
-
-    // 色
     public int getColor() {
         return color;
     }
     public void setColor(int color) {
         this.color = color;
+    }
+
+
+    /**
+     * 描画処理
+     * @param canvas
+     * @param paint
+     * @param offset 独自の座標系を持つオブジェクトをスクリーン座標系に変換するためのオフセット値
+     */
+    abstract void draw(Canvas canvas, Paint paint, PointF offset);
+
+    /**
+     * タッチ処理
+     * @param vt
+     * @return
+     */
+    abstract public boolean touchEvent(ViewTouch vt);
+
+    /**
+     * 移動
+     * @param moveX
+     * @param moveY
+     */
+    public void move(float moveX, float moveY) {
+        pos.x += moveX;
+        pos.y += moveY;
+        updateRect();
     }
 
     /**
@@ -185,8 +203,8 @@ abstract public class Drawable {
         return true;
     }
 
-    /*
-        Drawableインターフェース
+    /**
+     * Drawableインターフェース
      */
     public void setDrawList(DrawList drawList) {
         this.drawList = drawList;
@@ -199,11 +217,10 @@ abstract public class Drawable {
     public int getDrawPriority() {
         return drawPriority;
     }
+
     public void setDrawPriority(int drawPriority) {
         this.drawPriority = drawPriority;
     }
-
-
 
     /**
      * 描画オフセットを取得する
@@ -256,11 +273,4 @@ abstract public class Drawable {
         double v1 = ((double)animeFrame / (double)animeFrameMax) * 180;
         return (int)((1.0 -  Math.sin(v1 * RAD)) * 255);
     }
-
-    /**
-     * タッチ処理
-     * @param vt
-     * @return
-     */
-    abstract public boolean touchEvent(ViewTouch vt);
 }

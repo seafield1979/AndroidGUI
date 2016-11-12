@@ -15,6 +15,8 @@ import java.util.LinkedList;
  * アイコンを表示してタップされたらIDを返すぐらいの機能しか持たない
  */
 public class UMenuItem extends Drawable{
+    public static final String TAG = "UMenuItem";
+
     public static final int DRAW_PRIORITY = 200;
     public static final int ITEM_W = 120;
     public static final int ITEM_H = 120;
@@ -24,6 +26,9 @@ public class UMenuItem extends Drawable{
     private static final int CHILD_MARGIN_H = 30;
 
 
+    /**
+     * メンバ変数
+     */
     protected UMenuBar menuBar;
     protected UMenuItemCallbacks mCallbacks;
     protected MenuItemId id;
@@ -41,7 +46,9 @@ public class UMenuItem extends Drawable{
     protected Bitmap icon;
     protected int animeColor;
 
-    // Get/Set
+    /**
+     * Get/Set
+     */
     public LinkedList<UMenuItem> getChildItems() {
         return childItems;
     }
@@ -184,12 +191,12 @@ public class UMenuItem extends Drawable{
                     isOpened = true;
                     openMenu();
                 }
-                ULog.print("UMenuItem", "isOpened " + isOpened);
-            }
-
-            // タッチされた時の処理
-            if (mCallbacks != null) {
-                mCallbacks.menuItemClicked(id);
+                ULog.print(TAG, "isOpened " + isOpened);
+            } else {
+                // タッチされた時の処理
+                if (mCallbacks != null) {
+                    mCallbacks.menuItemClicked(id);
+                }
             }
             // アニメーション
             startAnim();
@@ -277,45 +284,6 @@ public class UMenuItem extends Drawable{
         }
         return !allFinished;
     }
-
-    /**
-     * 子要素の移動処理
-     * @return  true:移動中 / false:移動完了
-     */
-//    public boolean moveChilds() {
-//        if (childItems == null) return false;
-//
-//        // 移動中のものが１つでもあったら false になる
-//        boolean allFinished = true;
-//
-//        for (UMenuItem item : childItems) {
-//            if (item.move()) {
-//                allFinished = false;
-//            }
-//        }
-//
-//        return !allFinished;
-//    }
-//
-//    /**
-//     * 子要素のアニメーション
-//     * @return
-//     */
-//    public boolean animateChilds() {
-//        if (childItems == null) return false;
-//
-//        // 移動中のものが１つでもあったら false になる
-//        boolean allFinished = true;
-//
-//        for (UMenuItem item : childItems) {
-//            if (item.move()) {
-//                allFinished = false;
-//            }
-//        }
-//
-//        return !allFinished;
-//    }
-
 
     /**
      * Drawableインターフェース

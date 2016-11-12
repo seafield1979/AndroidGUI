@@ -10,10 +10,13 @@ import android.view.View;
 import java.util.List;
 
 /**
- * 子要素を持つことができるIcon
+ * 箱アイコン
+ * 子要素を持つことができる
  */
 
 public class UIconBox extends UIcon {
+    public static final String TAG = "UIconBox";
+
     public static final int ICON_W = 150;
     public static final int DUMMY_ICON_NUM = 10;
 
@@ -42,8 +45,8 @@ public class UIconBox extends UIcon {
         color = UColor.getRandomColor();
 
         // ダミーで子要素を追加
-        UIconWindow[] windows = parentWindow.getWindows();
-        subWindow = windows[WindowType.Sub.ordinal()];
+        UIconWindows windows = parentWindow.getWindows();
+        subWindow = windows.getSubWindow();
 
         mIconManager = UIconManager.createInstance(parentView, subWindow);
         for (int i=0; i<DUMMY_ICON_NUM; i++) {

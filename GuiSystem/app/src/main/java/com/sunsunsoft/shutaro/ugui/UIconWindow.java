@@ -67,7 +67,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
 
     // 他のIconWindow
     // ドラッグで他のWindowにアイコンを移動するのに使用する
-    private UIconWindow[] windows;
+    private UIconWindows windows;
 
     // ドラッグ中のアイコン
     private UIcon dragedIcon;
@@ -122,11 +122,11 @@ public class UIconWindow extends UWindow implements AutoMovable{
         this.dir = dir;
     }
 
-    public void setWindows(UIconWindow[] windows) {
+    public void setWindows(UIconWindows windows) {
         this.windows = windows;
     }
 
-    public UIconWindow[] getWindows() { return this.windows; }
+    public UIconWindows getWindows() { return this.windows; }
 
     public void setParentView(View mParentView) {
         this.mParentView = mParentView;
@@ -534,7 +534,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 dropedIcon.isDroping = false;
             }
 
-            for (UIconWindow window : windows) {
+            for (UIconWindow window : windows.getWindows()) {
                 // ドラッグ中のアイコンが別のアイコンの上にあるかをチェック
                 Point dragPos = new Point((int)window.toWinX(vt.getX()), (int) window.toWinY(vt.getY()));
 
@@ -577,7 +577,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
         }
 
         // 全てのWindowの全ての
-        for (UIconWindow window : windows) {
+        for (UIconWindow window : windows.getWindows()) {
             // Windowの領域外ならスキップ
             if (!(window.rect.contains((int)vt.getX(),(int)vt.getY()))){
                 continue;
@@ -614,7 +614,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                                 if (box.getIcons() != null) {
                                     moveIconIntoBox(dragedIcon, icon);
                                     mIconManager.updateBlockRect();
-                                    for (UIconWindow win : windows) {
+                                    for (UIconWindow win : windows.getWindows()) {
                                         UIconManager manager = win.getIconManager();
                                         if (manager != null) {
                                             manager.updateBlockRect();

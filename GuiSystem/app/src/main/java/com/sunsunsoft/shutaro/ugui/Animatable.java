@@ -4,8 +4,6 @@ package com.sunsunsoft.shutaro.ugui;
  */
 
 public interface Animatable {
-    double RAD = 3.1415 / 180.0;
-
     /**
      * アニメーション開始
      */
