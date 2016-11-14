@@ -8,7 +8,6 @@ import java.util.TimerTask;
 enum TouchType {
     None,
     Touch,        // タッチ開始
-    TouchUp,      // タッチ終了
     LongPress,    // 長押し
     Click,        // ただのクリック（タップ)
     LongClick,    // 長クリック
@@ -40,7 +39,7 @@ public class ViewTouch {
     public TouchType type;
     private Timer timer;
 
-    // タッチ中にtrueになる
+    private boolean isTouchUp;      // タッチアップしたフレームだけtrueになる
     private boolean isTouching;
     private boolean isLongTouch;
 
@@ -54,7 +53,9 @@ public class ViewTouch {
     // タッチ開始した時間
     long touchTime;
 
-    // get/set
+    /**
+     * Get/Set
+     */
     public float getX() { return x; }
     public float getY() { return y; }
     public float getX(float offset) { return x + offset; }
@@ -64,6 +65,12 @@ public class ViewTouch {
     public float touchX(float offset) {return this.touchX + offset;}
     public float touchY(float offset) {return this.touchY + offset;}
     public boolean isMoveStart() { return isMoveStart; }
+    public boolean isTouchUp() {
+        return isTouchUp;
+    }
+    public void setTouchUp(boolean touchUp) {
+        isTouchUp = touchUp;
+    }
 
     public ViewTouch() {
         this(null);
@@ -89,6 +96,8 @@ public class ViewTouch {
     }
 
     public TouchType checkTouchType(MotionEvent e) {
+        isTouchUp = false;
+
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
             {
@@ -110,6 +119,8 @@ public class ViewTouch {
 
                 timer.cancel();
 
+                isTouchUp = true;
+
                 if (type == TouchType.Moving) {
                     ULog.print(TAG, "MoveEnd");
                     type = TouchType.MoveEnd;
@@ -130,7 +141,7 @@ public class ViewTouch {
                             ULog.print(TAG, "LongClick");
                         }
                     } else {
-                        type = TouchType.TouchUp;
+                        type = TouchType.None;
                     }
                 }
             }

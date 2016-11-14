@@ -29,7 +29,12 @@ public class UIconCircle extends UIcon {
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);
 
-        if (isDroping) {
+        if (isLongTouched) {
+            paint.setColor(longPressedColor);
+        }
+        else if (isTouched) {
+            paint.setColor(touchedColor);
+        } else if (isDroping) {
             // 外枠のみ
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2);

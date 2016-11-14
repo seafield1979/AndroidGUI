@@ -287,7 +287,7 @@ class DrawList
             if (obj.touchEvent(vt)) {
                 if (vt.type == TouchType.Touch) {
                     UDrawManager.getInstance().setTouchingObj(obj);
-                } else if (vt.type == TouchType.TouchUp) {
+                } else if (vt.isTouchUp()) {
                     UDrawManager.getInstance().setTouchingObj(null);
                 }
                 return true;

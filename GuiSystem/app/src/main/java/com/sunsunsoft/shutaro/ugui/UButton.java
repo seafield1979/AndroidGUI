@@ -166,6 +166,12 @@ public class UButton extends Drawable {
         if (offset == null) {
             offset = new PointF();
         }
+        if (vt.isTouchUp()) {
+            if (isPressed) {
+                isPressed = false;
+                done = true;
+            }
+        }
 
         switch(vt.type) {
             case None:
@@ -184,12 +190,8 @@ public class UButton extends Drawable {
                     done = true;
                 }
                 break;
-            case TouchUp:
             case MoveEnd:
-                if (isPressed) {
-                    isPressed = false;
-                    done = true;
-                }
+
                 break;
         }
         return done;

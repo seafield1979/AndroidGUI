@@ -705,27 +705,27 @@ public class UIconWindow extends UWindow implements AutoMovable{
             }
         }
 
-            switch (vt.type) {
-                case Moving:
-                    if (vt.isMoveStart()) {
-                        if (dragStart(vt)) {
-                            done = true;
-                        }
-                    }
-                    if (dragMove(vt)) {
+        switch (vt.type) {
+            case Moving:
+                if (vt.isMoveStart()) {
+                    if (dragStart(vt)) {
                         done = true;
                     }
-                    break;
-                case MoveEnd:
-                    if (dragEnd(vt)) {
-                        done = true;
-                    }
-                    break;
-                case MoveCancel:
-                    sortIcons(false);
-                    setDragedIcon(null);
-                    break;
-            }
+                }
+                if (dragMove(vt)) {
+                    done = true;
+                }
+                break;
+            case MoveEnd:
+                if (dragEnd(vt)) {
+                    done = true;
+                }
+                break;
+            case MoveCancel:
+                sortIcons(false);
+                setDragedIcon(null);
+                break;
+        }
 
         if (!done) {
             // 画面のスクロール処理

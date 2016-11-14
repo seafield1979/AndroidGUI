@@ -49,7 +49,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     private boolean isFirst = true;
 
     // クリック判定の仕組み
-    private ViewTouch viewTouch = new ViewTouch();
+    private ViewTouch viewTouch = new ViewTouch(this);
 
     private Paint paint = new Paint();
 
@@ -379,9 +379,8 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         ((Activity)mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (WindoTouchEvent(viewTouch)) {
-                    invalidate();
-                }
+                WindoTouchEvent(viewTouch);
+                invalidate();
             }
         });
     }

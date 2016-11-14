@@ -70,6 +70,15 @@ abstract public class UIcon extends Drawable implements AutoMovable {
         isLongTouched = longTouched;
     }
 
+    private void clearFlags() {
+        isTouched = false;
+        isLongTouched = false;
+        isDraging = false;
+    }
+
+    /**
+     * Constructor
+     */
     public UIcon(UIconWindow parentWindow, IconType type, float x, float y, int width, int
             height)
     {
@@ -81,8 +90,13 @@ abstract public class UIcon extends Drawable implements AutoMovable {
         this.setPos(x, y);
         this.setSize(width, height);
         updateRect();
-        this.color = Color.rgb(0,0,0);
         count++;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+        this.touchedColor = UColor.addBrightness(color, 0.3f);
+        this.longPressedColor = UColor.addBrightness(color, 0.6f);
     }
 
     public IconType getType() { return type; }
@@ -249,6 +263,9 @@ abstract public class UIcon extends Drawable implements AutoMovable {
     public boolean touchEvent(ViewTouch vt, PointF offset) {
         boolean done = false;
 
+        if (vt.isTouchUp()) {
+            clearFlags();
+        }
         switch (vt.type) {
             case Touch:
                 if (getRect().contains((int)vt.touchX(offset.x), (int)vt.touchY(offset.y))) {
@@ -261,12 +278,6 @@ abstract public class UIcon extends Drawable implements AutoMovable {
                     isLongTouched = true;
                     done = true;
                 }
-                break;
-            case TouchUp:
-                isTouched = false;
-                isLongTouched = false;
-                isDraging = false;
-                done = true;
                 break;
             case Click:
                 if (getRect().contains((int)vt.touchX(offset.x), (int)vt.touchY(offset.y))) {

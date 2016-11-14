@@ -30,7 +30,13 @@ public class UIconRect extends UIcon {
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);
         // 色
-        if (isDroping) {
+        if (isLongTouched) {
+            paint.setColor(longPressedColor);
+        }
+        else if (isTouched) {
+            paint.setColor(touchedColor);
+        }
+        else if (isDroping) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2);
             paint.setColor(Color.BLACK);

@@ -133,16 +133,16 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
             }
         }
 
+        if (vt.isTouchUp()) {
+            logWindows[0].addLog("TouchUp");
+            invalidate();
+        }
         // タッチイベントのログをとる
         switch(vt.type) {
             case None:
                 break;
             case Touch:        // タッチ開始
                 logWindows[0].addLog("Touch " + vt.touchX() + " " + vt.touchY());
-                invalidate();
-                break;
-            case TouchUp:      // タッチ終了
-                logWindows[0].addLog("TouchUp");
                 invalidate();
                 break;
             case LongPress:
