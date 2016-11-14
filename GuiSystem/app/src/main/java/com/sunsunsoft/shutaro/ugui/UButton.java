@@ -59,7 +59,7 @@ public class UButton extends Drawable {
     public UButton(UButtonCallbacks callbacks, int id, String text,
                    float x, float y, int width, int height, int color)
     {
-        this(callbacks, UButtonType.BGColor, DRAW_PRIORITY, id, text, x, y, width, height, color);
+        this(callbacks, UButtonType.BGColor, id, DRAW_PRIORITY, text, x, y, width, height, color);
     }
 
     public UButton(UButtonCallbacks callbacks, UButtonType type, int id, int priority, String text,

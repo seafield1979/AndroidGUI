@@ -1,5 +1,6 @@
 package com.sunsunsoft.shutaro.ugui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,7 +13,7 @@ import android.view.View;
  * タッチイベントの処理
  */
 
-public class TestTouchView extends View implements View.OnTouchListener, UButtonCallbacks{
+public class TestTouchView extends View implements View.OnTouchListener, UButtonCallbacks, ViewTouchCallbacks {
     enum ButtonId {
         Clear1("clear1"),
         Clear2("clear2")
@@ -36,9 +37,10 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
     private boolean isFirst = true;
 
     // タッチ情報
-    private ViewTouch vt = new ViewTouch();
+    private ViewTouch vt = new ViewTouch(this);
 
     private Paint paint = new Paint();
+    private Context mContext;
 
     // UButton
     private UButton[] buttons = new UButton[ButtonId.values().length];
@@ -54,6 +56,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
     public TestTouchView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setOnTouchListener(this);
+        mContext = context;
     }
 
     /**
@@ -73,6 +76,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
             buttons[i] = new UButton(this, id.ordinal(), title, 100, y, width -
                     100*2, 120,
                     Color.rgb(0,128,0));
+            UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
         }
 
@@ -141,6 +145,10 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
                 logWindows[0].addLog("TouchUp");
                 invalidate();
                 break;
+            case LongPress:
+                logWindows[0].addLog("LongTouch");
+                invalidate();
+                break;
             case Click:        // ただのクリック（タップ)
                 logWindows[0].addLog("Click " + vt.touchX() + " " + vt.touchY());
                 invalidate();
@@ -207,6 +215,18 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
         }
     }
     public void longClick(UButton button) {
+    }
 
+    /**
+     * ViewTouchCallbacks
+     */
+    public void longPressed() {
+        ((Activity)mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                logWindows[0].addLog("long pressed");
+                invalidate();
+            }
+        });
     }
 }

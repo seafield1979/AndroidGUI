@@ -6,6 +6,9 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.Log;
 
+import java.util.Collections;
+import java.util.List;
+
 import static com.sunsunsoft.shutaro.ugui.UDebug.drawIconId;
 
 /**
@@ -38,9 +41,34 @@ abstract public class UIcon extends Drawable implements AutoMovable {
     public static final int ANIME_FRAME = 20;
 
     // ドラッグ中のアイコンが上にある状態
+    protected boolean isDraging;
     protected boolean isDroping;
+    protected boolean isTouched;
+    protected boolean isLongTouched;
+
+    protected int touchedColor;
+    protected int longPressedColor;
 
     protected IconType type;
+
+    /**
+     * Get/Set
+     */
+    public boolean isTouched() {
+        return isTouched;
+    }
+
+    public void setTouched(boolean touched) {
+        isTouched = touched;
+    }
+
+    public boolean isLongTouched() {
+        return isLongTouched;
+    }
+
+    public void setLongTouched(boolean longTouched) {
+        isLongTouched = longTouched;
+    }
 
     public UIcon(UIconWindow parentWindow, IconType type, float x, float y, int width, int
             height)
@@ -112,8 +140,7 @@ abstract public class UIcon extends Drawable implements AutoMovable {
      * @return
      */
     public boolean checkClick(float clickX, float clickY) {
-        if (pos.x <= clickX && clickX <= getRight() &&
-                pos.y <= clickY && clickY <= getBottom() )
+        if (getRect().contains((int)clickX, (int)clickY))
         {
             click();
             return true;
@@ -125,8 +152,7 @@ abstract public class UIcon extends Drawable implements AutoMovable {
      * ドロップをチェックする
      */
     public boolean checkDrop(float dropX, float dropY) {
-        if (pos.x <= dropX && dropX <= getRight() &&
-                pos.y <= dropY && dropY <= getBottom() )
+        if (getRect().contains((int)dropX, (int)dropY))
         {
             return true;
         }
@@ -213,9 +239,67 @@ abstract public class UIcon extends Drawable implements AutoMovable {
      * タッチイベント処理
      * 親のUIconWindowで処理するのでここでは何もしない
      * @param vt
+     * @param offset
      * @return
      */
     public boolean touchEvent(ViewTouch vt) {
-        return false;
+        return touchEvent(vt, null);
+    }
+
+    public boolean touchEvent(ViewTouch vt, PointF offset) {
+        boolean done = false;
+
+        switch (vt.type) {
+            case Touch:
+                if (getRect().contains((int)vt.touchX(offset.x), (int)vt.touchY(offset.y))) {
+                    isTouched = true;
+                    done = true;
+                }
+                break;
+            case LongPress:
+                if (getRect().contains((int)vt.getX(offset.x), (int)vt.getY(offset.y))) {
+                    isLongTouched = true;
+                    done = true;
+                }
+                break;
+            case TouchUp:
+                isTouched = false;
+                isLongTouched = false;
+                isDraging = false;
+                done = true;
+                break;
+            case Click:
+                if (getRect().contains((int)vt.touchX(offset.x), (int)vt.touchY(offset.y))) {
+                    click();
+                    done = true;
+                }
+                break;
+            case LongClick:
+                if (getRect().contains((int)vt.touchX(offset.x), (int)vt.touchY(offset.y))) {
+                    longClick();
+                    done = true;
+                }
+                break;
+            case Moving:
+                if (vt.isMoveStart()) {
+                    if (getRect().contains((int)vt.touchX(offset.x), (int)vt.touchY(offset.y))) {
+                        isDraging = true;
+                        done = true;
+                    }
+                }
+                if (isDraging) {
+                    move((int)vt.moveX, (int)vt.moveY);
+                    done = true;
+                }
+                break;
+            case MoveEnd:
+                isDraging = false;
+                break;
+            case MoveCancel:
+                isDraging = false;
+                break;
+        }
+
+        return done;
     }
 }

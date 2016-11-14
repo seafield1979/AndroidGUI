@@ -1,5 +1,6 @@
 package com.sunsunsoft.shutaro.ugui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,7 +16,7 @@ import android.view.SurfaceView;
  * 単語帳トップ SurfaceView版
  */
 
-public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolder.Callback, UMenuItemCallbacks, UIconCallbacks {
+public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolder.Callback, UMenuItemCallbacks, UIconCallbacks, ViewTouchCallbacks {
     enum WindowType {
         Icon1,
         Icon2,
@@ -29,7 +30,8 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     // SurfaceView用
     SurfaceHolder surfaceHolder;
     Thread thread;
-    private boolean isInvalidate = true;
+    Context mContext;
+    private boolean isInvalidate;
     int screen_width, screen_height;
 
     // Windows
@@ -58,7 +60,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
 
     public TopSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
+        mContext = context;
         surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
     }
@@ -122,6 +124,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         initWindows(getWidth(), getHeight());
+        isInvalidate = true;
 
         thread = new Thread(this);
         thread.start();
@@ -165,7 +168,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
                         surfaceHolder.unlockCanvasAndPost(canvas);
                     }
 
-                    // 次のinvalidateが実行されるまで待ち(すでにinvalidate済みなら待たない)
+                       // 次のinvalidateが実行されるまで待ち(すでにinvalidate済みなら待たない)
                     if (!isInvalidate) {
                         wait();
                     }
@@ -179,8 +182,10 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     }
 
     public synchronized void invalidate() {
-        isInvalidate = true;
-        notify();
+        if (isInvalidate == false) {
+            isInvalidate = true;
+            notify();
+        }
     }
 
 
@@ -365,5 +370,19 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     }
     public void dropToIcon(UIcon icon) {
         ULog.print(TAG, "dropToIcon");
+    }
+
+    /**
+     * ViewTouchCallbacks
+     */
+    public void longPressed() {
+        ((Activity)mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (WindoTouchEvent(viewTouch)) {
+                    invalidate();
+                }
+            }
+        });
     }
 }

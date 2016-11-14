@@ -9,6 +9,7 @@ enum TouchType {
     None,
     Touch,        // タッチ開始
     TouchUp,      // タッチ終了
+    LongPress,    // 長押し
     Click,        // ただのクリック（タップ)
     LongClick,    // 長クリック
     Moving,       // 移動
@@ -32,10 +33,11 @@ public class ViewTouch {
     public static final int MOVE_START_TIME = 100;
 
     // 長押しまでの時間(ms)
-    public static final int LONG_TOUCH_TIME = 1000;
+    public static final int LONG_TOUCH_TIME = 700;
 
+
+    private ViewTouchCallbacks callbacks;
     public TouchType type;
-
     private Timer timer;
 
     // タッチ中にtrueになる
@@ -64,7 +66,11 @@ public class ViewTouch {
     public boolean isMoveStart() { return isMoveStart; }
 
     public ViewTouch() {
+        this(null);
         type = TouchType.None;
+    }
+    public ViewTouch(ViewTouchCallbacks callback) {
+        this.callbacks = callback;
     }
 
     /**
@@ -130,9 +136,13 @@ public class ViewTouch {
             }
                 break;
             case MotionEvent.ACTION_MOVE:
-                // クリックが判定できるようにタッチ時間が一定時間以上、かつ移動距離が一定時間以上で移動判定される
                 isMoveStart = false;
-                if ( type != TouchType.Moving) {
+
+                // 長押し時は何もしない
+                if (type == TouchType.LongPress) break;
+
+                // クリックが判定できるようにタッチ時間が一定時間以上、かつ移動距離が一定時間以上で移動判定される
+                else if ( type != TouchType.Moving) {
                     float dx = (e.getX() - touchX);
                     float dy = (e.getY() - touchY);
                     float dist = (float) Math.sqrt(dx * dx + dy * dy);
@@ -182,9 +192,14 @@ public class ViewTouch {
             @Override
             public void run() {
                 timer.cancel();
-                if (isTouching) {
+                if (isTouching && type != TouchType.Moving) {
                     // ロングタッチを検出する
                     isLongTouch = true;
+                    type = TouchType.LongPress;
+                    // ロングタッチイベント開始はonTouchから取れないので親に通知する
+                    if (callbacks != null) {
+                        callbacks.longPressed();
+                    }
                     ULog.print(TAG, "timer Long Touch");
                 }
             }

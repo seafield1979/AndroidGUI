@@ -64,6 +64,10 @@ abstract public class UWindow extends Drawable implements AutoMovable {
         return screenY + contentTop.y - pos.y;
     }
 
+    public PointF getToWinPos() {
+        return new PointF(contentTop.x - pos.x, contentTop.y - pos.y);
+    }
+
     // Windows座標系 -> Screen座標系
     public float toScreenX(float winX) {
         return winX - contentTop.x + pos.x;
@@ -71,6 +75,10 @@ abstract public class UWindow extends Drawable implements AutoMovable {
 
     public float toScreenY(float winY) {
         return winY - contentTop.y + pos.y;
+    }
+
+    public PointF getToScreenPos() {
+        return new PointF(-contentTop.x + pos.x, -contentTop.y + pos.y);
     }
 
     // Window1の座標系から Window2の座標系に変換
@@ -82,11 +90,18 @@ abstract public class UWindow extends Drawable implements AutoMovable {
         return win1Y + win1.pos.y - win1.contentTop.y - win2.pos.y + win2.contentTop.y;
     }
 
-    // Window2座標系 -> Screen座標系に変換するための値
-    // Window内のオブジェクトを描画する際にこの値を加算する
-    public PointF getWin2ScreenPos() {
-        return new PointF(pos.x - contentTop.x, pos.y - contentTop.y);
+    public PointF getWin1ToWin2(UWindow win1, UWindow win2) {
+        return new PointF(
+                win1.pos.x - win1.contentTop.x - win2.pos.x + win2.contentTop.x,
+                win1.pos.y - win1.contentTop.y - win2.pos.y + win2.contentTop.y
+                );
     }
+
+    // Window座標系 -> Screen座標系に変換するための値
+    // Window内のオブジェクトを描画する際にこの値を加算する
+//    public PointF getWinToScreenPos() {
+//        return new PointF(pos.x - contentTop.x, pos.y - contentTop.y);
+//    }
 
     /**
      * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する
