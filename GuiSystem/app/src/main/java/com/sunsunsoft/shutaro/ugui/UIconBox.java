@@ -56,7 +56,7 @@ public class UIconBox extends UIcon {
 
     }
 
-    public void draw(Canvas canvas, Paint paint, PointF offset) {
+    public void drawIcon(Canvas canvas, Paint paint, PointF offset) {
 
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);

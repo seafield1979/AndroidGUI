@@ -25,7 +25,7 @@ public class UIconBmp extends UIcon {
         this.bmp = bmp;
     }
 
-    public void draw(Canvas canvas,Paint paint, PointF offset) {
+    public void drawIcon(Canvas canvas,Paint paint, PointF offset) {
         if (bmp == null) return;
 
         // 領域の幅に合わせて伸縮

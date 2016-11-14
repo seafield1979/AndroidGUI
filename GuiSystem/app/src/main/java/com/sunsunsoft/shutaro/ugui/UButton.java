@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 
 
@@ -112,8 +113,8 @@ public class UButton extends Drawable {
                 _pos.y += PRESS_Y;
             } else {
                 // ボタンの影用に下に矩形を描画
-                UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y,
-                        _pos.x + size.width, _pos.y + size.height, BUTTON_RADIUS, pressedColor);
+                UDraw.drawRoundRectFill(canvas, paint,
+                        new RectF(_pos.x, _pos.y, _pos.x + size.width, _pos.y + size.height), BUTTON_RADIUS, pressedColor);
             }
             _height -= PRESS_Y;
 
@@ -123,7 +124,9 @@ public class UButton extends Drawable {
                 _color = pressedColor;
             }
         }
-        UDraw.drawRoundRectFill(canvas, paint, _pos.x, _pos.y, _pos.x + size.width, _pos.y + _height, BUTTON_RADIUS, _color);
+        UDraw.drawRoundRectFill(canvas, paint,
+                new RectF(_pos.x, _pos.y, _pos.x + size.width, _pos.y + _height),
+                BUTTON_RADIUS, _color);
 
         // テキスト
         if (text != null) {

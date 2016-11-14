@@ -30,6 +30,7 @@ abstract public class UIcon extends Drawable implements AutoMovable {
 
     private static final String TAG = "UIcon";
     private static final int DRAW_PRIORITY = 200;
+    public static final int DRAG_ICON_PRIORITY = 10;
     private static int count;
 
     public int id;
@@ -40,11 +41,13 @@ abstract public class UIcon extends Drawable implements AutoMovable {
     // アニメーション用
     public static final int ANIME_FRAME = 20;
 
-    // ドラッグ中のアイコンが上にある状態
-    protected boolean isDraging;
-    protected boolean isDroping;
-    protected boolean isTouched;
-    protected boolean isLongTouched;
+    // 各種状態
+    protected boolean isChecking;      // 選択可能状態(チェックボックスが表示される)
+    protected boolean isChecked;       // 選択中
+    protected boolean isDraging;        // ドラッグ中
+    protected boolean isDroping;        // ドロップ中(上に他のアイコンがドラッグ)
+    protected boolean isTouched;        // タッチ中
+    protected boolean isLongTouched;    // 長押し中
 
     protected int touchedColor;
     protected int longPressedColor;
@@ -111,9 +114,22 @@ abstract public class UIcon extends Drawable implements AutoMovable {
 
     public void click() {
         Log.v(TAG, "click");
+
         startAnim();
-        if (mCallbacks != null) {
-            mCallbacks.clickIcon(this);
+        if (isChecking) {
+            if(isChecked) {
+                isChecked = false;
+                UDrawManager.getInstance().removeDrawable(this);
+            }
+            else {
+                isChecked = true;
+                this.drawPriority = DRAG_ICON_PRIORITY;
+                UDrawManager.getInstance().addDrawable(this);
+            }
+        } else {
+            if (mCallbacks != null) {
+                mCallbacks.clickIcon(this);
+            }
         }
     }
     public void longClick() {
@@ -172,6 +188,27 @@ abstract public class UIcon extends Drawable implements AutoMovable {
         }
         return false;
     }
+
+    /**
+     * アイコンを描画
+     */
+    protected void draw(Canvas canvas, Paint paint, PointF offset) {
+        drawIcon(canvas, paint, offset);
+
+        if (isChecking) {
+            float _x = pos.x + offset.x;
+            float _y = pos.y + offset.y;
+            int width = 70;
+            UDraw.drawCheckbox(canvas, paint, isChecked, _x + 10, _y + size.height - width - 10, width,
+                    Color.rgb
+                    (100,100,200));
+        }
+    }
+
+    /**
+     * アイコンを描画する
+     */
+    abstract protected void drawIcon(Canvas canvas, Paint paint, PointF offset);
 
     /**
      * アイコンにIDを表示する
@@ -276,6 +313,13 @@ abstract public class UIcon extends Drawable implements AutoMovable {
             case LongPress:
                 if (getRect().contains((int)vt.getX(offset.x), (int)vt.getY(offset.y))) {
                     isLongTouched = true;
+                    isChecking = true;
+                    isChecked = true;
+
+                    // 描画リストに登録
+                    this.drawPriority = DRAG_ICON_PRIORITY;
+                    UDrawManager.getInstance().addDrawable(this);
+
                     done = true;
                 }
                 break;
@@ -299,10 +343,10 @@ abstract public class UIcon extends Drawable implements AutoMovable {
                     }
                 }
                 if (isDraging) {
-                    move((int)vt.moveX, (int)vt.moveY);
+//                    move((int)vt.moveX, (int)vt.moveY);
                     done = true;
                 }
-                break;
+              break;
             case MoveEnd:
                 isDraging = false;
                 break;

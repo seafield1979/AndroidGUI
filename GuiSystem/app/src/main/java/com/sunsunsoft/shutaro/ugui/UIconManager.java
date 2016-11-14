@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.view.View;
 
 import java.util.LinkedList;
+import java.util.List;
 
 // アイコンの挿入位置
 enum AddPos {
@@ -27,7 +28,7 @@ public class UIconManager {
     private UIconsBlockManager mBlockManager;
 
     // Get/Set
-    public LinkedList<UIcon> getIcons() {
+    public List<UIcon> getIcons() {
         return icons;
     }
 
@@ -39,6 +40,24 @@ public class UIconManager {
         return mParentWindow;
     }
 
+    /**
+     * チェックされたアイコンのリストを取得する
+     * @return
+     */
+    public List<UIcon> getCheckedIcons() {
+        LinkedList<UIcon> checkedIcons = new LinkedList<>();
+
+        for (UIcon icon : icons) {
+            if (icon.isChecked) {
+                checkedIcons.add(icon);
+            }
+        }
+        return checkedIcons;
+    }
+
+    /**
+     * Constructor
+     */
     public UIconsBlockManager getBlockManager() {
         return mBlockManager;
     }

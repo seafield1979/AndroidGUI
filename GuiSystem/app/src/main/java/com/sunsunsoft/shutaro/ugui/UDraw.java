@@ -1,6 +1,7 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -33,6 +34,22 @@ public class UDraw {
     }
 
     /**
+     * 角丸矩形描画 (ライン）
+     * @param canvas
+     * @param paint
+     * @param rect
+     * @param width 線の太さ
+     * @param color
+     */
+    public static void drawRoundRect(Canvas canvas, Paint paint, RectF rect, int width,
+                                     float radius, int color) {
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(width);
+        paint.setColor(color);
+        canvas.drawRoundRect(rect, radius, radius, paint);
+    }
+
+    /**
      * 矩形描画(塗りつぶし)
      * @param canvas
      * @param paint
@@ -49,18 +66,15 @@ public class UDraw {
      * 角丸四角形(塗りつぶし)
      * @param canvas
      * @param paint
-     * @param left
-     * @param top
-     * @param right
-     * @param bottom
-     * @param radius
+     * @param rect
+     * @param radius    角の半径
      * @param color
      */
-    public static void drawRoundRectFill(Canvas canvas, Paint paint, float left, float top, float
-            right, float bottom, float radius, int color) {
+    public static void drawRoundRectFill(Canvas canvas, Paint paint, RectF rect, float radius, int
+            color) {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(color);
-        canvas.drawRoundRect(new RectF(left, top, right, bottom), radius, radius, paint);
+        canvas.drawRoundRect(rect, radius, radius, paint);
     }
 
     /**
@@ -152,5 +166,41 @@ public class UDraw {
         path.close();
 
         return path;
+    }
+
+
+    /**
+     * チェックボックスを描画する
+     * @param canvas
+     * @param paint
+     * @param isChecked
+     * @param x
+     * @param y
+     * @param width
+     * @param color  チェック時の色(みチェック時は灰色)
+     */
+    public static void drawCheckbox(Canvas canvas, Paint paint, boolean isChecked,
+                               float x, float y, float width, int color )
+    {
+        RectF rect = new RectF(x, y, x + width, y + width);
+
+        if (isChecked) {
+            // 枠
+            drawRoundRectFill(canvas, paint, rect, 10, color );
+
+            // チェック
+            Path path = new Path();
+            paint.setStyle(Paint.Style.STROKE);
+            path.moveTo(x + width * 0.2f, y + width * 0.4f);
+            path.lineTo(x + width * 0.4f, y + width * 0.7f);
+            path.lineTo(x + width * 0.75f, y + width * 0.25f);
+            paint.setColor(Color.WHITE);
+            paint.setStrokeWidth(6);
+            canvas.drawPath(path, paint);
+
+        } else {
+            // 枠
+            drawRoundRect(canvas, paint, rect, 10, 15, Color.rgb(140,140,140) );
+        }
     }
 }
