@@ -146,7 +146,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
                 invalidate();
                 break;
             case LongPress:
-                logWindows[0].addLog("LongTouch");
+                logWindows[0].addLog("LongPress");
                 invalidate();
                 break;
             case Click:        // ただのクリック（タップ)

@@ -36,7 +36,8 @@ public class ViewTouch {
 
 
     private ViewTouchCallbacks callbacks;
-    public TouchType type;
+    public TouchType type;          // 外部用のタイプ(変化があった時に有効な値を返す)
+    private TouchType innerType;    // 内部用のタイプ
     private Timer timer;
 
     private boolean isTouchUp;      // タッチアップしたフレームだけtrueになる
@@ -74,7 +75,7 @@ public class ViewTouch {
 
     public ViewTouch() {
         this(null);
-        type = TouchType.None;
+        innerType = TouchType.None;
     }
     public ViewTouch(ViewTouchCallbacks callback) {
         this.callbacks = callback;
@@ -106,7 +107,7 @@ public class ViewTouch {
                 isTouching = true;
                 touchX = e.getX();
                 touchY = e.getY();
-                type = TouchType.Touch;
+                type = innerType = TouchType.Touch;
                 touchTime = System.currentTimeMillis();
                 startLongTouchTimer();
             }
@@ -121,9 +122,9 @@ public class ViewTouch {
 
                 isTouchUp = true;
 
-                if (type == TouchType.Moving) {
+                if (innerType == TouchType.Moving) {
                     ULog.print(TAG, "MoveEnd");
-                    type = TouchType.MoveEnd;
+                    type = innerType = TouchType.MoveEnd;
                     return type;
                 } else {
                     float x = (e.getX() - touchX);
@@ -150,10 +151,13 @@ public class ViewTouch {
                 isMoveStart = false;
 
                 // 長押し時は何もしない
-                if (type == TouchType.LongPress) break;
+                if (innerType == TouchType.LongPress) {
+                    type = TouchType.None;
+                    break;
+                }
 
                 // クリックが判定できるようにタッチ時間が一定時間以上、かつ移動距離が一定時間以上で移動判定される
-                else if ( type != TouchType.Moving) {
+                else if ( innerType != TouchType.Moving) {
                     float dx = (e.getX() - touchX);
                     float dy = (e.getY() - touchY);
                     float dist = (float) Math.sqrt(dx * dx + dy * dy);
@@ -161,18 +165,18 @@ public class ViewTouch {
                     if (dist >= CLICK_DISTANCE) {
                         long time = System.currentTimeMillis() - touchTime;
                         if (time >= MOVE_START_TIME) {
-                            type = TouchType.Moving;
+                            type = innerType = TouchType.Moving;
                             isMoveStart = true;
                             x = touchX;
                             y = touchY;
                         }
                     }
                 }
-                if ( type == TouchType.Moving) {
+                if ( innerType == TouchType.Moving) {
                     moveX = e.getX() - x;
                     moveY = e.getY() - y;
                 } else {
-                    type = TouchType.None;
+                    innerType = type = TouchType.None;
                 }
                 x = e.getX();
                 y = e.getY();
@@ -206,7 +210,7 @@ public class ViewTouch {
                 if (isTouching && type != TouchType.Moving) {
                     // ロングタッチを検出する
                     isLongTouch = true;
-                    type = TouchType.LongPress;
+                    innerType = type = TouchType.LongPress;
                     // ロングタッチイベント開始はonTouchから取れないので親に通知する
                     if (callbacks != null) {
                         callbacks.longPressed();
