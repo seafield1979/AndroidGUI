@@ -74,10 +74,10 @@ public class UIconsBlockManager {
      * @param pos
      * @return
      */
-    public UIcon getOverlapedIcon(Point pos, UIcon exceptIcon) {
+    public UIcon getOverlapedIcon(Point pos, List<UIcon> exceptIcons) {
         //ULog.startCount(TAG);
         for (IconsBlock block : blockList) {
-            UIcon icon = block.getOverlapedIcon(pos, exceptIcon);
+            UIcon icon = block.getOverlapedIcon(pos, exceptIcons);
             if (icon != null) {
                 //ULog.endCount(TAG);
                 return icon;
@@ -169,14 +169,15 @@ class IconsBlock {
      * ブロックとの重なり判定
      * ブロックと重なっていたら個々のアイコンとも判定を行う
      * @param pos
-     * @param exceptIcon
+     * @param exceptIcons
      * @return null:重なるアイコンなし
      */
-    public UIcon getOverlapedIcon(Point pos, UIcon exceptIcon) {
-//        ULog.count(UIconsBlockManager.TAG);
+    public UIcon getOverlapedIcon(Point pos, List<UIcon> exceptIcons) {
+
         if (rect.contains(pos.x, pos.y)) {
             for (UIcon icon : icons) {
-                if (icon == exceptIcon) continue;
+                if (exceptIcons.contains(icon)) continue;
+
                 ULog.count(UIconsBlockManager.TAG);
                 if (icon.getRect().contains(pos.x, pos.y)) {
                     return icon;

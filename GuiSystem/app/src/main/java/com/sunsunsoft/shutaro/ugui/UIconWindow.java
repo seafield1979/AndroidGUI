@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
     public static final String TAG = "UIconWindow";
 
     public static final int DRAW_PRIORITY = 100;
-    public static final int DRAG_ICON_PRIORITY = 10;
+    public static final int DRAG_ICON_PRIORITY = 11;
 
     public static final int ICON_MARGIN = 30;
 
@@ -77,8 +78,10 @@ public class UIconWindow extends UWindow implements AutoMovable{
     // 選択中のアイコン
     private UIcon selectedIcon;
 
-    // アニメーション用
     private WindowState state = WindowState.none;
+    private WindowState nextState = WindowState.none;
+
+    private boolean isDropInBox;
 
     // Iconのアニメーション中
     private boolean isAnimating;
@@ -146,8 +149,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
             }
         }
         else {
-            dragedIcon.setDrawPriority(DRAG_ICON_PRIORITY);
-            UDrawManager.getInstance().addDrawable(dragedIcon);
+            UDrawManager.getInstance().addWithNewPriority(dragedIcon, DrawPriority.DragIcon.p());
         }
         this.dragedIcon = dragedIcon;
     }
@@ -167,6 +169,12 @@ public class UIconWindow extends UWindow implements AutoMovable{
         // 状態変化時の処理
         // 後処理
         switch (this.state) {
+            case icon_moving:
+            {
+                // ドラッグアイコンの描画オブジェクトをクリア
+                UDrawManager.getInstance().removeWithPriority(DRAG_ICON_PRIORITY);
+            }
+                break;
             case icon_selecting:
             {
                 if (state == WindowState.none) {
@@ -175,9 +183,9 @@ public class UIconWindow extends UWindow implements AutoMovable{
                         icon.isChecking = false;
                         if (icon.isChecked) {
                             icon.isChecked = false;
-                            UDrawManager.getInstance().removeDrawable(icon);
                         }
                     }
+                    UDrawManager.getInstance().removeWithPriority(DRAG_ICON_PRIORITY);
                 }
             }
                 break;
@@ -187,10 +195,10 @@ public class UIconWindow extends UWindow implements AutoMovable{
         switch(state){
             case icon_moving:
             {
-//                List<UIcon> icons = mIconManager.getCheckedIcons();
-//                for (UIcon icon : icons) {
-//                    UDrawManager.getInstance().addDrawable(icon);
-//                }
+                List<UIcon> icons = mIconManager.getCheckedIcons();
+                for (UIcon icon : icons) {
+                    UDrawManager.getInstance().addDrawable(icon);
+                }
             }
                 break;
         }
@@ -307,11 +315,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 }
                 if (allFinished) {
                     List<UIcon> checkedIcons = mIconManager.getCheckedIcons();
-                    if (checkedIcons.size() > 0) {
-                        setState(WindowState.icon_selecting);
-                    } else {
-                        setState(WindowState.none);
-                    }
+                    setState(nextState);
                     mIconManager.updateBlockRect();
                     setDragedIcon(null);
                 }
@@ -469,6 +473,18 @@ public class UIconWindow extends UWindow implements AutoMovable{
         if (!animate) {
             IconsPosFixed();
         }
+
+        if (state == WindowState.icon_selecting) {
+            if (isDropInBox) {
+                nextState = WindowState.none;
+                changeIconChecking(getIcons(), false);
+            } else {
+                nextState = WindowState.icon_selecting;
+            }
+        } else {
+            nextState = WindowState.none;
+        }
+
         setState(WindowState.icon_moving);
 
         // メニューバーに重ならないように下にマージンを設ける
@@ -513,7 +529,6 @@ public class UIconWindow extends UWindow implements AutoMovable{
             }
             setState(WindowState.icon_selecting);
         } else if (state == WindowState.icon_selecting) {
-            changeIconChecking(icons, false);
             setState(WindowState.none);
         }
         return true;
@@ -553,8 +568,9 @@ public class UIconWindow extends UWindow implements AutoMovable{
             }
         } else if (state == WindowState.icon_selecting) {
             // チェックしたアイコンをまとめてドラッグ
-            for (UIcon icon : icons) {
+            for (UIcon icon : checkedIcons) {
                 icon.isDraging = true;
+                UDrawManager.getInstance().addWithNewPriority(icon, DrawPriority.DragIcon.p());
                 ret = true;
             }
         }
@@ -574,27 +590,6 @@ public class UIconWindow extends UWindow implements AutoMovable{
             if (dragedIcon == null) return false;
             // ドラッグ中のアイコンを移動する
             dragedIcon.move(vt.moveX, vt.moveY);
-
-            // 現在のドロップフラグをクリア
-            if (dropedIcon != null) {
-                dropedIcon.isDroping = false;
-            }
-
-            for (UIconWindow window : windows.getWindows()) {
-                // ドラッグ中のアイコンが別のアイコンの上にあるかをチェック
-                Point dragPos = new Point((int) window.toWinX(vt.getX()), (int) window.toWinY(vt.getY()));
-
-                UIconManager manager = window.getIconManager();
-                if (manager == null) continue;
-
-                UIcon icon = manager.getOverlappedIcon(dragPos, dragedIcon);
-                if (icon != null) {
-                    isDone = true;
-                    dropedIcon = icon;
-                    dropedIcon.isDroping = true;
-                }
-                if (isDone) break;
-            }
         } else if (state == WindowState.icon_selecting){
             // チェックしたアイコンをまとめて移動する
             List<UIcon> icons = mIconManager.getCheckedIcons();
@@ -603,6 +598,38 @@ public class UIconWindow extends UWindow implements AutoMovable{
                     icon.move(vt.moveX, vt.moveY);
                 }
             }
+        } else {
+            return false;
+        }
+
+        // 現在のドロップフラグをクリア
+        if (dropedIcon != null) {
+            dropedIcon.isDroping = false;
+        }
+
+        for (UIconWindow window : windows.getWindows()) {
+            // ドラッグ中のアイコンが別のアイコンの上にあるかをチェック
+            Point dragPos = new Point((int) window.toWinX(vt.getX()), (int) window.toWinY(vt.getY()));
+
+            UIconManager manager = window.getIconManager();
+            if (manager == null) continue;
+
+            UIcon dropIcon;
+            // ドラッグ先のアイコンと重なっているアイコンを取得する
+            if (state == WindowState.drag) {
+                LinkedList<UIcon> exceptIcons = new LinkedList<>();
+                exceptIcons.add(dragedIcon);
+                dropIcon = manager.getOverlappedIcon(dragPos, exceptIcons);
+            } else {
+                List<UIcon> checkedIcons = mIconManager.getCheckedIcons();
+                dropIcon = manager.getOverlappedIcon(dragPos, checkedIcons);
+            }
+            if (dropIcon != null) {
+                isDone = true;
+                dropedIcon = dropIcon;
+                dropedIcon.isDroping = true;
+            }
+            if (isDone) break;
         }
 
         return isDone;
@@ -750,26 +777,29 @@ public class UIconWindow extends UWindow implements AutoMovable{
             float winX = window.toWinX(vt.getX());
             float winY = window.toWinY(vt.getY());
 
+            UIcon dropIcon = null;
             for (UIcon icon : dstIcons) {
-                if (icon == dragedIcon ||
-                 icon.getType() != IconType.BOX )
-                {
+                if (checkedIcons.contains(icon) || icon.getType() != IconType.BOX) {
                     continue;
                 }
 
-                if (icon.checkDrop(winX, winY)) {
-                    UIconBox box = (UIconBox) icon;
-                    if (box.getIcons() != null) {
-                        moveIconsIntoBox(box);
+                if (icon.getRect().contains((int) winX, (int) winY)) {
+                    dropIcon = icon;
+                    break;
+                }
+            }
+            if (dropIcon != null) {
+                UIconBox box = (UIconBox) dropIcon;
+                if (box.getIcons() != null) {
+                    moveIconsIntoBox(box);
 
-                        for (UIconWindow win : windows.getWindows()) {
-                            UIconManager manager = win.getIconManager();
-                            if (manager != null) {
-                                manager.updateBlockRect();
-                            }
+                    for (UIconWindow win : windows.getWindows()) {
+                        UIconManager manager = win.getIconManager();
+                        if (manager != null) {
+                            manager.updateBlockRect();
                         }
-                        isDroped = true;
                     }
+                    isDroped = true;
                 }
             }
 
@@ -802,12 +832,11 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 }
             }
             // 再配置
-            if (srcIcons != dstIcons) {
+            if (isDroped && srcIcons != dstIcons) {
                 // 座標系変換(移動元Windowから移動先Window)
-                if (isDroped) {
-                    for (UIcon icon : checkedIcons) {
-                        icon.setPos(win1ToWin2X(icon.pos.x, this, window), win1ToWin2Y(icon.pos.y, this, window));
-                    }
+
+                for (UIcon icon : checkedIcons) {
+                    icon.setPos(win1ToWin2X(icon.pos.x, this, window), win1ToWin2Y(icon.pos.y, this, window));
                 }
                 window.sortIcons(true);
             }
@@ -1026,17 +1055,19 @@ public class UIconWindow extends UWindow implements AutoMovable{
         UIconWindow window1 = dragIcon.parentWindow;
         UIconWindow window2 = dropedIcon.getSubWindow();
         List<UIcon> icons1 = window1.getIcons();
-        List<UIcon> icons2 = window2.getIcons();
+        List<UIcon> icons2 = dropedIcon.getIcons();
 
         icons1.removeAll(checkedIcons);
-        icons2.addAll(checkedIcons);
+        if (icons2 != null) {
+            icons2.addAll(checkedIcons);
 
-        if (window2 != null) {
             window2.sortIcons(false);
             for (UIcon icon : checkedIcons) {
                 icon.setParentWindow(window2);
             }
         }
+        // 箱の中に入れた後のアイコン整列後にチェックを解除したいのでフラグを持っておく
+        isDropInBox = true;
     }
 
 
@@ -1044,6 +1075,8 @@ public class UIconWindow extends UWindow implements AutoMovable{
      * アイコンの選択状態を変更する
      */
     private void changeIconChecking(List<UIcon> icons, boolean isChecking) {
+        if (icons == null) return;
+
         for (UIcon icon : icons) {
             icon.isChecking = isChecking;
             if (!isChecking) {

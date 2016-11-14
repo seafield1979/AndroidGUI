@@ -30,7 +30,6 @@ abstract public class UIcon extends Drawable implements AutoMovable {
 
     private static final String TAG = "UIcon";
     private static final int DRAW_PRIORITY = 200;
-    public static final int DRAG_ICON_PRIORITY = 10;
     private static int count;
 
     public int id;
@@ -119,12 +118,10 @@ abstract public class UIcon extends Drawable implements AutoMovable {
         if (isChecking) {
             if(isChecked) {
                 isChecked = false;
-                UDrawManager.getInstance().removeDrawable(this);
             }
             else {
                 isChecked = true;
-                this.drawPriority = DRAG_ICON_PRIORITY;
-                UDrawManager.getInstance().addDrawable(this);
+                this.drawPriority = DrawPriority.DragIcon.p();
             }
         } else {
             if (mCallbacks != null) {
@@ -290,7 +287,6 @@ abstract public class UIcon extends Drawable implements AutoMovable {
      * タッチイベント処理
      * 親のUIconWindowで処理するのでここでは何もしない
      * @param vt
-     * @param offset
      * @return
      */
     public boolean touchEvent(ViewTouch vt) {
@@ -315,11 +311,6 @@ abstract public class UIcon extends Drawable implements AutoMovable {
                     isLongTouched = true;
                     isChecking = true;
                     isChecked = true;
-
-                    // 描画リストに登録
-                    this.drawPriority = DRAG_ICON_PRIORITY;
-                    UDrawManager.getInstance().addDrawable(this);
-
                     done = true;
                 }
                 break;
@@ -343,7 +334,6 @@ abstract public class UIcon extends Drawable implements AutoMovable {
                     }
                 }
                 if (isDraging) {
-//                    move((int)vt.moveX, (int)vt.moveY);
                     done = true;
                 }
               break;

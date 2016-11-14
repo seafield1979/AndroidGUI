@@ -142,10 +142,10 @@ public class UIconManager {
     /**
      * 指定座標下にあるアイコンを取得する
      * @param pos
-     * @param exceptIcon
+     * @param exceptIcons
      * @return
      */
-    public UIcon getOverlappedIcon(Point pos, UIcon exceptIcon) {
-        return mBlockManager.getOverlapedIcon(pos, exceptIcon);
+    public UIcon getOverlappedIcon(Point pos, List<UIcon> exceptIcons) {
+        return mBlockManager.getOverlapedIcon(pos, exceptIcons);
     }
 }

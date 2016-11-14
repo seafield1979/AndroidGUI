@@ -11,6 +11,21 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.TreeMap;
 
+enum DrawPriority {
+    DragIcon(11),
+    IconWindow(100),
+    ;
+    private final int priority;
+
+    private DrawPriority(final int priority) {
+        this.priority = priority;
+    }
+
+    public int p() {
+        return this.priority;
+    }
+}
+
 /**
  * 描画オブジェクトを管理するクラス
  * 描画するオブジェクトを登録すると一括で描画を行ってくれる
@@ -54,6 +69,10 @@ public class UDrawManager {
      * @param obj
      * @return
      */
+    public DrawList addWithNewPriority(Drawable obj, int priority) {
+        obj.drawPriority = priority;
+        return addDrawable(obj);
+    }
     public DrawList addDrawable(Drawable obj) {
         // 挿入するリストを探す
         Integer _priority = new Integer(obj.getDrawPriority());
@@ -80,6 +99,14 @@ public class UDrawManager {
             return list.remove(obj);
         }
         return false;
+    }
+
+    /**
+     * 指定のプライオリティのオブジェクトを全て削除
+     * @param priority
+     */
+    public void removeWithPriority(int priority) {
+        lists.remove(new Integer(priority));
     }
 
     /**
