@@ -82,6 +82,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
             buttons[i] = new UButton(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
                     (i+1), 100, y,
                     width - 100*2, 120,
+                    Color.WHITE,
                     Color.rgb(0,128,0));
 
 
@@ -243,10 +244,8 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
      * UButtonCallbacks
      */
 
-    public void click(UButton button) {
-        ULog.print(TAG, "button click:" + (button.getId() + 1));
-
-        int id = button.getId();
+    public void click(int id) {
+        ULog.print(TAG, "button click:" + (id + 1));
 
         if (id < ButtonId.values().length) {
             ButtonId buttonId = ButtonId.values()[id];
@@ -264,7 +263,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
 
         }
     }
-    public void longClick(UButton button) {
+    public void longClick(int id) {
 
     }
 }

@@ -76,6 +76,7 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
                     id.toString(),
                     100, y,
                     width - 100*2, 120,
+                    Color.WHITE,
                     Color.rgb(0,128,0));
             if (buttons[i] != null) {
                 UDrawManager.getInstance().addDrawable(buttons[i]);
@@ -152,8 +153,7 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
     /**
      * UButtonCallbacks
      */
-    public void click(UButton button) {
-        int id = button.getId();
+    public void click(int id) {
         ULog.print(TAG, "button click:" + id);
 
         if (id < com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values().length) {
@@ -165,7 +165,7 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
             }
         }
     }
-    public void longClick(UButton button) {
+    public void longClick(int id) {
 
     }
 }

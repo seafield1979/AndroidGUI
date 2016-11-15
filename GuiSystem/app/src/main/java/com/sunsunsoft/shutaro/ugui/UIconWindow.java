@@ -155,7 +155,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
     public void setSelectedIcon(UIcon selectedIcon) {
         this.selectedIcon = selectedIcon;
     }
-    
+
     /**
      * 状態を設定する
      * 状態に移る時の前処理、後処理を実行できる
@@ -312,14 +312,9 @@ public class UIconWindow extends UWindow implements AutoMovable{
                     }
                 }
                 if (allFinished) {
-                    List<UIcon> checkedIcons = mIconManager.getCheckedIcons();
-                    setState(nextState);
-                    mIconManager.updateBlockRect();
-                    setDragedIcon(null);
+                    iconMovingEnd();
                 }
-                else {
-                    redraw = true;
-                }
+                redraw = true;
             }
         }
 
@@ -474,7 +469,6 @@ public class UIconWindow extends UWindow implements AutoMovable{
         if (state == WindowState.icon_selecting) {
             if (isDropInBox) {
                 nextState = WindowState.none;
-                changeIconCheckingAll(false);
             } else {
                 nextState = WindowState.icon_selecting;
             }
@@ -860,6 +854,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                     for (UIcon icon : checkedIcons) {
                         icon.setParentWindow(window);
                     }
+                    isDropInBox = true;
                 }
             }
             // 再配置
@@ -963,6 +958,16 @@ public class UIconWindow extends UWindow implements AutoMovable{
             }
         }
         return done;
+    }
+
+    /**
+     * アイコンの移動が完了
+     */
+    private void iconMovingEnd() {
+        setState(nextState);
+        mIconManager.updateBlockRect();
+        changeIconCheckingAll(false);
+        setDragedIcon(null);
     }
 
     /**

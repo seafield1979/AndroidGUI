@@ -1,9 +1,11 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 import java.util.LinkedList;
 
@@ -11,7 +13,7 @@ import java.util.LinkedList;
  * ダイアログ(画面の最前面に表示されるWindow)
  */
 
-public class UDialogWindow extends UWindow implements UButtonCallbacks {
+public class UDialogWindow extends UWindow {
 
     enum DialogType {
         Normal,     // 移動可能、下にあるWindowをタッチできる
@@ -29,9 +31,14 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks {
         Vertical        // 縦に並ぶ
     }
 
+    public static final int CloseDialogId = 10000123;
+
+    public static final int TEXT_SIZE = 70;
+    public static final int MESSAGE_TEXT_SIZE = 50;
     public static final int TEXT_MARGIN_V = 50;
     public static final int BUTTON_H = 100;
     public static final int BUTTON_MARGIN_H = 50;
+    public static final int BUTTON_MARGIN_V = 30;
 
 
     protected DialogType type;
@@ -39,9 +46,16 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks {
     protected PointF dialogPos;
     protected Size dialogSize;
 
-    protected String title;
-    protected String message;
+    protected String title = "";
+    protected String message = "";
 
+    protected UTextView titleView;
+    protected UTextView messageView;
+
+    protected int textColor;
+    protected int dialogColor;
+
+    protected UButtonCallbacks buttonCallbacks;
     protected Paint paint;
 
     protected boolean isUpdate = true;     // ボタンを追加するなどしてレイアウトが変更された
@@ -56,16 +70,26 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks {
         super(DrawPriority.Dialog.p(), 0, 0, width, height, color);
 
     }
-    public UDialogWindow createInstance(DialogType type, ButtonDir dir, int width, int height, int
-            color)
+    public static UDialogWindow createInstance(DialogType type, UButtonCallbacks buttonCallbacks,
+                                               ButtonDir dir,
+                                               int width, int height,
+                                               int textColor, int dialogColor)
     {
-        UDialogWindow instance = new UDialogWindow(0, 0, width, height, color);
+        UDialogWindow instance = new UDialogWindow(0, 0, width, height, 0);
         // ダミーのサイズ
         instance.dialogSize = new Size(width - 200, height - 200);
-        instance.dialogPos = new PointF(100, 100);
+        instance.dialogPos = new PointF(
+                (width - instance.dialogSize.width) / 2,
+                (height - instance.dialogSize.height) / 2 );
         instance.type = type;
         instance.buttonDir = dir;
         instance.paint = new Paint();
+        instance.textColor = textColor;
+        instance.dialogColor = dialogColor;
+        instance.buttonCallbacks = buttonCallbacks;
+
+        // 描画はDrawManagerに任せるのでDrawManagerに登録
+        UDrawManager.getInstance().addDrawable(instance);
 
         return instance;
     }
@@ -92,38 +116,92 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks {
     }
 
     /**
+     * ダイアログを閉じる
+     */
+    public void close() {
+        UDrawManager.getInstance().removeDrawable(this);
+    }
+
+    /**
      * ボタンを追加
      * ボタンを追加した時点では座標は設定しない
      * @param text
      * @param color
      */
-    public UButton addButton(int id, String text, int color) {
-        UButton button = new UButton(this, UButtonType.Press, id, 0, text, 0, 0, 0, 0, color);
+    public UButton addButton(int id, String text, int textColor, int color) {
+        UButton button = new UButton(buttonCallbacks, UButtonType.Press, id, 0, text, 0, 0, 0, 0,
+                textColor, color);
         buttons.add(button);
         isUpdate = true;
         return button;
     }
 
     /**
+     * ダイアログを閉じるボタンを追加する
+     * @param text
+     */
+    public void addCloseButton(String text) {
+        if (text == null) {
+            text = "Close";
+        }
+        UButton button = new UButton(buttonCallbacks, UButtonType.Press, CloseDialogId, 0, text, 0, 0,
+                0, 0,
+                Color.WHITE, Color.RED);
+        buttons.add(button);
+        isUpdate = true;
+    }
+
+    /**
      * レイアウトを更新
      * ボタンの数によってレイアウトは自動で変わる
      */
-    private void udpateLayout() {
-        // タイトル、テキストのサイズを計算する
-        Rect bounds = new Rect();
-        paint.setTextSize(30);
-        paint.getTextBounds(title, 0, title.length(), bounds);
+    private void udpateLayout(Canvas canvas) {
+        // タイトル、メッセージ
+        int y = TEXT_MARGIN_V;
+        if (titleView == null) {
+            titleView = UTextView.createInstance(title, 70, 0, UTextView.UAlignment.CenterX,
+                    canvas.getWidth(), dialogSize.width / 2, y, color, 0);
+        }
+
+        Size titleSize = titleView.getTextRect(getWidth());
+        y += titleSize.height + BUTTON_MARGIN_H;
+
+        if (messageView == null) {
+            messageView = UTextView.createInstance(message, MESSAGE_TEXT_SIZE, 0, UTextView
+                    .UAlignment.CenterX,
+                    canvas.getWidth(), dialogSize.width / 2, y, color, 0);
+        }
+
+        Size messageSize = messageView.getTextRect(getWidth());
+        y += messageSize.height + BUTTON_MARGIN_H;
 
         if (buttonDir == ButtonDir.Horizontal) {
             // ボタンを横に並べる
             int num = buttons.size();
-            int buttonW = (size.width - ((num + 1) * BUTTON_MARGIN_H)) / num;
+            int buttonW = (dialogSize.width - ((num + 1) * BUTTON_MARGIN_H)) / num;
             for (int i=0; i<num; i++) {
-
+                UButton button = buttons.get(i);
+                button.setPos(BUTTON_MARGIN_H + (buttonW + BUTTON_MARGIN_H) * i, y);
+                button.setSize(buttonW, BUTTON_H);
             }
+            y += BUTTON_H + BUTTON_MARGIN_H;
         }
         else {
+            // ボタンを縦に並べる
+            int num = buttons.size();
+
+            for (int i=0; i<num; i++) {
+                UButton button = buttons.get(i);
+                button.setPos(BUTTON_MARGIN_H, y);
+                button.setSize(dialogSize.width - BUTTON_MARGIN_H * 2, BUTTON_H);
+                y += BUTTON_H + BUTTON_MARGIN_V;
+            }
         }
+        dialogSize.height = y;
+
+        // センタリング
+        dialogPos.x = (size.width - dialogSize.width) / 2;
+        dialogPos.y = (size.height - dialogSize.height) / 2;
     }
 
     /**
@@ -134,7 +212,26 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks {
      */
     public void draw(Canvas canvas, Paint paint, PointF offset) {
         if (isUpdate) {
+            udpateLayout(canvas);
         }
+
+        // BG
+        UDraw.drawRoundRectFill(canvas, paint, getDialogRect(), 20, dialogColor);
+
+        // Title, Message
+        PointF _offset = dialogPos;
+        titleView.draw(canvas, paint, _offset);
+        messageView.draw(canvas, paint, _offset);
+
+        // Buttons
+        for (UButton button : buttons) {
+            button.draw(canvas, paint, _offset);
+        }
+    }
+
+    public RectF getDialogRect() {
+        return new RectF(dialogPos.x, dialogPos.y, dialogPos.x + dialogSize.width, dialogPos
+                .y + dialogSize.height);
     }
 
     /**
@@ -143,18 +240,26 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks {
      * @return
      */
     public boolean touchEvent(ViewTouch vt) {
+        PointF offset = dialogPos;
+
+        for (UButton button : buttons) {
+            if (button.touchEvent(vt, offset)) {
+                return true;
+            }
+        }
+
+        // 範囲外をタッチしたら閉じる
+        if (getDialogRect().contains(vt.touchX(), vt.touchY())) {
+
+        } else {
+            if (type == DialogType.Mordal) {
+                return false;
+            } else {
+                buttonCallbacks.click(CloseDialogId);
+            }
+        }
+
         return false;
     }
 
-
-    /**
-     * UButtonCallbacks
-     */
-    public void click(UButton button) {
-
-    }
-
-    public void longClick(UButton button) {
-
-    }
 }

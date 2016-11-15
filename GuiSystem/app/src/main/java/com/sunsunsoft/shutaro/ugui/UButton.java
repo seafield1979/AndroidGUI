@@ -25,7 +25,7 @@ enum UButtonType {
 public class UButton extends Drawable {
     public static final String TAG = "UButton";
     public static final int DRAW_PRIORITY = 100;
-    private static final int PRESS_Y = 20;
+    private static final int PRESS_Y = 12;
     private static final int BUTTON_RADIUS = 20;
 
     private int id;
@@ -58,13 +58,15 @@ public class UButton extends Drawable {
     }
 
     public UButton(UButtonCallbacks callbacks, int id, String text,
-                   float x, float y, int width, int height, int color)
+                   float x, float y, int width, int height, int textColor, int color)
     {
-        this(callbacks, UButtonType.BGColor, id, DRAW_PRIORITY, text, x, y, width, height, color);
+        this(callbacks, UButtonType.BGColor, id, DRAW_PRIORITY, text,
+                x, y, width, height,
+                textColor, color);
     }
 
     public UButton(UButtonCallbacks callbacks, UButtonType type, int id, int priority, String text,
-                   float x, float y, int width, int height, int color)
+                   float x, float y, int width, int height, int textColor, int color)
     {
         super(priority, x, y, width, height);
         this.id = id;
@@ -72,11 +74,11 @@ public class UButton extends Drawable {
         this.type = type;
         this.color = color;
         this.text = text;
-        this.textColor = Color.WHITE;
+        this.textColor = textColor;
         if (type == UButtonType.BGColor) {
-            this.pressedColor = UColor.addBrightness(color, 0.5f);
+            this.pressedColor = UColor.addBrightness(color, 0.4f);
         } else {
-            this.pressedColor = UColor.addBrightness(color, -0.5f);
+            this.pressedColor = UColor.addBrightness(color, -0.3f);
         }
     }
 
@@ -147,7 +149,7 @@ public class UButton extends Drawable {
     public void click() {
         Log.v(TAG, "click");
         if (mCallbacks != null) {
-            mCallbacks.click(this);
+            mCallbacks.click(id);
         }
     }
 
@@ -189,7 +191,7 @@ public class UButton extends Drawable {
             case LongClick:
                 isPressed = false;
                 if (rect.contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
-                    mCallbacks.click(this);
+                    mCallbacks.click(id);
                     done = true;
                 }
                 break;

@@ -60,6 +60,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         for (int i=0; i<buttons.length; i++) {
             buttons[i] = new UButton(this, i, "test" + (i+1), 100, y, width -
                     100*2, 120,
+                    Color.WHITE,
                     Color.rgb(0,128,0));
             y += 150;
         }
@@ -137,10 +138,10 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
      * UButtonCallbacks
      */
 
-    public void click(UButton button) {
-        ULog.print(TAG, "button click:" + button.getId());
+    public void click(int id) {
+        ULog.print(TAG, "button click:" + id);
 
-        ButtonId buttonId = ButtonId.values()[button.getId()];
+        ButtonId buttonId = ButtonId.values()[id];
         switch(buttonId) {
             case Test1:
                 break;
@@ -150,7 +151,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
                 break;
         }
     }
-    public void longClick(UButton button) {
+    public void longClick(int id) {
 
     }
 

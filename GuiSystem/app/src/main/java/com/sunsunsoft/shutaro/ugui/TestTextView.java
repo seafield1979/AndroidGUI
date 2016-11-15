@@ -60,9 +60,14 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     private UTextView addTextView(String text, int textSize, int priority, UTextView.UAlignment
             alignment, float x, float y, int color, int bgColor) {
         UTextView textView = UTextView.createInstance(text, textSize, priority, alignment,
-                x, y, color, bgColor);
+                getWidth(), x, y, color, bgColor);
         textViews.add(textView);
         UDrawManager.getInstance().addDrawable(textView);
+
+
+        UDrawableRect rectObj = UDrawableRect.createInstance(priority - 1, 0, y, getWidth(), 2,
+                color);
+        UDrawManager.getInstance().addDrawable(rectObj);
 
         return textView;
     }
@@ -158,8 +163,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     /**
      * UButtonCallbacks
      */
-    public void click(UButton button) {
-        int id = button.getId();
+    public void click(int id) {
         ULog.print(TAG, "button click:" + id);
 
         if (id < com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values().length) {
@@ -172,7 +176,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         }
     }
 
-    public void longClick(UButton button) {
+    public void longClick(int id) {
 
     }
 }

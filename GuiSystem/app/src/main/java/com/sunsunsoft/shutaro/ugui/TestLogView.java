@@ -76,6 +76,7 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
             String title = id.getString();
             buttons[i] = new UButton(this, id.ordinal(), title, 100, y, width -
                     100*2, 120,
+                    Color.WHITE,
                     Color.rgb(0,128,0));
             y += 150;
         }
@@ -147,10 +148,10 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
     /**
      * UButtonCallbacks
      */
-    public void click(UButton button) {
-        ULog.print(TAG, "button click:" + button.getId());
+    public void click(int id) {
+        ULog.print(TAG, "button click:" + id);
 
-        ButtonId buttonId = ButtonId.values()[button.getId()];
+        ButtonId buttonId = ButtonId.values()[id];
         switch(buttonId) {
             case ShowToggle:
                 logWindows[0].toggle();
@@ -169,7 +170,7 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
                 break;
         }
     }
-    public void longClick(UButton button) {
+    public void longClick(int id) {
 
     }
 }

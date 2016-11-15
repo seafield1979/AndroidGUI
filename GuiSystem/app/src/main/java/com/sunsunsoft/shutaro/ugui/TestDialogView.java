@@ -12,21 +12,30 @@ import android.view.View;
  * ダイアログWindowのテスト
  */
 public class TestDialogView extends View implements View.OnTouchListener, UButtonCallbacks{
-    // ボタンのID
-    enum ButtonId {
-        Sort("sort window")
-        ;
-
-        private final String text;
-
-        ButtonId(final String text) {
-            this.text = text;
-        }
-
-        public String getString() {
-            return this.text;
-        }
+    enum DialogTest{
+        Test1,
+        Test2,
+        Test3
     }
+
+    private static final int DialogButton1 = 100;
+    private static final int DialogButton2 = 101;
+    private static final int DialogButton3 = 102;
+
+    private static final int TestButton1 = 200;
+    private static final int TestButton2 = 201;
+    private static final int TestButton3 = 202;
+
+    private static final int[] dialogButtonIds = {
+            DialogButton1,
+            DialogButton2,
+            DialogButton3
+    };
+    private static final int[] testButtonIds = {
+            TestButton1,
+            TestButton2,
+            TestButton3
+    };
 
     public static final String TAG = "TestButtonView";
     private static final int BUTTON_PRIORITY = 100;
@@ -40,7 +49,10 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     private Paint paint = new Paint();
 
     // UButton
-    private UButton[] buttons = new UButton[com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values().length];
+    private UButton[] buttons = new UButton[testButtonIds.length];
+
+    // Dialog
+    private UDialogWindow dialogWindow;
 
     // ULogWindow
     private ULogWindow logWindow;
@@ -66,12 +78,13 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
 
         // Buttons
         float y = 100;
-        for (int i=0; i<buttons.length; i++) {
-            com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId id = com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values()[i];
-            buttons[i] = new UButton(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
-                    id.toString(),
+        for (int i=0; i<testButtonIds.length; i++) {
+            int id = testButtonIds[i];
+            buttons[i] = new UButton(this, UButtonType.Press, id, BUTTON_PRIORITY,
+                    "Dialog" + (i+1),
                     100, y,
                     width - 100*2, 120,
+                    Color.WHITE,
                     Color.rgb(0,128,0));
             if (buttons[i] != null) {
                 UDrawManager.getInstance().addDrawable(buttons[i]);
@@ -82,6 +95,75 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
         // LogWindow
         logWindow = ULogWindow.createInstance(getContext(), this,LogWindowType.AutoDisappear,
                 0, 500, getWidth(), getHeight() - 500);
+    }
+
+    /**
+     * ダイアログを生成
+     * @param id
+     * @param width
+     * @param height
+     */
+    private void initDialog(DialogTest id, int width, int height) {
+        if (dialogWindow != null) {
+            return;
+        }
+
+        switch (id) {
+            case Test1: {
+                // 横にボタンが並ぶダイアログ
+                dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Mordal,
+                        this,
+                        UDialogWindow.ButtonDir.Horizontal,
+                        width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.title = "hoge\nhoge";
+                dialogWindow.message = "message";
+                for (int i = 0; i < dialogButtonIds.length; i++) {
+                    int buttonId = dialogButtonIds[i];
+                    dialogWindow.addButton(buttonId, "Test" + (i + 1), Color.BLACK, Color
+                            .YELLOW);
+                }
+                dialogWindow.addCloseButton(null);
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
+            }
+                break;
+            case Test2:
+            {
+                // 縦にボタンが並ぶダイアログ
+                dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Mordal,
+                        this,
+                        UDialogWindow.ButtonDir.Vertical,
+                        width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.title = "hoge\nhoge";
+                dialogWindow.message = "message";
+                for (int i=0; i<dialogButtonIds.length; i++) {
+                    int buttonId = dialogButtonIds[i];
+                    dialogWindow.addButton(buttonId, "Test" + (i+1), Color.BLACK, Color
+                            .YELLOW);
+                }
+                dialogWindow.addCloseButton(null);
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
+            }
+                break;
+            case Test3:
+            {
+                // 縦にボタンが並ぶダイアログ
+                // ノーマルタイプ
+                dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Normal,
+                        this,
+                        UDialogWindow.ButtonDir.Vertical,
+                        width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.title = "hoge\nhoge";
+                dialogWindow.message = "message";
+                for (int i=0; i<dialogButtonIds.length; i++) {
+                    int buttonId = dialogButtonIds[i];
+                    dialogWindow.addButton(buttonId, "Test" + (i+1), Color.BLACK, Color
+                            .WHITE);
+                }
+                dialogWindow.addCloseButton(null);
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
+            }
+                break;
+        }
     }
 
     @Override
@@ -148,20 +230,34 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     /**
      * UButtonCallbacks
      */
-    public void click(UButton button) {
-        int id = button.getId();
+    public void click(int id) {
         ULog.print(TAG, "button click:" + id);
 
-        if (id < com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values().length) {
-            com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId buttonId = com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values()[id];
-            switch (buttonId) {
-                case Sort:
-                    invalidate();
-                    break;
-            }
+        switch (id) {
+            case DialogButton1:
+                break;
+            case DialogButton2:
+                break;
+            case DialogButton3:
+                break;
+            case UDialogWindow.CloseDialogId:
+                if (dialogWindow != null) {
+                    dialogWindow.close();
+                    dialogWindow = null;
+                }
+                break;
+            case TestButton1:
+                initDialog(DialogTest.Test1, getWidth(), getHeight());
+                break;
+            case TestButton2:
+                initDialog(DialogTest.Test2, getWidth(), getHeight());
+                break;
+            case TestButton3:
+                initDialog(DialogTest.Test3, getWidth(), getHeight());
+                break;
         }
     }
-    public void longClick(UButton button) {
+    public void longClick(int id) {
 
     }
 }

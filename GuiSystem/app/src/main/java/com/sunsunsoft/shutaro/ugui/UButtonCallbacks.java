@@ -5,6 +5,6 @@ package com.sunsunsoft.shutaro.ugui;
  */
 
 public interface UButtonCallbacks {
-    public void click(UButton button);
-    public void longClick(UButton button);
+    void click(int id);
+    void longClick(int id);
 }

@@ -75,6 +75,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
             String title = id.getString();
             buttons[i] = new UButton(this, id.ordinal(), title, 100, y, width -
                     100*2, 120,
+                    Color.WHITE,
                     Color.rgb(0,128,0));
             UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
@@ -201,10 +202,10 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
     /**
      * UButtonCallbacks
      */
-    public void click(UButton button) {
-        ULog.print(TAG, "button click:" + button.getId());
+    public void click(int id) {
+        ULog.print(TAG, "button click:" + id);
 
-        ButtonId buttonId = ButtonId.values()[button.getId()];
+        ButtonId buttonId = ButtonId.values()[id];
         switch(buttonId) {
             case Clear1:
                 logWindows[0].clear();
@@ -214,7 +215,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
                 break;
         }
     }
-    public void longClick(UButton button) {
+    public void longClick(int id) {
     }
 
     /**
