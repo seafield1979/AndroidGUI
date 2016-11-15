@@ -255,7 +255,9 @@ public class UDialogWindow extends UWindow {
             if (type == DialogType.Mordal) {
                 return false;
             } else {
+                close();
                 buttonCallbacks.click(CloseDialogId);
+                return true;
             }
         }
 

@@ -49,6 +49,8 @@ public class UDrawManager {
     // 同じプライオリティーのDrawableリストを管理するリスト
     TreeMap<Integer, DrawList> lists;
 
+    LinkedList<Drawable> removeRequest = new LinkedList<>();
+
 
     // Get/Set
 
@@ -93,16 +95,26 @@ public class UDrawManager {
 
     /**
      * リストに登録済みの描画オブジェクトを削除
+     * 削除要求をバッファに積んでおき、描画前に削除チェックを行う
      * @param obj
      * @return
      */
-    public boolean removeDrawable(Drawable obj) {
-        Integer _priority = new Integer(obj.getDrawPriority());
-        DrawList list = lists.get(_priority);
-        if (list != null) {
-            return list.remove(obj);
+    public void removeDrawable(Drawable obj) {
+        removeRequest.add(obj);
+    }
+
+    /**
+     * 削除要求のリストの描画オブジェクトを削除する
+     */
+    public void removeRequestedList() {
+        for (Drawable obj : removeRequest) {
+            Integer _priority = new Integer(obj.getDrawPriority());
+            DrawList list = lists.get(_priority);
+            if (list != null) {
+                list.remove(obj);
+            }
         }
-        return false;
+        removeRequest.clear();
     }
 
     /**
@@ -164,6 +176,10 @@ public class UDrawManager {
      */
     public boolean draw(Canvas canvas, Paint paint) {
         boolean redraw = false;
+
+        // 削除要求のかかったオブジェクトを削除する
+        removeRequestedList();
+
         ULog.startCount(TAG);
         for (DrawList list : lists.descendingMap().values()) {
             if (list.draw(canvas, paint) ) {
