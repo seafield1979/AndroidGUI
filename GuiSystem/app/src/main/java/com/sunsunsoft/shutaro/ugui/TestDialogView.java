@@ -11,7 +11,7 @@ import android.view.View;
 /**
  * ダイアログWindowのテスト
  */
-public class TestDialogView extends View implements View.OnTouchListener, UButtonCallbacks{
+public class TestDialogView extends View implements View.OnTouchListener, UButtonCallbacks, UDialogCallbacks{
     enum DialogTest{
         Test1,
         Test2,
@@ -112,8 +112,8 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
             case Test1: {
                 // 横にボタンが並ぶダイアログ
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Mordal,
-                        this,
-                        UDialogWindow.ButtonDir.Horizontal,
+                        this, this,
+                        UDialogWindow.ButtonDir.Horizontal, false,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 dialogWindow.message = "message";
@@ -130,8 +130,8 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
             {
                 // 縦にボタンが並ぶダイアログ
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Mordal,
-                        this,
-                        UDialogWindow.ButtonDir.Vertical,
+                        this, this,
+                        UDialogWindow.ButtonDir.Vertical, true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 dialogWindow.message = "message";
@@ -149,8 +149,8 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 // 縦にボタンが並ぶダイアログ
                 // ノーマルタイプ
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Normal,
-                        this,
-                        UDialogWindow.ButtonDir.Vertical,
+                        this, this,
+                        UDialogWindow.ButtonDir.Vertical, true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 dialogWindow.message = "message";
@@ -259,5 +259,14 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     }
     public void longClick(int id) {
 
+    }
+
+    /**
+     * UDialogCallbacks
+     */
+    public void dialogClosed(UDialogWindow dialog) {
+        if (dialogWindow == dialog) {
+            dialogWindow = null;
+        }
     }
 }

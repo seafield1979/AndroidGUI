@@ -78,6 +78,7 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
                     100*2, 120,
                     Color.WHITE,
                     Color.rgb(0,128,0));
+            UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
         }
 

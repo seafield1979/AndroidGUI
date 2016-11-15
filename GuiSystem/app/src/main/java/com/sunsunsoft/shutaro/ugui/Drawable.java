@@ -40,6 +40,7 @@ abstract public class Drawable {
     protected boolean isAnimating;
     protected int animeFrame;
     protected int animeFrameMax;
+    protected float animeRatio;
 
     public Drawable(int priority, float x, float y, int width, int height)
     {
@@ -233,10 +234,20 @@ abstract public class Drawable {
     /**
      * アニメーション開始
      */
-    public void startAnim() {
+    public void startAnimation() {
+        startAnimation(ANIME_FRAME);
+    }
+    public void startAnimation(int frameMax) {
         isAnimating = true;
         animeFrame = 0;
-        animeFrameMax = ANIME_FRAME;
+        animeFrameMax = frameMax;
+        animeRatio = 0f;
+    }
+
+    /**
+     * アニメーション終了時に呼ばれる処理
+     */
+    public void endAnimation() {
     }
 
     /**
@@ -248,10 +259,11 @@ abstract public class Drawable {
         if (!isAnimating) return false;
         if (animeFrame >= animeFrameMax) {
             isAnimating = false;
-            return false;
+            endAnimation();
+        } else {
+            animeFrame++;
+            animeRatio = (float) animeFrame / (float) animeFrameMax;
         }
-
-        animeFrame++;
         return true;
     }
 

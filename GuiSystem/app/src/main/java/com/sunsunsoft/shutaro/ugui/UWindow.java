@@ -8,7 +8,7 @@ import android.graphics.PointF;
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
-abstract public class UWindow extends Drawable implements AutoMovable {
+abstract public class UWindow extends Drawable {
     enum WindowType {
         Movable,        // ドラッグで移動可能(クリックで表示切り替え)
         Fixed,          // 固定位置に表示(ドラッグ移動不可、クリックで非表示にならない)
