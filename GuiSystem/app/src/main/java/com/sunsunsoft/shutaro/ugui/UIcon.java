@@ -30,6 +30,7 @@ abstract public class UIcon extends Drawable implements AutoMovable {
 
     private static final String TAG = "UIcon";
     private static final int DRAW_PRIORITY = 200;
+    public static final int DRAG_ICON_PRIORITY = 10;
     private static int count;
 
     public int id;

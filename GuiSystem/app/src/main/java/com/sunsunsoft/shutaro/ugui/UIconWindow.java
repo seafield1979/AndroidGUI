@@ -155,7 +155,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
     public void setSelectedIcon(UIcon selectedIcon) {
         this.selectedIcon = selectedIcon;
     }
-
+    
     /**
      * 状態を設定する
      * 状態に移る時の前処理、後処理を実行できる
@@ -607,17 +607,17 @@ public class UIconWindow extends UWindow implements AutoMovable{
             return false;
         }
 
-        // 現在のドロップフラグをクリア
-        if (dropedIcon != null) {
-            dropedIcon.isDroping = false;
-        }
+            // 現在のドロップフラグをクリア
+            if (dropedIcon != null) {
+                dropedIcon.isDroping = false;
+            }
 
         for (UIconWindow window : windows.getWindows()) {
             // ドラッグ中のアイコンが別のアイコンの上にあるかをチェック
             Point dragPos = new Point((int) window.toWinX(vt.getX()), (int) window.toWinY(vt.getY()));
 
-            UIconManager manager = window.getIconManager();
-            if (manager == null) continue;
+                UIconManager manager = window.getIconManager();
+                if (manager == null) continue;
 
             // ドラッグ先のアイコンと重なっているアイコンを取得する
             UIcon dropIcon;
@@ -640,7 +640,6 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 dropedIcon = dropIcon;
                 dropedIcon.isDroping = true;
             }
-            if (isDone) break;
         }
 
         return isDone;
@@ -648,7 +647,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
 
 
     /**
-     * ドラッグ終了時の処理
+     * ドラッグ終了時の処理（通常時)
      * @param vt
      * @return trueならViewを再描画
      */
@@ -941,8 +940,14 @@ public class UIconWindow extends UWindow implements AutoMovable{
                 }
                 break;
             case MoveEnd:
-                if (dragEnd(vt)) {
-                    done = true;
+                if (state == WindowState.drag) {
+                    if (dragEndNormal(vt)) {
+                        done = true;
+                    }
+                } else {
+                    if (dragEndChecking(vt)) {
+                        done = true;
+                    }
                 }
                 break;
             case MoveCancel:
