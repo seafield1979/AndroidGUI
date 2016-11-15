@@ -197,7 +197,7 @@ public class UDrawManager {
      * @return true:再描画
      */
     public boolean touchEvent(ViewTouch vt) {
-        for (DrawList list : lists.descendingMap().values()) {
+        for (DrawList list : lists.values()) {
             if (list.touchEvent(vt) ) {
                 return true;
             }

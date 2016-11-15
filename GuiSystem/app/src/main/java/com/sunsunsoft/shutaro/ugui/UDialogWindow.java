@@ -298,15 +298,22 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
 
         // 範囲外をタッチしたら閉じる
         if (vt.type == TouchType.Touch) {
-            if (getDialogRect().contains(vt.touchX(), vt.touchY())) {
-
-            } else {
-                if (type == DialogType.Mordal) {
-                    return false;
-                } else {
+            if (!getDialogRect().contains(vt.touchX(), vt.touchY())) {
+                if (type == DialogType.Normal) {
                     startClosing();
                     return true;
                 }
+            }
+        }
+        // モーダルなら他のオブジェクトにタッチ処理を渡さない
+        if (type == DialogType.Mordal) {
+            if (vt.type == TouchType.Touch ||
+                    vt.type == TouchType.LongPress ||
+                    vt.type == TouchType.Click ||
+                    vt.type == TouchType.LongClick )
+            {
+                ULog.print(TAG, "hoge");
+                return true;
             }
         }
 
