@@ -11,7 +11,11 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.TreeMap;
 
+/**
+ * 描画優先度
+ */
 enum DrawPriority {
+    Dialog(5),
     DragIcon(11),
     IconWindow(100),
     ;

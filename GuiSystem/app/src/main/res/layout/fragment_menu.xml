@@ -9,31 +9,41 @@
         android:text="Home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button"/>
+        android:id="@+id/buttonHome"/>
     <Button
         android:text="TestButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button2"/>
+        android:id="@+id/buttonButton"/>
+    <Button
+        android:text="Test Textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonTextview"/>
     <Button
         android:text="Test MenuBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button3"/>
+        android:id="@+id/buttonMenuBar"/>
     <Button
         android:text="Test LogWindow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button4"/>
+        android:id="@+id/buttonLog"/>
     <Button
         android:text="Test Window"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button5"/>
+        android:id="@+id/buttonWindow"/>
+    <Button
+        android:text="Test Dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDialog"/>
     <Button
         android:text="Test Touch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button6"/>
+        android:id="@+id/buttonTouch"/>
 
 </LinearLayout>

@@ -14,12 +14,14 @@ public class FragmentMenu extends Fragment implements OnClickListener{
     public static final String FRAMGMENT_NAME = FragmentTop.class.getName();
 
     int[] buttonIds = {
-        R.id.button,
-        R.id.button2,
-        R.id.button3,
-        R.id.button4,
-        R.id.button5,
-            R.id.button6
+        R.id.buttonHome,
+        R.id.buttonButton,
+        R.id.buttonTextview,
+        R.id.buttonMenuBar,
+        R.id.buttonLog,
+        R.id.buttonWindow,
+        R.id.buttonDialog,
+            R.id.buttonTouch,
     };
 
     public FragmentMenu() {
@@ -48,37 +50,49 @@ public class FragmentMenu extends Fragment implements OnClickListener{
 
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.button:
+            case R.id.buttonHome:
             {
                 Fragment fragment = new FragmentTop();
                 showFragment(fragment);
             }
                 break;
-            case R.id.button2:
+            case R.id.buttonButton:
             {
                 Fragment fragment = new FragmentTestButton();
                 showFragment(fragment);
             }
                 break;
-            case R.id.button3:
+            case R.id.buttonTextview:
+            {
+                Fragment fragment = new FragmentTestTextview();
+                showFragment(fragment);
+            }
+            break;
+            case R.id.buttonMenuBar:
             {
                 Fragment fragment = new FragmentTestMenubar();
                 showFragment(fragment);
             }
                 break;
-            case R.id.button4:
+            case R.id.buttonLog:
             {
                 Fragment fragment = new FragmentTestLogWindow();
                 showFragment(fragment);
             }
             break;
-            case R.id.button5:
+            case R.id.buttonWindow:
             {
                 Fragment fragment = new FragmentTestWindow();
                 showFragment(fragment);
             }
             break;
-            case R.id.button6:
+            case R.id.buttonDialog:
+            {
+                Fragment fragment = new FragmentTestDialog();
+                showFragment(fragment);
+            }
+            break;
+            case R.id.buttonTouch:
             {
                 Fragment fragment = new FragmentTestTouch();
                 showFragment(fragment);

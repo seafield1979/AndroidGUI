@@ -23,23 +23,23 @@ enum WindowState {
     icon_selecting      // icons can be selected
 }
 
-// Type of icon window
-// Home is a window that shows desktop icons
-// Sub is a window that shows icons which in a box
-enum WindowType {
-    Home,
-    Sub
-}
-
-// Window directions
-// If screen width is longer than height, it is Horizontal
-// If screen height is longer than width, it is Vertical
-enum WindowDir {
-    Horizontal,
-    Vertical
-}
 
 public class UIconWindow extends UWindow implements AutoMovable{
+    // Type of icon window
+    // Home is a window that shows desktop icons
+    // Sub is a window that shows icons which in a box
+    enum WindowType {
+        Home,
+        Sub
+    }
+
+    // Window directions
+    // If screen width is longer than height, it is Horizontal
+    // If screen height is longer than width, it is Vertical
+    enum WindowDir {
+        Horizontal,
+        Vertical
+    }
 
     public static final String TAG = "UIconWindow";
 

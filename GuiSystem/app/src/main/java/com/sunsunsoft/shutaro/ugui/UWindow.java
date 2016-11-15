@@ -2,11 +2,18 @@ package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Color;
 import android.graphics.PointF;
 
+
+
 /**
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
 abstract public class UWindow extends Drawable implements AutoMovable {
+    enum WindowType {
+        Movable,        // ドラッグで移動可能(クリックで表示切り替え)
+        Fixed,          // 固定位置に表示(ドラッグ移動不可、クリックで非表示にならない)
+    }
+
     public static final String TAG = "UWindow";
     protected static final int SCROLL_BAR_W = 100;
 
@@ -96,12 +103,6 @@ abstract public class UWindow extends Drawable implements AutoMovable {
                 win1.pos.y - win1.contentTop.y - win2.pos.y + win2.contentTop.y
                 );
     }
-
-    // Window座標系 -> Screen座標系に変換するための値
-    // Window内のオブジェクトを描画する際にこの値を加算する
-//    public PointF getWinToScreenPos() {
-//        return new PointF(pos.x - contentTop.x, pos.y - contentTop.y);
-//    }
 
     /**
      * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する

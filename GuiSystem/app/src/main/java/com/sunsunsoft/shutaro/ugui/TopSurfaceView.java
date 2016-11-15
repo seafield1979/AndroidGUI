@@ -74,19 +74,19 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         // UIconWindow
         PointF pos1, pos2;
         Size size1, size2;
-        WindowDir winDir;
+        UIconWindow.WindowDir winDir;
         if (width <= height) {
             pos1 = new PointF(0, 0);
             size1 = new Size(width, height/2);
             pos2 = new PointF(0, height/2);
             size2 = new Size(width, height/2);
-            winDir = WindowDir.Vertical;
+            winDir = UIconWindow.WindowDir.Vertical;
         } else {
             pos1 = new PointF(0, 0);
             size1 = new Size(width / 2, height);
             pos2 = new PointF(width / 2, 0);
             size2 = new Size(width / 2, height);
-            winDir = WindowDir.Horizontal;
+            winDir = UIconWindow.WindowDir.Horizontal;
         }
 
         // Main
@@ -345,7 +345,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
 
                     // SubWindowを画面外から移動させる
                     float sx, sy, dx, dy;
-                    if (window.getDir() == WindowDir.Vertical) {
+                    if (window.getDir() == UIconWindow.WindowDir.Vertical) {
                         sx = 0;
                         sy = getHeight();
                         dx = 0;
