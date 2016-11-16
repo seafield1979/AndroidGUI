@@ -25,56 +25,28 @@ enum UButtonType {
 public class UButton extends Drawable {
     public static final String TAG = "UButton";
     public static final int DRAW_PRIORITY = 100;
-    private static final int PRESS_Y = 12;
-    private static final int BUTTON_RADIUS = 20;
+    protected static final int PRESS_Y = 12;
+    protected static final int BUTTON_RADIUS = 20;
 
-    private int id;
+    protected int id;
     protected UButtonType type;
-    private UButtonCallbacks mCallbacks;
-    private boolean isPressed;
-    private String text;
-    private int textColor;
-    private int pressedColor;
+    protected UButtonCallbacks mCallbacks;
+    protected boolean isPressed;
+    protected int pressedColor;
 
     // Get/Set
     public int getId() {
         return id;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public int getTextColor() {
-        return textColor;
-    }
-
-    public void setTextColor(int textColor) {
-        this.textColor = textColor;
-    }
-
-    public UButton(UButtonCallbacks callbacks, int id, String text,
-                   float x, float y, int width, int height, int textColor, int color)
-    {
-        this(callbacks, UButtonType.BGColor, id, DRAW_PRIORITY, text,
-                x, y, width, height,
-                textColor, color);
-    }
-
-    public UButton(UButtonCallbacks callbacks, UButtonType type, int id, int priority, String text,
-                   float x, float y, int width, int height, int textColor, int color)
+    public UButton(UButtonCallbacks callbacks, UButtonType type, int id, int priority,
+                   float x, float y, int width, int height, int color)
     {
         super(priority, x, y, width, height);
         this.id = id;
         this.mCallbacks = callbacks;
         this.type = type;
         this.color = color;
-        this.text = text;
-        this.textColor = textColor;
         if (type == UButtonType.BGColor) {
             this.pressedColor = UColor.addBrightness(color, 0.4f);
         } else {
@@ -91,6 +63,12 @@ public class UButton extends Drawable {
         return null;
     }
 
+    /**
+     * 描画処理
+     * @param canvas
+     * @param paint
+     * @param offset 独自の座標系を持つオブジェクトをスクリーン座標系に変換するためのオフセット値
+     */
     public void draw(Canvas canvas, Paint paint, PointF offset) {
         // 内部を塗りつぶし
         paint.setStyle(Paint.Style.FILL);
@@ -129,21 +107,6 @@ public class UButton extends Drawable {
         UDraw.drawRoundRectFill(canvas, paint,
                 new RectF(_pos.x, _pos.y, _pos.x + size.width, _pos.y + _height),
                 BUTTON_RADIUS, _color);
-
-        // テキスト
-        if (text != null) {
-            Rect bound = new Rect();
-            paint.setTextSize(50);
-            paint.setColor(textColor);
-
-            // センタリング
-            paint.getTextBounds(text, 0, text.length(), bound);
-            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            float baseY = _pos.y + _height / 2 - (fontMetrics.ascent + fontMetrics
-                    .descent) / 2;
-
-            canvas.drawText(text, _pos.x + (size.width - bound.width()) / 2, baseY, paint);
-        }
     }
 
     public void click() {

@@ -44,7 +44,7 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
     private Paint paint = new Paint();
 
     // UButton
-    private UButton[] buttons = new UButton[com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values().length];
+    private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
 
     // ULogWindow
     private ULogWindow logWindow;
@@ -71,8 +71,8 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
         // Buttons
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
-            com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId id = com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values()[i];
-            buttons[i] = new UButton(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
+            ButtonId id = ButtonId.values()[i];
+            buttons[i] = new UButtonText(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
                     id.toString(),
                     100, y,
                     width - 100*2, 120,

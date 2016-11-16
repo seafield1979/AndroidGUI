@@ -43,7 +43,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
     private Context mContext;
 
     // UButton
-    private UButton[] buttons = new UButton[ButtonId.values().length];
+    private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
 
     // ULogWindow
     private ULogWindow[] logWindows = new ULogWindow[2];
@@ -73,8 +73,9 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
             String title = id.getString();
-            buttons[i] = new UButton(this, id.ordinal(), title, 100, y, width -
-                    100*2, 120,
+            buttons[i] = new UButtonText(this, UButtonType.Press, id.ordinal(),
+                    BUTTON_PRIORITY, title,
+                    100, y, width - 100*2, 120,
                     Color.WHITE,
                     Color.rgb(0,128,0));
             UDrawManager.getInstance().addDrawable(buttons[i]);

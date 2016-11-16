@@ -157,7 +157,8 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
      * @param color
      */
     public UButton addButton(int id, String text, int textColor, int color) {
-        UButton button = new UButton(buttonCallbacks, UButtonType.Press, id, 0, text, 0, 0, 0, 0,
+        UButtonText button = new UButtonText(buttonCallbacks, UButtonType.Press, id, 0, text, 0, 0,
+                0, 0,
                 textColor, color);
         buttons.add(button);
         isUpdate = true;
@@ -172,7 +173,7 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
         if (text == null) {
             text = "Close";
         }
-        UButton button = new UButton(this, UButtonType.Press, CloseDialogId, 0, text, 0, 0,
+        UButtonText button = new UButtonText(this, UButtonType.Press, CloseDialogId, 0, text, 0, 0,
                 0, 0,
                 Color.WHITE, Color.RED);
         buttons.add(button);

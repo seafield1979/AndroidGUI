@@ -48,7 +48,7 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
     private Paint paint = new Paint();
 
     // UButton
-    private UButton[] buttons = new UButton[ButtonId.values().length];
+    private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
 
     // ULogWindow
     private ULogWindow logWindow;
@@ -79,7 +79,7 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            buttons[i] = new UButton(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
+            buttons[i] = new UButtonText(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
                     id.toString(),
                     100, y,
                     width - 100*2, 120,

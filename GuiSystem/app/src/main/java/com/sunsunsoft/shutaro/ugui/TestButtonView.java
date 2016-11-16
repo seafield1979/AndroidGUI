@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 /**
- * メニューバー、サブViewのサンプル
+ * UButtonのテスト
  */
 public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolder.Callback, UButtonCallbacks {
     enum ButtonId {
@@ -41,7 +41,10 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
     private Paint paint = new Paint();
 
     // UButton
-    private UButton[] buttons = new UButton[ButtonId.values().length];
+    private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
+
+    // UButtonClose
+    private UButtonClose buttonClose;
 
     // UButtons
     private UButtons buttons2;
@@ -79,8 +82,8 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
                 buttonType = UButtonType.Press;
             }
 
-            buttons[i] = new UButton(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
-                    (i+1), 100, y,
+            buttons[i] = new UButtonText(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
+                    (i+1), 500, y,
                     width - 100*2, 120,
                     Color.WHITE,
                     Color.rgb(0,128,0));
@@ -89,6 +92,16 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
             UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
         }
+
+        // UButtonClose
+        buttonClose = new UButtonClose(this, UButtonType.Press, 100, BUTTON_PRIORITY,
+                100, y,
+                120,
+                Color.rgb(255,0,0));
+
+
+        UDrawManager.getInstance().addDrawable(buttonClose);
+        y += 150;
 
         // UButtons
         int row = 2;
@@ -200,27 +213,9 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
 
         vt.checkTouchType(e);
 
-        // Button
-        if (buttons != null) {
-            for (UButton button : buttons) {
-                if (button != null && button.touchEvent(vt)) {
-                    invalidate();
-                }
-            }
+        if (UDrawManager.getInstance().touchEvent(vt)) {
+            invalidate();
         }
-
-        // Buttons
-        if (buttons2 != null) {
-            if (buttons2.touchEvent(vt)) {
-                invalidate();
-            }
-        }
-        if (buttons3 != null) {
-            if (buttons3.touchEvent(vt)) {
-                invalidate();
-            }
-        }
-
 
         switch(e.getAction()) {
             case MotionEvent.ACTION_DOWN:

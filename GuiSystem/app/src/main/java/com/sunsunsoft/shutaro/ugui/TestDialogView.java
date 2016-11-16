@@ -49,7 +49,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     private Paint paint = new Paint();
 
     // UButton
-    private UButton[] buttons = new UButton[testButtonIds.length];
+    private UButtonText[] buttons = new UButtonText[testButtonIds.length];
 
     // Dialog
     private UDialogWindow dialogWindow;
@@ -80,7 +80,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
         float y = 100;
         for (int i=0; i<testButtonIds.length; i++) {
             int id = testButtonIds[i];
-            buttons[i] = new UButton(this, UButtonType.Press, id, BUTTON_PRIORITY,
+            buttons[i] = new UButtonText(this, UButtonType.Press, id, BUTTON_PRIORITY,
                     "Dialog" + (i+1),
                     100, y,
                     width - 100*2, 120,

@@ -58,7 +58,7 @@ public class UButtons extends Drawable {
         int buttonW = (size.width - ((row + 1) * BUTTON_MARGIN)) / row;
         int buttonH = (size.height - ((column + 1) * BUTTON_MARGIN)) / column;
 
-        UButton button = new UButton(mCallbacks, type, id, 0, text,
+        UButtonText button = new UButtonText(mCallbacks, type, id, 0, text,
                 BUTTON_MARGIN + (count % row) * (buttonW + BUTTON_MARGIN),
                 BUTTON_MARGIN + (count / row) * (buttonH + BUTTON_MARGIN),
                 buttonW, buttonH,
