@@ -304,8 +304,7 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
         if (closeButton != null) return;
 
         closeButton = new UButtonClose(this, UButtonType.Press, CloseButtonId, 0,
-                100, 100,
-                100,
+                UButtonClose.BUTTON_RADIUS * 2, UButtonClose.BUTTON_RADIUS * 2,
                 Color.rgb(255,0,0));
     }
 

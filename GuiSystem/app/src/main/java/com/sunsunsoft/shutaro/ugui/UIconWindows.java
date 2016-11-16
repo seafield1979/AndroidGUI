@@ -132,12 +132,20 @@ public class UIconWindows {
 
             // Sub
             if (subWindow.isShow()) {
+                // appear
                 if (directionType == DirectionType.Landscape) {
                     subWindow.setPos(size.width, 0);
                     subWindow.startMoving(width, 0, width, height, MOVING_FRAME);
                 } else {
                     subWindow.setPos(0, size.height);
                     subWindow.startMoving(0, height, width, height, MOVING_FRAME);
+                }
+            } else {
+                // disappear
+                if (directionType == DirectionType.Landscape) {
+                    subWindow.startMoving(size.width, 0, 0, height, MOVING_FRAME);
+                } else {
+                    subWindow.startMoving(0, size.height, width, 0, MOVING_FRAME);
                 }
             }
 

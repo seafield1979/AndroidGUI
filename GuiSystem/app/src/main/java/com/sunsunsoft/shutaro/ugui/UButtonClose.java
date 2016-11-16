@@ -17,6 +17,7 @@ public class UButtonClose extends UButton {
      * Consts
      */
     private static final int X_LINE_WIDTH = 15;
+    private static final int RADIUS = 60;
 
     /**
      * Member Variables
@@ -33,11 +34,11 @@ public class UButtonClose extends UButton {
 
 
     public UButtonClose(UButtonCallbacks callbacks, UButtonType type, int id, int priority,
-                   float x, float y, int radius, int color)
+                   float x, float y, int color)
     {
-        super(callbacks, type, id, priority, x, y, radius * 2, radius * 2, color);
+        super(callbacks, type, id, priority, x + 30, y + 30, RADIUS * 2, RADIUS * 2, color);
 
-        this.radius = radius;
+        this.radius = RADIUS;
     }
 
     /**

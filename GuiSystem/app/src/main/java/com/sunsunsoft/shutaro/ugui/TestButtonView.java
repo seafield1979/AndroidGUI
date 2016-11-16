@@ -96,7 +96,6 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
         // UButtonClose
         closingButton = new UButtonClose(this, UButtonType.Press, 100, BUTTON_PRIORITY,
                 100, y,
-                120,
                 Color.rgb(255,0,0));
 
 
