@@ -74,7 +74,7 @@ public class UScrollBar {
     }
 
     private void updateBarLength() {
-        if (viewLen > contentLen) {
+        if (viewLen >= contentLen) {
             // 表示領域よりコンテンツの領域が小さいので表示不要
             barLength = 0;
         } else {

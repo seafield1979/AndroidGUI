@@ -8,9 +8,23 @@ import android.graphics.PointF;
  * UWindowのテスト用のシンプルなWindow
  */
 public class UTestWindow extends UWindow {
+    /**
+     * Consts
+     */
     public static final String TAG  = "UTestWindow";
     private static final int DRAW_PRIORITY = 100;
 
+    /**
+     * Member Variables
+     */
+
+    /**
+     * Get/Set
+     */
+
+    /**
+     * Constructor
+     */
     private UTestWindow(float x, float y, int width, int height, int color) {
         super(null, DRAW_PRIORITY, x, y, width, height, color);
     }

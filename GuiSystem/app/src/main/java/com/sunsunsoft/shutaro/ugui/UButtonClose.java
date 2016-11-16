@@ -85,4 +85,64 @@ public class UButtonClose extends UButton {
         canvas.drawLine(_pos.x - x, _pos.y + y,
                 _pos.x + x, _pos.y - y, paint);
     }
+
+    /**
+     * タッチ処理
+     * @param vt
+     * @param offset
+     * @return
+     */
+    public boolean touchEvent(ViewTouch vt, PointF offset) {
+        boolean done = false;
+        if (offset == null) {
+            offset = new PointF();
+        }
+        if (vt.isTouchUp()) {
+            if (isPressed) {
+                isPressed = false;
+                done = true;
+            }
+        }
+
+        switch(vt.type) {
+            case None:
+                break;
+            case Touch:
+            case Moving:
+                if (contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
+                    isPressed = true;
+                    done = true;
+                }
+                break;
+            case Click:
+            case LongClick:
+                isPressed = false;
+                if (contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
+                    buttonCallback.click(id);
+                    done = true;
+                }
+                break;
+            case MoveEnd:
+
+                break;
+        }
+        return done;
+    }
+
+    /**
+     * 指定の座標がボタンの円の中に含まれるかをチェック
+     * @param x
+     * @param y
+     * @return
+     */
+    private boolean contains(float x, float y) {
+        // 中心からの距離で判定
+        float dx = x - pos.x;
+        float dy = y - pos.y;
+
+        if (radius * radius >= dx * dx + dy * dy) {
+            return true;
+        }
+        return false;
+    }
 }

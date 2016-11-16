@@ -131,12 +131,14 @@ public class UIconWindows {
             mainWindow.startMovingSize(width, height, MOVING_FRAME);
 
             // Sub
-            if (directionType == DirectionType.Landscape) {
-                subWindow.setPos(size.width, 0);
-                subWindow.startMoving(width, 0, width, height, MOVING_FRAME);
-            } else {
-                subWindow.setPos(0, size.height);
-                subWindow.startMoving(0, height, width, height, MOVING_FRAME);
+            if (subWindow.isShow()) {
+                if (directionType == DirectionType.Landscape) {
+                    subWindow.setPos(size.width, 0);
+                    subWindow.startMoving(width, 0, width, height, MOVING_FRAME);
+                } else {
+                    subWindow.setPos(0, size.height);
+                    subWindow.startMoving(0, height, width, height, MOVING_FRAME);
+                }
             }
 
         } else {

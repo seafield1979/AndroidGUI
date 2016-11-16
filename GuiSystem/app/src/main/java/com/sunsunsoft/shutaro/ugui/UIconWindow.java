@@ -40,7 +40,9 @@ public class UIconWindow extends UWindow {
         Horizontal,
         Vertical
     }
-
+    /**
+     * Consts
+     */
     public static final String TAG = "UIconWindow";
 
     public static final int DRAW_PRIORITY = 100;
@@ -155,6 +157,11 @@ public class UIconWindow extends UWindow {
         this.selectedIcon = selectedIcon;
     }
 
+    public void setPos(float x, float y) {
+        super.setPos(x,y);
+        ULog.print(TAG, "x:" + x + " y:" + y);
+    }
+
     /**
      * 状態を設定する
      * 状態に移る時の前処理、後処理を実行できる
@@ -226,6 +233,7 @@ public class UIconWindow extends UWindow {
             instance.mIconManager = UIconManager.createInstance(parent, instance);
         } else {
             instance.type = WindowType.Sub;
+            instance.addCloseButton();
         }
         instance.mParentView = parent;
         instance.windowCallbacks = windowCallbacks;
@@ -366,12 +374,6 @@ public class UIconWindow extends UWindow {
             }
         }
 
-        // スクロールバー
-        if (dir == WindowDir.Vertical) {
-            mScrollBarV.draw(canvas, paint);
-        } else {
-            mScrollBarH.draw(canvas, paint);
-        }
 
         if (UDebug.DRAW_ICON_BLOCK_RECT) {
             mIconManager.getBlockManager().draw(canvas, paint, getToScreenPos());
@@ -402,19 +404,6 @@ public class UIconWindow extends UWindow {
         super.setSize(width, height);
         // アイコンの整列
         sortIcons(false);
-
-        // スクロールバー
-//        if (dir == WindowDir.Vertical) {
-//            if (mScrollBarV != null) {
-//                mScrollBarV.updateSize(width, height);
-//                mScrollBarV.updateContent(contentSize);
-//            }
-//        } else {
-//            if (mScrollBarH != null) {
-//                mScrollBarH.updateSize(width, height);
-//                mScrollBarH.updateContent(contentSize);
-//            }
-//        }
     }
 
     /**
@@ -425,15 +414,14 @@ public class UIconWindow extends UWindow {
         List<UIcon> icons = getIcons();
         if (icons == null) return;
 
-        int column = (clientSize.width - ICON_MARGIN) / (ICON_W + ICON_MARGIN);
-        if (column <= 0) {
-            return;
-        }
-
         int maxSize = 0;
 
         int i=0;
         if (dir == WindowDir.Vertical) {
+            int column = (clientSize.width - ICON_MARGIN) / (ICON_W + ICON_MARGIN);
+            if (column <= 0) {
+                return;
+            }
             int margin = (clientSize.width - ICON_W * column) / (column + 1);
             for (UIcon icon : icons) {
                 int x = margin + (i % column) * (ICON_W + margin);
@@ -450,6 +438,10 @@ public class UIconWindow extends UWindow {
                 i++;
             }
         } else {
+            int column = (clientSize.height - ICON_MARGIN) / (ICON_H + ICON_MARGIN);
+            if (column <= 0) {
+                return;
+            }
             int margin = (clientSize.height - ICON_H * column) / (column + 1);
             for (UIcon icon : icons) {
                 int x = margin + (i / column) * (ICON_W + margin);
@@ -886,23 +878,16 @@ public class UIconWindow extends UWindow {
     public boolean touchEvent(ViewTouch vt) {
         if (!isShow) return false;
         if (state == WindowState.icon_moving) return false;
-        boolean done = false;
 
-        // スクロールバーのタッチ処理
-        if (mScrollBarV.touchEvent(vt)) {
-            if (dir == WindowDir.Vertical) {
-                contentTop.y = mScrollBarV.getTopPos();
-            } else {
-                contentTop.x = mScrollBarH.getTopPos();
-            }
+        if (super.touchEvent(vt)) {
             return true;
         }
+        boolean done = false;
 
         // 範囲外なら除外
         if (!(rect.contains((int)vt.touchX(), (int)vt.touchY()))) {
             return false;
         }
-
 
         List<UIcon> icons = getIcons();
         if (icons != null) {

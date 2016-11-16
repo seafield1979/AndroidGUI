@@ -17,21 +17,25 @@ interface UWindowCallbacks {
  * 座標、サイズを持ち自由に配置が行える
  */
 abstract public class UWindow extends Drawable implements UButtonCallbacks{
-    enum WindowType {
-        Movable,        // ドラッグで移動可能(クリックで表示切り替え)
-        Fixed,          // 固定位置に表示(ドラッグ移動不可、クリックで非表示にならない)
-    }
 
+    /**
+     * Consts
+     */
     public static final String TAG = "UWindow";
     private static final int CloseButtonId = 1000123;
 
     protected static final int SCROLL_BAR_W = 100;
 
-    // メンバ変数
+    /**
+     * Member Variables
+     */
     protected UWindowCallbacks windowCallbacks;
     protected boolean isShow = true;
     protected int bgColor;
 
+    /**
+     * Get/Set
+     */
     protected Size contentSize = new Size();     // 領域全体のサイズ
     protected Size clientSize = new Size();      // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
@@ -116,6 +120,9 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
     }
 
     /**
+     * Constructor
+     */
+    /**
      * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する
      * インスタンス生成には createWindow を使うべし
      */
@@ -145,8 +152,9 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
     }
 
     /**
-     * Windowのサイズを更新する
-     * Windowのサイズを更新する
+     * Methods
+     */
+    /**
      * Windowのサイズを更新する
      * サイズ変更に合わせて中のアイコンを再配置する
      * @param width
@@ -172,8 +180,8 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
     public void closeWindow() {
         // 描画オブジェクトから削除する
         if (drawList != null) {
-            UDrawManager.getInstance().removeDrawable(this);
-            drawList = null;
+//            UDrawManager.getInstance().removeDrawable(this);
+//            drawList = null;
         }
     }
 
@@ -191,6 +199,8 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
      * @param offset 独自の座標系を持つオブジェクトをスクリーン座標系に変換するためのオフセット値
      */
     public void draw(Canvas canvas, Paint paint, PointF offset) {
+        if (!isShow) return;
+
         // Window内部
         drawContent(canvas, paint);
 
@@ -214,6 +224,14 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
         // Close Button
         if (closeButton != null) {
             closeButton.draw(canvas, paint, pos);
+        }
+
+        // スクロールバー
+        if (mScrollBarV != null) {
+            mScrollBarV.draw(canvas, paint);
+        }
+        if (mScrollBarH != null) {
+            mScrollBarH.draw(canvas, paint);
         }
     }
 
@@ -267,14 +285,14 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
             }
         }
 
-        switch (vt.type) {
-            case Touch:
-                if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {
-                    // 最前面に移動
-                    UWindowList.getInstance().add(this);
-                    return true;
-                }
-                break;
+        // スクロールバーのタッチ処理
+        if (mScrollBarV.touchEvent(vt)) {
+            contentTop.y = mScrollBarV.getTopPos();
+            return true;
+        }
+        if (mScrollBarH.touchEvent(vt)) {
+            contentTop.x = mScrollBarH.getTopPos();
+            return true;
         }
         return false;
     }
@@ -282,7 +300,7 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
     /**
      * 閉じるボタンを追加する
      */
-    public void addCloseButton() {
+    protected void addCloseButton() {
         if (closeButton != null) return;
 
         closeButton = new UButtonClose(this, UButtonType.Press, CloseButtonId, 0,
