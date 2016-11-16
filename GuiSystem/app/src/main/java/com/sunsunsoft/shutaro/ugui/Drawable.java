@@ -80,11 +80,20 @@ abstract public class Drawable {
     }
 
     public void setPos(float x, float y) {
+        setPos(x, y, true);
+    }
+    public void setPos(float x, float y, boolean update) {
         pos.x = x;
         pos.y = y;
-        updateRect();
+        if (update) {
+            updateRect();
+        }
     }
     public void setPos(PointF pos) {
+        setPos(pos, true);
+    }
+
+    public void setPos(PointF pos, boolean update) {
         this.pos.x = pos.x;
         this.pos.y = pos.y;
         updateRect();
@@ -261,20 +270,22 @@ abstract public class Drawable {
     public boolean autoMoving() {
         if (!isMoving) return false;
 
-        float ratio = (float)movingFrame / (float)movingFrameMax;
-
         movingFrame++;
         if (movingFrame >= movingFrameMax) {
-            isMoving = false;
             if (isMovingPos) {
                 setPos(dstPos);
             }
             if (isMovingSize) {
                 setSize(dstSize.width, dstSize.height);
             }
+
+            isMoving = false;
+            isMovingPos = false;
+            isMovingSize = false;
             updateRect();
-            return false;
+            endMoving();
         } else {
+            float ratio = (float)movingFrame / (float)movingFrameMax;
             if (isMovingPos) {
                 setPos(srcPos.x + ((dstPos.x - srcPos.x) * ratio),
                         srcPos.y + ((dstPos.y - srcPos.y) * ratio));
@@ -286,6 +297,11 @@ abstract public class Drawable {
         }
         return true;
     }
+
+    /**
+     * 自動移動完了時の処理
+     */
+    public void endMoving() {}
 
     /**
      * Drawableインターフェース
@@ -357,7 +373,6 @@ abstract public class Drawable {
     public boolean isAnimating() {
         return isAnimating;
     }
-
 
     /**
      * アニメーションフレームからアルファ値(1.0 -> 0.0 -> 1.0)を取得する

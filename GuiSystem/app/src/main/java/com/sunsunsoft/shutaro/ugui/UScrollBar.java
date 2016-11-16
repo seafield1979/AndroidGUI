@@ -119,20 +119,20 @@ public class UScrollBar {
 
     /**
      * スクロールバーを表示する先のViewのサイズが変更された時の処理
-     * @param viewWidth
-     * @param viewHeight
+     * @param viewW
+     * @param viewH
      */
-    public void updateSize(int viewWidth, int viewHeight) {
+    public void updateSize(int viewW, int viewH) {
         if (isVertical()) {
-            viewLen = viewHeight;
+            viewLen = viewH;
         } else {
-            viewLen = viewWidth;
+            viewLen = viewW;
         }
 
         switch (type) {
             case Top:
                 pos.x = 0;
-                bgLength = viewWidth;
+                bgLength = viewW;
                 if (inOut == ScrollBarInOut.In) {
                     pos.y = 0;
                 } else {
@@ -141,16 +141,16 @@ public class UScrollBar {
                 break;
             case Bottom:
                 pos.x = 0;
-                bgLength = viewWidth;
+                bgLength = viewW;
                 if (inOut == ScrollBarInOut.In) {
-                    pos.y = viewHeight - bgWidth;
+                    pos.y = viewH - bgWidth;
                 } else {
-                    pos.y = viewHeight;
+                    pos.y = viewH;
                 }
                 break;
             case Left:
                 pos.y = 0;
-                bgLength = viewHeight;
+                bgLength = viewH;
                 if (inOut == ScrollBarInOut.In) {
                     pos.x = 0;
                 } else {
@@ -159,16 +159,18 @@ public class UScrollBar {
                 break;
             case Right:
                 pos.y = 0;
-                bgLength = viewHeight;
+                bgLength = viewH;
                 if (inOut == ScrollBarInOut.In) {
-                    pos.x = viewWidth - bgWidth;
+                    pos.x = viewW - bgWidth;
                 } else {
-                    pos.x = viewWidth;
+                    pos.x = viewW;
                 }
                 break;
         }
         updateBarLength();
-        barPos = 0;
+        if (barPos + barLength > bgLength) {
+            barPos = bgLength - barLength;
+        }
     }
 
 

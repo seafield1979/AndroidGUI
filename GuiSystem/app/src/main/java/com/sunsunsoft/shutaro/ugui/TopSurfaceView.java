@@ -69,23 +69,18 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 
-        ULog.print(TAG, "w:" + width + " h:" + height);
-
         // UIconWindow
         PointF pos1, pos2;
         Size size1, size2;
         UIconWindow.WindowDir winDir;
+        pos1 = new PointF(0, 0);
+        size1 = new Size(width, height);
+        pos2 = new PointF(0, 0);
+        size2 = new Size(width, height);
+
         if (width <= height) {
-            pos1 = new PointF(0, 0);
-            size1 = new Size(width, height/2);
-            pos2 = new PointF(0, height/2);
-            size2 = new Size(width, height/2);
             winDir = UIconWindow.WindowDir.Vertical;
         } else {
-            pos1 = new PointF(0, 0);
-            size1 = new Size(width / 2, height);
-            pos2 = new PointF(width / 2, 0);
-            size2 = new Size(width / 2, height);
             winDir = UIconWindow.WindowDir.Horizontal;
         }
 
@@ -95,9 +90,10 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
 
         // Sub
         UIconWindow subWindow = UIconWindow.createInstance(this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
+        subWindow.isShow = false;
         mWindows[TopView.WindowType.Icon2.ordinal()] = subWindow;
 
-        mIconWindows = UIconWindows.createInstance(mainWindow, subWindow);
+        mIconWindows = UIconWindows.createInstance(mainWindow, subWindow, width, height);
         mainWindow.setWindows(mIconWindows);
         subWindow.setWindows(mIconWindows);
 
@@ -344,20 +340,8 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
                     window.sortIcons(false);
 
                     // SubWindowを画面外から移動させる
-                    float sx, sy, dx, dy;
-                    if (window.getDir() == UIconWindow.WindowDir.Vertical) {
-                        sx = 0;
-                        sy = getHeight();
-                        dx = 0;
-                        dy = window.getBasePos().y;
-                    } else {
-                        sx = getWidth();
-                        sy = 0;
-                        dx = window.getBasePos().x;
-                        dy = 0;
-                    }
-                    window.setPos(sx, sy, true);
-                    window.startMovingPos(dx, dy, SUB_WINDOW_MOVE_FRAME);
+                    mIconWindows.showWindow(window, true);
+                    invalidate();
                 }
             }
             break;

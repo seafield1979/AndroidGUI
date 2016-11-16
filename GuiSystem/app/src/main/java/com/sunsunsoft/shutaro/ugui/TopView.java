@@ -86,7 +86,7 @@ public class TopView extends View implements OnTouchListener, UMenuItemCallbacks
         UIconWindow subWindow = UIconWindow.createInstance(this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
             mWindows[WindowType.Icon2.ordinal()] = subWindow;
 
-        mIconWindows = UIconWindows.createInstance(mainWindow, subWindow);
+        mIconWindows = UIconWindows.createInstance(mainWindow, subWindow, width, height);
         mainWindow.setWindows(mIconWindows);
         subWindow.setWindows(mIconWindows);
 

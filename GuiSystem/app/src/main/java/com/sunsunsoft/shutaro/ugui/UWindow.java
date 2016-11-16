@@ -129,16 +129,24 @@ abstract public class UWindow extends Drawable {
 
     /**
      * Windowのサイズを更新する
+     * Windowのサイズを更新する
+     * Windowのサイズを更新する
      * サイズ変更に合わせて中のアイコンを再配置する
      * @param width
      * @param height
      */
-    public void updateSize(int width, int height) {
-        setSize(width, height);
-        updateRect();
+    public void setSize(int width, int height) {
+        super.setSize(width, height);
 
-        // スクロールをクリア
-        setContentTop(0, 0);
+        // スクロールバー
+        if (mScrollBarV != null) {
+            mScrollBarV.updateSize(width, height);
+            mScrollBarV.updateContent(contentSize);
+        }
+        if (mScrollBarH != null) {
+            mScrollBarH.updateSize(width, height);
+            mScrollBarH.updateContent(contentSize);
+        }
     }
 
     /**

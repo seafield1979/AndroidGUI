@@ -295,10 +295,8 @@ public class UIconWindow extends UWindow {
 
         // Windowの移動
         if (isMoving) {
-            if (isMoving) {
-                if (!autoMoving()) {
-                    isMoving = false;
-                }
+            if (!autoMoving()) {
+                isMoving = false;
             }
         }
 
@@ -330,6 +328,7 @@ public class UIconWindow extends UWindow {
     public void draw(Canvas canvas, Paint paint, PointF offset)
     {
         if (!isShow) return;
+
         List<UIcon> icons = getIcons();
         if (icons == null) return;
 
@@ -396,20 +395,23 @@ public class UIconWindow extends UWindow {
      * @param width
      * @param height
      */
-    @Override
-    public void updateSize(int width, int height) {
-        super.updateSize(width, height);
+    public void setSize(int width, int height) {
+        super.setSize(width, height);
         // アイコンの整列
         sortIcons(false);
 
         // スクロールバー
-        if (dir == WindowDir.Vertical) {
-            mScrollBarV.updateSize(width, height);
-            mScrollBarV.updateContent(contentSize);
-        } else {
-            mScrollBarH.updateSize(width, height);
-            mScrollBarH.updateContent(contentSize);
-        }
+//        if (dir == WindowDir.Vertical) {
+//            if (mScrollBarV != null) {
+//                mScrollBarV.updateSize(width, height);
+//                mScrollBarV.updateContent(contentSize);
+//            }
+//        } else {
+//            if (mScrollBarH != null) {
+//                mScrollBarH.updateSize(width, height);
+//                mScrollBarH.updateContent(contentSize);
+//            }
+//        }
     }
 
     /**
