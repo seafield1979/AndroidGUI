@@ -12,7 +12,7 @@ public class UTestWindow extends UWindow {
     private static final int DRAW_PRIORITY = 100;
 
     private UTestWindow(float x, float y, int width, int height, int color) {
-        super(DRAW_PRIORITY, x, y, width, height, color);
+        super(null, DRAW_PRIORITY, x, y, width, height, color);
     }
 
     /**
@@ -24,9 +24,12 @@ public class UTestWindow extends UWindow {
      * @param color
      * @return
      */
-    public static UTestWindow createInstance(float x, float y, int width, int height, int color) {
+    public static UTestWindow createInstance(UWindowCallbacks callbacks, float x, float y, int
+            width, int height,
+                                             int color) {
         UTestWindow instance = new UTestWindow(x, y, width, height, color);
-
+        instance.windowCallbacks = callbacks;
+        instance.addCloseButton();
         UDrawManager.getInstance().addDrawable(instance);
         return instance;
     }
@@ -46,6 +49,9 @@ public class UTestWindow extends UWindow {
      */
     public boolean touchEvent(ViewTouch vt) {
         if (!isShow) return false;
+        if (super.touchEvent(vt)) {
+            return true;
+        }
 
         boolean redraw = super.touchEvent(vt);
 
@@ -68,16 +74,17 @@ public class UTestWindow extends UWindow {
         return redraw;
     }
 
+
     /**
-     * 描画処理
+     * コンテンツを描画する
      * @param canvas
      * @param paint
-     * @param offset
      */
-    public void draw(Canvas canvas, Paint paint, PointF offset) {
+    public void drawContent(Canvas canvas, Paint paint ) {
         // BG
         UDraw.drawRectFill(canvas, paint, getRect(), bgColor);
     }
+
 
     public PointF getDrawOffset() {
         return null;

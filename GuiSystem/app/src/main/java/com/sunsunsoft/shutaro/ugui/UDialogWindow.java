@@ -79,7 +79,7 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
      * Constructor
      */
     public UDialogWindow(int x, int y, int width, int height, int color) {
-        super(DrawPriority.Dialog.p(), 0, 0, width, height, color);
+        super(null, DrawPriority.Dialog.p(), 0, 0, width, height, color);
 
     }
     public static UDialogWindow createInstance(DialogType type, UButtonCallbacks buttonCallbacks,
@@ -246,6 +246,17 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
             udpateLayout(canvas);
         }
 
+        drawContent(canvas, paint);
+
+
+    }
+
+    /**
+     * コンテンツを描画する
+     * @param canvas
+     * @param paint
+     */
+    public void drawContent(Canvas canvas, Paint paint) {
         if (isAnimating) {
             float ratio;
             if (animationType == AnimationType.Opening) {

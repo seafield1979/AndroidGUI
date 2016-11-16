@@ -44,7 +44,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
     private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
 
     // UButtonClose
-    private UButtonClose buttonClose;
+    private UButtonClose closingButton;
 
     // UButtons
     private UButtons buttons2;
@@ -83,7 +83,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
             }
 
             buttons[i] = new UButtonText(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
-                    (i+1), 500, y,
+                    (i+1), 100, y,
                     width - 100*2, 120,
                     Color.WHITE,
                     Color.rgb(0,128,0));
@@ -94,13 +94,13 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
         }
 
         // UButtonClose
-        buttonClose = new UButtonClose(this, UButtonType.Press, 100, BUTTON_PRIORITY,
+        closingButton = new UButtonClose(this, UButtonType.Press, 100, BUTTON_PRIORITY,
                 100, y,
                 120,
                 Color.rgb(255,0,0));
 
 
-        UDrawManager.getInstance().addDrawable(buttonClose);
+        UDrawManager.getInstance().addDrawable(closingButton);
         y += 150;
 
         // UButtons

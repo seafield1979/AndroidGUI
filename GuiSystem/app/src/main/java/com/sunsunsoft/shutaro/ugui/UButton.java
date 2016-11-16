@@ -30,7 +30,7 @@ public class UButton extends Drawable {
 
     protected int id;
     protected UButtonType type;
-    protected UButtonCallbacks mCallbacks;
+    protected UButtonCallbacks buttonCallback;
     protected boolean isPressed;
     protected int pressedColor;
 
@@ -44,7 +44,7 @@ public class UButton extends Drawable {
     {
         super(priority, x, y, width, height);
         this.id = id;
-        this.mCallbacks = callbacks;
+        this.buttonCallback = callbacks;
         this.type = type;
         this.color = color;
         if (type == UButtonType.BGColor) {
@@ -111,8 +111,8 @@ public class UButton extends Drawable {
 
     public void click() {
         Log.v(TAG, "click");
-        if (mCallbacks != null) {
-            mCallbacks.click(id);
+        if (buttonCallback != null) {
+            buttonCallback.click(id);
         }
     }
 
@@ -154,7 +154,7 @@ public class UButton extends Drawable {
             case LongClick:
                 isPressed = false;
                 if (rect.contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
-                    mCallbacks.click(id);
+                    buttonCallback.click(id);
                     done = true;
                 }
                 break;

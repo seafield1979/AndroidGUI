@@ -1,23 +1,34 @@
 package com.sunsunsoft.shutaro.ugui;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PointF;
 
 
+/**
+ * UWindow呼び出し元に通知するためのコールバック
+ */
+interface UWindowCallbacks {
+    void windowClose(UWindow window);
+}
 
 /**
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
-abstract public class UWindow extends Drawable {
+abstract public class UWindow extends Drawable implements UButtonCallbacks{
     enum WindowType {
         Movable,        // ドラッグで移動可能(クリックで表示切り替え)
         Fixed,          // 固定位置に表示(ドラッグ移動不可、クリックで非表示にならない)
     }
 
     public static final String TAG = "UWindow";
+    private static final int CloseButtonId = 1000123;
+
     protected static final int SCROLL_BAR_W = 100;
 
     // メンバ変数
+    protected UWindowCallbacks windowCallbacks;
     protected boolean isShow = true;
     protected int bgColor;
 
@@ -26,6 +37,7 @@ abstract public class UWindow extends Drawable {
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
     protected UScrollBar mScrollBarH;
     protected UScrollBar mScrollBarV;
+    protected UButtonClose closeButton;         // 閉じるボタン
 
     public boolean isShow() {
         return isShow;
@@ -107,8 +119,10 @@ abstract public class UWindow extends Drawable {
      * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する
      * インスタンス生成には createWindow を使うべし
      */
-    protected UWindow(int priority, float x, float y, int width, int height, int color) {
+    protected UWindow(UWindowCallbacks callbacks, int priority, float x, float y, int width, int
+            height, int color) {
         super(priority, x,y,width,height);
+        this.windowCallbacks = callbacks;
         this.bgColor = color;
         clientSize.width = size.width - SCROLL_BAR_W;
         clientSize.height = size.height - SCROLL_BAR_W;
@@ -120,6 +134,9 @@ abstract public class UWindow extends Drawable {
 
         mScrollBarH = new UScrollBar(ScrollBarType.Bottom, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
         mScrollBarH.setBgColor(Color.rgb(128, 128, 128));
+
+        // 描画オブジェクトに登録する
+        drawList = UDrawManager.getInstance().addDrawable(this);
     }
 
     public void setContentSize(int width, int height) {
@@ -150,11 +167,55 @@ abstract public class UWindow extends Drawable {
     }
 
     /**
+     * Windowを閉じるときの処理
+     */
+    public void closeWindow() {
+        // 描画オブジェクトから削除する
+        if (drawList != null) {
+            UDrawManager.getInstance().removeDrawable(this);
+            drawList = null;
+        }
+    }
+
+    /**
      * 毎フレーム行う処理
      *
      * @return true:描画を行う
      */
     abstract public boolean doAction();
+
+    /**
+     * 描画
+     * @param canvas
+     * @param paint
+     * @param offset 独自の座標系を持つオブジェクトをスクリーン座標系に変換するためのオフセット値
+     */
+    public void draw(Canvas canvas, Paint paint, PointF offset) {
+        // Window内部
+        drawContent(canvas, paint);
+
+        // Window枠
+        drawFrame(canvas, paint);
+    }
+
+    /**
+     * コンテンツを描画する
+     * @param canvas
+     * @param paint
+     */
+    abstract public void drawContent(Canvas canvas, Paint paint );
+
+    /**
+     * Windowの枠やバー、ボタンを描画する
+     * @param canvas
+     * @param paint
+     */
+    public void drawFrame(Canvas canvas, Paint paint) {
+        // Close Button
+        if (closeButton != null) {
+            closeButton.draw(canvas, paint, pos);
+        }
+    }
 
     /**
      * Viewをスクロールする処理
@@ -200,14 +261,52 @@ abstract public class UWindow extends Drawable {
      * @return true:再描画
      */
     public boolean touchEvent(ViewTouch vt) {
+        if (closeButton != null) {
+            if (closeButton.touchEvent(vt, pos)) {
+                return true;
+            }
+        }
+
         switch (vt.type) {
             case Touch:
                 if (rect.contains((int)vt.touchX(), (int)vt.touchY())) {
+                    // 最前面に移動
                     UWindowList.getInstance().add(this);
                     return true;
                 }
                 break;
         }
         return false;
+    }
+
+    /**
+     * 閉じるボタンを追加する
+     */
+    public void addCloseButton() {
+        if (closeButton != null) return;
+
+        closeButton = new UButtonClose(this, UButtonType.Press, CloseButtonId, 0,
+                100, 100,
+                100,
+                Color.rgb(255,0,0));
+    }
+
+    /**
+     * UButtonCallbacks
+     */
+
+    public void click(int id) {
+        switch (id) {
+            case CloseButtonId:
+                // 閉じるボタンを押したら自身のWindowを閉じてから呼び出し元の閉じる処理を呼び出す
+                if (windowCallbacks != null) {
+                    closeWindow();
+                    windowCallbacks.windowClose(this);
+                }
+                break;
+        }
+    }
+    public void longClick(int id) {
+
     }
 }

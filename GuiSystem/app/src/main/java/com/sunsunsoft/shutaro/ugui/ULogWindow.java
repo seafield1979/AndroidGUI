@@ -40,7 +40,7 @@ public class ULogWindow extends UWindow {
 
     private ULogWindow(float x, float y, int width, int height, int color)
     {
-        super(DRAW_PRIORITY, x, y, width, height, color);
+        super(null, DRAW_PRIORITY, x, y, width, height, color);
         setShow(false);
         if (type == LogWindowType.AutoDisappear) {
             startTimer(SHOW_TIME);
@@ -205,7 +205,7 @@ public class ULogWindow extends UWindow {
      * @param canvas
      * @param paint
      */
-    public void draw(Canvas canvas, Paint paint, PointF offset ) {
+    public void drawContent(Canvas canvas, Paint paint) {
         if (!isShow) return;
 
         // 背景

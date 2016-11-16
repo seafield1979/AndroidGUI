@@ -72,7 +72,7 @@ public class UButtonClose extends UButton {
             _color = pressedColor;
         }
         UDraw.drawCircleFill(canvas, paint,
-                new PointF(pos.x, pos.y),
+                new PointF(_pos.x, _pos.y),
                 radius, _color);
 
         // x
@@ -80,9 +80,9 @@ public class UButtonClose extends UButton {
         paint.setStrokeWidth(X_LINE_WIDTH);
         float x = (float)Math.cos(45 * RAD) * radius * 0.8f;
         float y = (float)Math.sin(45 * RAD) * radius * 0.8f;
-        canvas.drawLine(pos.x - x, pos.y - y,
-                pos.x + x, pos.y + y, paint);
-        canvas.drawLine(pos.x - x, pos.y + y,
-                pos.x + x, pos.y - y, paint);
+        canvas.drawLine(_pos.x - x, _pos.y - y,
+                _pos.x + x, _pos.y + y, paint);
+        canvas.drawLine(_pos.x - x, _pos.y + y,
+                _pos.x + x, _pos.y - y, paint);
     }
 }

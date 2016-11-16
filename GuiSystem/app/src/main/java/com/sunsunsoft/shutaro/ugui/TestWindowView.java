@@ -12,7 +12,8 @@ import android.view.View;
  * Created by shutaro on 2016/11/10.
  */
 
-public class TestWindowView extends View implements View.OnTouchListener, UButtonCallbacks{
+public class TestWindowView extends View implements View.OnTouchListener, UButtonCallbacks,
+        UWindowCallbacks{
     // ボタンのID
     enum ButtonId {
         Sort("sort window")
@@ -101,7 +102,7 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         int windowW = width / 2;
         int windowH = height / 2;
         for (int i=0; i<WINDOW_NUM; i++) {
-            UWindow window = UTestWindow.createInstance(x, y, windowW, windowH, UColor
+            UWindow window = UTestWindow.createInstance(this, x, y, windowW, windowH, UColor
                     .getRandomColor());
             windows.add(window);
             x += windowW;
@@ -211,5 +212,12 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
     }
     public void longClick(int id) {
 
+    }
+
+    /**
+     * UWindowCallbacks
+     */
+    public void windowClose(UWindow window) {
+        windows.remove(window);
     }
 }

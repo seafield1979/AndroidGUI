@@ -65,7 +65,6 @@ public class UIconWindow extends UWindow {
     private View mParentView;
     private UIconCallbacks mIconCallbacks;
     private UIconManager mIconManager;
-    private DrawList mDrawList;
     private PointF basePos;
     private WindowDir dir;
 
@@ -208,7 +207,7 @@ public class UIconWindow extends UWindow {
      * Constructor
      */
     private UIconWindow(float x, float y, int width, int height, int color) {
-        super(DRAW_PRIORITY, x, y, width, height, color);
+        super(null, DRAW_PRIORITY, x, y, width, height, color);
         basePos = new PointF(x,y);
     }
     /**
@@ -216,7 +215,8 @@ public class UIconWindow extends UWindow {
      * It doesn't allow creating multi Home windows.
      * @return
      */
-    public static UIconWindow createInstance(View parent, UIconCallbacks iconCallbacks,
+    public static UIconWindow createInstance(View parent, UWindowCallbacks windowCallbacks,
+                                             UIconCallbacks iconCallbacks,
                                              boolean isHome, WindowDir dir,
                                              float x, float y, int width, int height, int bgColor)
     {
@@ -228,8 +228,13 @@ public class UIconWindow extends UWindow {
             instance.type = WindowType.Sub;
         }
         instance.mParentView = parent;
+        instance.windowCallbacks = windowCallbacks;
         instance.mIconCallbacks = iconCallbacks;
         instance.dir = dir;
+
+        // 描画はDrawManagerに任せるのでDrawManagerに登録
+        instance.drawList = UDrawManager.getInstance().addDrawable(instance);
+
         return instance;
     }
 
@@ -278,8 +283,6 @@ public class UIconWindow extends UWindow {
                 UIcon icon = mIconManager.addIcon(IconType.BOX, AddPos.Tail);
             }
         }
-        // 描画はDrawManagerに任せるのでDrawManagerに登録
-        mDrawList = UDrawManager.getInstance().addDrawable(this);
 
         sortIcons(false);
     }
@@ -325,7 +328,7 @@ public class UIconWindow extends UWindow {
      * @param paint
      * @return trueなら描画継続
      */
-    public void draw(Canvas canvas, Paint paint, PointF offset)
+    public void drawContent(Canvas canvas, Paint paint)
     {
         if (!isShow) return;
 

@@ -23,7 +23,7 @@ abstract public class Drawable {
     /**
      * メンバ変数
      */
-    protected DrawList drawList;
+    protected DrawList drawList;    // DrawManagerに描画登録するとnull以外になる
     protected PointF pos = new PointF();
     protected Size size = new Size();
     protected Rect rect;

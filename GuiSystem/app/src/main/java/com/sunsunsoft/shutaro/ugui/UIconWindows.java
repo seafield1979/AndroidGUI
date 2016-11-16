@@ -84,6 +84,27 @@ public class UIconWindows {
      */
     public void showWindow(UIconWindow window, boolean animation) {
         window.isShow = true;
+
+        updateLayout(animation);
+    }
+
+    /**
+     * 指定のウィンドウを非表示にする
+     * @param window
+     */
+    public void hideWindow(UIconWindow window, boolean animation) {
+        // すでに非表示なら何もしない
+        if (!window.isShow) return;
+
+        window.setShow(false);
+        updateLayout(animation);
+    }
+
+    /**
+     * レイアウトを更新する
+     * ウィンドウを追加、削除した場合に呼び出す
+     */
+    private void updateLayout(boolean animation) {
         LinkedList<UIconWindow> showWindows = new LinkedList<>();
         for (UIconWindow _window : windows) {
             if (_window.isShow) {
@@ -130,10 +151,6 @@ public class UIconWindows {
                 }
             }
         }
-    }
-
-    public void hideWindow(UIconWindow window) {
-
     }
 
     /**

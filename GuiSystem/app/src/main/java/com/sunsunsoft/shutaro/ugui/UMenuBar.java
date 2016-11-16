@@ -67,7 +67,7 @@ public class UMenuBar extends UWindow {
 
     private UMenuBar(View parentView, UMenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor)
     {
-        super(DRAW_PRIORITY, 0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
+        super(null, DRAW_PRIORITY, 0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
         mParentView = parentView;
         mCallbackClass = callbackClass;
     }
@@ -258,7 +258,7 @@ public class UMenuBar extends UWindow {
      * @param canvas
      * @param paint
      */
-    public void draw(Canvas canvas, Paint paint, PointF offset ) {
+    public void drawContent(Canvas canvas, Paint paint ) {
         if (!isShow) return;
 
         // bg
@@ -266,16 +266,6 @@ public class UMenuBar extends UWindow {
         paint.setStyle(Paint.Style.FILL);
         // 色
         paint.setColor(0xff000000);
-
-        Rect drawRect = null;
-        if (offset != null) {
-            drawRect = new Rect(rect.left + (int)offset.x,
-                    rect.top + (int)offset.y,
-                    rect.right + (int)offset.x,
-                    rect.bottom + (int)offset.y);
-        } else {
-            drawRect = rect;
-        }
 
         canvas.drawRect(pos.x,
                 pos.y,

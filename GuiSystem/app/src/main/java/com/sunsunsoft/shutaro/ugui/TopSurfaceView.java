@@ -16,7 +16,7 @@ import android.view.SurfaceView;
  * 単語帳トップ SurfaceView版
  */
 
-public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolder.Callback, UMenuItemCallbacks, UIconCallbacks, ViewTouchCallbacks {
+public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolder.Callback, UMenuItemCallbacks, UIconCallbacks, ViewTouchCallbacks, UWindowCallbacks {
     enum WindowType {
         Icon1,
         Icon2,
@@ -35,7 +35,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     int screen_width, screen_height;
 
     // Windows
-    private UWindow[] mWindows = new UWindow[TopView.WindowType.values().length];
+    private UWindow[] mWindows = new UWindow[WindowType.values().length];
     // UIconWindow
     private UIconWindows mIconWindows;
 
@@ -85,13 +85,13 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         }
 
         // Main
-        UIconWindow mainWindow = UIconWindow.createInstance(this, this, true, winDir, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
-        mWindows[TopView.WindowType.Icon1.ordinal()] = mainWindow;
+        UIconWindow mainWindow = UIconWindow.createInstance(this, this, this, true, winDir, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
+        mWindows[WindowType.Icon1.ordinal()] = mainWindow;
 
         // Sub
-        UIconWindow subWindow = UIconWindow.createInstance(this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
+        UIconWindow subWindow = UIconWindow.createInstance(this, this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
         subWindow.isShow = false;
-        mWindows[TopView.WindowType.Icon2.ordinal()] = subWindow;
+        mWindows[WindowType.Icon2.ordinal()] = subWindow;
 
         mIconWindows = UIconWindows.createInstance(mainWindow, subWindow, width, height);
         mainWindow.setWindows(mIconWindows);
@@ -105,14 +105,14 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         if (mMenuBar == null) {
             mMenuBar = UMenuBar.createInstance(this, this, width, height,
                     Color.BLACK);
-            mWindows[TopView.WindowType.MenuBar.ordinal()] = mMenuBar;
+            mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
 
         // ULogWindow
         if (mLogWin == null) {
             mLogWin = ULogWindow.createInstance(getContext(), this, LogWindowType.AutoDisappear,
                     0, 0, width / 2, height);
-            mWindows[TopView.WindowType.Log.ordinal()] = mLogWin;
+            mWindows[WindowType.Log.ordinal()] = mLogWin;
         }
     }
 
@@ -367,5 +367,18 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
                 invalidate();
             }
         });
+    }
+
+    /**
+     * UWindowCallbacks
+     */
+    public void windowClose(UWindow window) {
+        // Windowを閉じる
+        for (UIconWindow _window : mIconWindows.getWindows()) {
+            if (window == _window) {
+                mIconWindows.hideWindow(_window, true);
+                break;
+            }
+        }
     }
 }

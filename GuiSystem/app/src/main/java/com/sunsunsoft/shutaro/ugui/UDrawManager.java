@@ -47,9 +47,9 @@ public class UDrawManager {
     private Drawable touchingObj;
 
     // 同じプライオリティーのDrawableリストを管理するリスト
-    TreeMap<Integer, DrawList> lists;
+    private TreeMap<Integer, DrawList> lists;
 
-    LinkedList<Drawable> removeRequest = new LinkedList<>();
+    private LinkedList<Drawable> removeRequest = new LinkedList<>();
 
 
     // Get/Set
@@ -106,7 +106,7 @@ public class UDrawManager {
     /**
      * 削除要求のリストの描画オブジェクトを削除する
      */
-    public void removeRequestedList() {
+    private void removeRequestedList() {
         for (Drawable obj : removeRequest) {
             Integer _priority = new Integer(obj.getDrawPriority());
             DrawList list = lists.get(_priority);
