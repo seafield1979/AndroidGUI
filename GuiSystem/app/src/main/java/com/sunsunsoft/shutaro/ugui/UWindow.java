@@ -20,10 +20,9 @@ abstract public class UWindow extends Drawable {
     // メンバ変数
     protected boolean isShow = true;
     protected int bgColor;
-    protected Size clientSize = new Size();       // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
 
-    // スクロール用
     protected Size contentSize = new Size();     // 領域全体のサイズ
+    protected Size clientSize = new Size();      // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
     protected UScrollBar mScrollBarH;
     protected UScrollBar mScrollBarV;

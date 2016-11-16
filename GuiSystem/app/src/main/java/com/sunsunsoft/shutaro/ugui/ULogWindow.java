@@ -121,7 +121,7 @@ public class ULogWindow extends UWindow {
     public boolean doAction() {
         // 自動移動
         if (isMoving) {
-            if (move()) {
+            if (autoMoving()) {
                 return true;
             }
         }

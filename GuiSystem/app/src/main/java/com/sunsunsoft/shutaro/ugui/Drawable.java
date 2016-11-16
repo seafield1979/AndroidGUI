@@ -11,6 +11,8 @@ import android.graphics.Rect;
  * Drawableの共通処理を実装済み
  *
  * このクラスのサブクラスをDrawManagerで管理できる
+ *
+ * 描画の他に、自動移動、アニメーション等の機能も持っている
  */
 
 abstract public class Drawable {
@@ -28,12 +30,16 @@ abstract public class Drawable {
     protected int color;
     protected int drawPriority;     // DrawManagerに渡す描画優先度
 
-    // 移動用
+    // 自動移動用
     protected boolean isMoving;
+    protected boolean isMovingPos;
+    protected boolean isMovingSize;
     protected int movingFrame;
     protected int movingFrameMax;
     protected PointF srcPos = new PointF();
     protected PointF dstPos = new PointF();
+    protected Size srcSize = new Size();
+    protected Size dstSize = new Size();
 
     // アニメーション用
     public static final int ANIME_FRAME = 20;
@@ -162,24 +168,89 @@ abstract public class Drawable {
     }
 
     /**
-     * 自動移動開始
-     * @param dstX  目的位置x
-     * @param dstY  目的位置y
+     * 自動移動(座標)
+     * @param dstX  目的x
+     * @param dstY  目的y
      * @param frame  移動にかかるフレーム数
      */
-    public void startMoving(float dstX, float dstY, int frame) {
-        if (pos.x == dstX && pos.y == dstY) {
+    public void startMovingPos(float dstX, float dstY, int frame) {
+        if (!setMovingPos(dstX, dstY)) {
+            // 移動不要
             return;
+        }
+
+        isMoving = true;
+        isMovingPos = true;
+        isMovingSize = false;
+        movingFrame = 0;
+        movingFrameMax = frame;
+    }
+
+    private boolean setMovingPos(float dstX, float dstY) {
+        if (pos.x == dstX && pos.y == dstY) {
+            return false;
         }
         srcPos.x = pos.x;
         srcPos.y = pos.y;
         dstPos.x = dstX;
         dstPos.y = dstY;
+        return true;
+    }
+
+    /**
+     * 自動移動(サイズ)
+     * @param dstW
+     * @param dstH
+     * @param frame
+     */
+    public void startMovingSize(int dstW, int dstH, int frame) {
+        if (!setMovingSize(dstW, dstH)) {
+            // 移動不要
+            return;
+        }
+
+        isMoving = true;
+        isMovingPos = false;
+        isMovingSize = true;
         movingFrame = 0;
         movingFrameMax = frame;
-        isMoving = true;
+    }
 
-        ULog.print(TAG, "startMoving:" + dstPos.x + " " + dstPos.y);
+    private boolean setMovingSize(int dstW, int dstH) {
+        if (size.width == dstW && size.height == dstH) {
+            return false;
+        }
+        srcSize.width = size.width;
+        srcSize.height = size.height;
+        dstSize.width = dstW;
+        dstSize.height = dstH;
+        return true;
+    }
+
+    /**
+     * 自動移動(座標 & サイズ)
+     * @param dstX
+     * @param dstY
+     * @param dstW
+     * @param dstH
+     * @param frame
+     */
+    public void startMoving(float dstX, float dstY, int dstW, int dstH, int frame) {
+        boolean noMoving = true;
+
+        if (setMovingPos(dstX, dstY)) {
+            noMoving = false;
+        }
+        if (setMovingSize(dstW, dstH)) {
+            noMoving = false;
+        }
+        if (!noMoving) {
+            isMovingPos = true;
+            isMovingSize = true;
+            movingFrame = 0;
+            movingFrameMax = frame;
+            isMoving = true;
+        }
     }
 
     /**
@@ -187,7 +258,7 @@ abstract public class Drawable {
      * 移動開始位置、終了位置、経過フレームから現在位置を計算する
      * @return true:移動中
      */
-    public boolean move() {
+    public boolean autoMoving() {
         if (!isMoving) return false;
 
         float ratio = (float)movingFrame / (float)movingFrameMax;
@@ -195,11 +266,23 @@ abstract public class Drawable {
         movingFrame++;
         if (movingFrame >= movingFrameMax) {
             isMoving = false;
-            setPos(dstPos);
+            if (isMovingPos) {
+                setPos(dstPos);
+            }
+            if (isMovingSize) {
+                setSize(dstSize.width, dstSize.height);
+            }
+            updateRect();
             return false;
         } else {
-            setPos(srcPos.x + ((dstPos.x - srcPos.x) * ratio),
-                    srcPos.y + ((dstPos.y - srcPos.y) * ratio));
+            if (isMovingPos) {
+                setPos(srcPos.x + ((dstPos.x - srcPos.x) * ratio),
+                        srcPos.y + ((dstPos.y - srcPos.y) * ratio));
+            }
+            if (isMovingSize) {
+                setSize((int)(srcSize.width + (dstSize.width - srcSize.width) * ratio),
+                        (int)(srcSize.height + (dstSize.height - srcSize.height) * ratio));
+            }
         }
         return true;
     }

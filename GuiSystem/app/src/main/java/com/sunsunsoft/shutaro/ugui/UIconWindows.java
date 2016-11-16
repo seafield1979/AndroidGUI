@@ -57,4 +57,32 @@ public class UIconWindows {
      * Methods
      */
 
+    public void showWindow(UIconWindow window, boolean animation) {
+        if (animation) {
+
+        } else {
+
+        }
+    }
+
+    public void hideWindow(UIconWindow window) {
+
+    }
+
+    /**
+     * 毎フレームの処理
+     * @return true:処理中
+     */
+    public boolean doAction() {
+        boolean isFinished = true;
+
+
+        for (UIconWindow window : windows) {
+            if (window.autoMoving()) {
+                isFinished = false;
+            }
+        }
+        return !isFinished;
+    }
+
 }

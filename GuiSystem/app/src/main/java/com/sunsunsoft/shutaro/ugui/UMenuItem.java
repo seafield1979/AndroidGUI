@@ -232,10 +232,10 @@ public class UMenuItem extends Drawable{
             // 親の階層により開く方向が変わる
             if (nestCount == 0) {
                 // 縦方向
-                item.startMoving(0, -count * (ITEM_H + CHILD_MARGIN_V), ANIME_FRAME);
+                item.startMovingPos(0, -count * (ITEM_H + CHILD_MARGIN_V), ANIME_FRAME);
             } else if (nestCount == 1) {
                 // 横方向
-                item.startMoving(count * (ITEM_W + CHILD_MARGIN_H), 0, ANIME_FRAME);
+                item.startMovingPos(count * (ITEM_W + CHILD_MARGIN_H), 0, ANIME_FRAME);
             }
             count++;
         }
@@ -250,7 +250,7 @@ public class UMenuItem extends Drawable{
         isOpened = false;
 
         for (UMenuItem item : childItems) {
-            item.startMoving(0, 0, ANIME_FRAME);
+            item.startMovingPos(0, 0, ANIME_FRAME);
             if (item.isOpened) {
                 item.closeMenu();
             }
@@ -266,7 +266,7 @@ public class UMenuItem extends Drawable{
 
         // 自分の処理
         // 移動
-        if (move()) {
+        if (autoMoving()) {
             allFinished = false;
         }
         // アニメーション

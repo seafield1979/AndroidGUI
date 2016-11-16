@@ -26,7 +26,7 @@ enum IconType {
  * ViewのonDrawで描画するアイコンの情報
  */
 
-abstract public class UIcon extends Drawable implements AutoMovable {
+abstract public class UIcon extends Drawable {
 
     private static final String TAG = "UIcon";
     private static final int DRAW_PRIORITY = 200;

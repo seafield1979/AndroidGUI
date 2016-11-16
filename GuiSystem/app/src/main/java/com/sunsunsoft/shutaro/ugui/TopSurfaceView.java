@@ -357,7 +357,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
                         dy = 0;
                     }
                     window.setPos(sx, sy, true);
-                    window.startMoving(dx, dy, SUB_WINDOW_MOVE_FRAME);
+                    window.startMovingPos(dx, dy, SUB_WINDOW_MOVE_FRAME);
                 }
             }
             break;

@@ -24,7 +24,7 @@ enum WindowState {
 }
 
 
-public class UIconWindow extends UWindow implements AutoMovable{
+public class UIconWindow extends UWindow {
     // Type of icon window
     // Home is a window that shows desktop icons
     // Sub is a window that shows icons which in a box
@@ -296,7 +296,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
         // Windowの移動
         if (isMoving) {
             if (isMoving) {
-                if (!move()) {
+                if (!autoMoving()) {
                     isMoving = false;
                 }
             }
@@ -307,7 +307,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
             if (state == WindowState.icon_moving) {
                 allFinished = true;
                 for (UIcon icon : icons) {
-                    if (icon.move()) {
+                    if (icon.autoMoving()) {
                         allFinished = false;
                     }
                 }
@@ -438,7 +438,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                     maxSize = height;
                 }
                 if (animate) {
-                    icon.startMoving(x, y, MOVING_TIME);
+                    icon.startMovingPos(x, y, MOVING_TIME);
                 } else {
                     icon.setPos(x, y);
                 }
@@ -454,7 +454,7 @@ public class UIconWindow extends UWindow implements AutoMovable{
                     maxSize = width;
                 }
                 if (animate) {
-                    icon.startMoving(x, y, MOVING_TIME);
+                    icon.startMovingPos(x, y, MOVING_TIME);
                 } else {
                     icon.setPos(x, y);
                 }
