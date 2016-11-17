@@ -26,7 +26,7 @@ abstract public class Drawable {
     protected DrawList drawList;    // DrawManagerに描画登録するとnull以外になる
     protected PointF pos = new PointF();
     protected Size size = new Size();
-    protected Rect rect;
+    protected Rect rect = new Rect();
     protected int color;
     protected int drawPriority;     // DrawManagerに渡す描画優先度
 

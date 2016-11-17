@@ -297,6 +297,10 @@ abstract public class UIcon extends Drawable {
     public boolean touchEvent(ViewTouch vt, PointF offset) {
         boolean done = false;
 
+        if (offset == null) {
+            offset = new PointF();
+        }
+
         if (vt.isTouchUp()) {
             clearFlags();
         }

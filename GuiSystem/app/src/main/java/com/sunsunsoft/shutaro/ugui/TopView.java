@@ -8,32 +8,16 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.View;
 
-import java.util.LinkedList;
 
 /**
  * Created by shutaro on 2016/11/16.
  */
 
 public class TopView extends View implements View.OnTouchListener, UMenuItemCallbacks, UIconCallbacks, ViewTouchCallbacks, UWindowCallbacks {
-    enum WindowType {
-        Icon1,
-        Icon2,
-        MenuBar,
-        Log
-    }
 
     public static final String TAG = "TopView";
-    public static final int SUB_WINDOW_MOVE_FRAME = 10;
-
-    // SurfaceView用
-    SurfaceHolder surfaceHolder;
-    Thread thread;
-    Context mContext;
-    private boolean isInvalidate;
-    int screen_width, screen_height;
 
     // Windows
     private UWindow[] mWindows = new UWindow[TopSurfaceView.WindowType.values().length];
@@ -50,8 +34,9 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
     private boolean isFirst = true;
 
     // クリック判定の仕組み
-    private ViewTouch viewTouch = new ViewTouch(this);
+    private ViewTouch vt = new ViewTouch(this);
 
+    private Context mContext;
     private Paint paint = new Paint();
 
 
@@ -64,6 +49,7 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
     public TopView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setOnTouchListener(this);
+        mContext = context;
     }
 
     private void initWindows(int width, int height) {
@@ -154,8 +140,9 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
     public boolean onTouch(View v, MotionEvent e) {
         boolean ret = true;
 
-        viewTouch.checkTouchType(e);
-        if (WindoTouchEvent(viewTouch)) {
+        vt.checkTouchType(e);
+        // 描画オブジェクトのタッチ処理はすべてUDrawManagerにまかせる
+        if (UDrawManager.getInstance().touchEvent(vt)) {
             invalidate();
         }
 
@@ -182,7 +169,7 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
      * @param vt
      * @return
      */
-    private boolean WindoTouchEvent(ViewTouch vt) {
+    private boolean WindowTouchEvent(ViewTouch vt) {
         // 手前から順に処理する
         for (int i=mWindows.length - 1; i >= 0; i--) {
             UWindow win = mWindows[i];
@@ -302,10 +289,12 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
      * ViewTouchCallbacks
      */
     public void longPressed() {
+//        WindowTouchEvent(vt);
+//        invalidate();
         ((Activity)mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                WindoTouchEvent(viewTouch);
+                WindowTouchEvent(vt);
                 invalidate();
             }
         });

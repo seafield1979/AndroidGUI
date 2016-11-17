@@ -74,9 +74,11 @@ public class UScrollBar {
     }
 
     private void updateBarLength() {
+        ULog.print(TAG, "viewLen:" + viewLen + " contentLen:" + contentLen);
         if (viewLen >= contentLen) {
             // 表示領域よりコンテンツの領域が小さいので表示不要
             barLength = 0;
+            topPos = 0;
         } else {
             barLength = (int) (this.bgLength * ((float) viewLen / (float) contentLen));
         }
@@ -211,7 +213,7 @@ public class UScrollBar {
     /**
      * コンテンツやViewのサイズが変更された時の処理
      */
-    public void updateContent(Size contentSize) {
+    public float updateContent(Size contentSize) {
         if (isVertical()) {
             this.contentLen = contentSize.height;
         } else {
@@ -219,6 +221,7 @@ public class UScrollBar {
         }
 
         updateBarLength();
+        return topPos;
     }
 
     public void draw(Canvas canvas, Paint paint) {

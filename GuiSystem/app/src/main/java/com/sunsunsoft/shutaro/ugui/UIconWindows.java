@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * 想定はメインWindowが１つにサブWindowが１つ
  */
 
-public class UIconWindows {
+public class UIconWindows implements UWindowCallbacks {
     enum DirectionType {
         Landscape,      // 横長
         Portlait,       // 縦長
@@ -16,12 +16,11 @@ public class UIconWindows {
     /**
      * Consts
      */
-    public static final int MOVING_FRAME = 10;
+    public static final int MOVING_FRAME = 12;
 
     /**
      * Member Variables
      */
-
     private LinkedList<UIconWindow> windows = new LinkedList<>();
     private UIconWindow mainWindow;
     private UIconWindow subWindow;
@@ -84,6 +83,7 @@ public class UIconWindows {
      */
     public void showWindow(UIconWindow window, boolean animation) {
         window.isShow = true;
+        window.setAppearance(true);
 
         updateLayout(animation);
     }
@@ -94,9 +94,9 @@ public class UIconWindows {
      */
     public void hideWindow(UIconWindow window, boolean animation) {
         // すでに非表示なら何もしない
-        if (!window.isShow) return;
+        if (!window.isShow || !window.isAppearance()) return;
 
-        window.setShow(false);
+        window.setAppearance(false);
         updateLayout(animation);
     }
 
@@ -107,7 +107,7 @@ public class UIconWindows {
     private void updateLayout(boolean animation) {
         LinkedList<UIconWindow> showWindows = new LinkedList<>();
         for (UIconWindow _window : windows) {
-            if (_window.isShow) {
+            if (_window.isAppearance()) {
                 showWindows.add(_window);
             }
         }
@@ -131,7 +131,7 @@ public class UIconWindows {
             mainWindow.startMovingSize(width, height, MOVING_FRAME);
 
             // Sub
-            if (subWindow.isShow()) {
+            if (subWindow.isAppearance()) {
                 // appear
                 if (directionType == DirectionType.Landscape) {
                     subWindow.setPos(size.width, 0);
@@ -164,19 +164,9 @@ public class UIconWindows {
     }
 
     /**
-     * 毎フレームの処理
-     * @return true:処理中
+     * UWindowCallbacks
      */
-    public boolean doAction() {
-        boolean isFinished = true;
+    public void windowClose(UWindow window) {
 
-
-        for (UIconWindow window : windows) {
-            if (window.autoMoving()) {
-                isFinished = false;
-            }
-        }
-        return !isFinished;
     }
-
 }

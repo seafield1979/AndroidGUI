@@ -166,11 +166,11 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
         // スクロールバー
         if (mScrollBarV != null) {
             mScrollBarV.updateSize(width, height);
-            mScrollBarV.updateContent(contentSize);
+            contentTop.y = mScrollBarV.updateContent(contentSize);
         }
         if (mScrollBarH != null) {
             mScrollBarH.updateSize(width, height);
-            mScrollBarH.updateContent(contentSize);
+            contentTop.x = mScrollBarH.updateContent(contentSize);
         }
     }
 
@@ -306,6 +306,13 @@ abstract public class UWindow extends Drawable implements UButtonCallbacks{
         closeButton = new UButtonClose(this, UButtonType.Press, CloseButtonId, 0,
                 UButtonClose.BUTTON_RADIUS * 2, UButtonClose.BUTTON_RADIUS * 2,
                 Color.rgb(255,0,0));
+    }
+
+    /**
+     * 移動が完了した時の処理
+     */
+    public void endMoving() {
+        super.endMoving();
     }
 
     /**

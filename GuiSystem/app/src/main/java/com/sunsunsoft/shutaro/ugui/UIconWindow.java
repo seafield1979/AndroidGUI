@@ -87,7 +87,7 @@ public class UIconWindow extends UWindow {
     private boolean isDragMove;
     private boolean isDropInBox;
     private boolean isAnimating;
-
+    private boolean isAppearance = true;       // true:出現中 / false:退出中
 
     /**
      * Get/Set
@@ -160,6 +160,14 @@ public class UIconWindow extends UWindow {
     public void setPos(float x, float y) {
         super.setPos(x,y);
         ULog.print(TAG, "x:" + x + " y:" + y);
+    }
+
+    public boolean isAppearance() {
+        return isAppearance;
+    }
+
+    public void setAppearance(boolean appearance) {
+        isAppearance = appearance;
     }
 
     /**
@@ -478,11 +486,12 @@ public class UIconWindow extends UWindow {
         // メニューバーに重ならないように下にマージンを設ける
         if (dir == WindowDir.Vertical) {
             setContentSize(size.width, maxSize + MARGIN_D);
-            mScrollBarV.updateContent(contentSize);
+            contentTop.y = mScrollBarV.updateContent(contentSize);
         } else {
             setContentSize(maxSize + MARGIN_D, size.height);
-            mScrollBarH.updateContent(contentSize);
+            contentTop.x = mScrollBarH.updateContent(contentSize);
         }
+
     }
 
     /**
@@ -1149,5 +1158,18 @@ public class UIconWindow extends UWindow {
             }
         }
         return !allFinished;
+    }
+
+    /**
+     * 移動が完了した時の処理
+     */
+    public void endMoving() {
+        super.endMoving();
+
+        if (isAppearance) {
+
+        } else {
+            isShow = false;
+        }
     }
 }
