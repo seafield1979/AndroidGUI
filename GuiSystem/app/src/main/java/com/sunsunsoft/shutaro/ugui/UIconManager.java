@@ -33,7 +33,9 @@ public class UIconManager implements UIconCallbacks{
     private UIconCallbacks mIconCallbacks;
     private LinkedList<UIcon> icons;
     private UIconsBlockManager mBlockManager;
+
     private UIcon selectedIcon;
+    private UIcon dropedIcon;       // アイコンをドロップ中のアイコン
 
     /**
      * Get/Set
@@ -56,6 +58,21 @@ public class UIconManager implements UIconCallbacks{
 
     public void setSelectedIcon(UIcon selectedIcon) {
         this.selectedIcon = selectedIcon;
+    }
+
+    public UIcon getDropedIcon() {
+        return dropedIcon;
+    }
+
+    public void setDropedIcon(UIcon dropedIcon) {
+        // 全てのアイコンのdropフラグを解除
+        for (UIcon icon : icons) {
+            icon.isDroping = false;
+        }
+        if (dropedIcon != null) {
+            this.dropedIcon = dropedIcon;
+            dropedIcon.isDroping = true;
+        }
     }
 
     /**

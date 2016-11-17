@@ -55,21 +55,6 @@ abstract public class UIcon extends UDrawable {
     /**
      * Get/Set
      */
-    public boolean isTouched() {
-        return isTouched;
-    }
-
-    public void setTouched(boolean touched) {
-        isTouched = touched;
-    }
-
-    public boolean isLongTouched() {
-        return isLongTouched;
-    }
-
-    public void setLongTouched(boolean longTouched) {
-        isLongTouched = longTouched;
-    }
 
     private void clearFlags() {
         isTouched = false;

@@ -13,30 +13,34 @@ import android.view.View;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Windows for Icons
- * Window can have many icons
- */
-enum WindowState {
-    none,
-    drag,               // single icon draging
-    icon_moving,        // icons moving (icons sort animation)
-    icon_selecting      // icons can be selected
-}
-
 
 public class UIconWindow extends UWindow {
-    // Type of icon window
-    // Home is a window that shows desktop icons
-    // Sub is a window that shows icons which in a box
+    /**
+     * Windows for Icons
+     * Window can have many icons
+     */
+    enum WindowState {
+        none,
+        drag,               // single icon draging
+        icon_moving,        // icons moving (icons sort animation)
+        icon_selecting      // icons can be selected
+    }
+
+    /**
+     * Type of icon window
+     * Home is a window that shows desktop icons
+     * Sub is a window that shows icons which in a box
+     */
     enum WindowType {
         Home,
         Sub
     }
 
-    // Window directions
-    // If screen width is longer than height, it is Horizontal
-    // If screen height is longer than width, it is Vertical
+    /**
+     * Window directions
+     * If screen width is longer than height, it is Horizontal
+     * If screen height is longer than width, it is Vertical
+     */
     enum WindowDir {
         Horizontal,
         Vertical
@@ -76,7 +80,7 @@ public class UIconWindow extends UWindow {
     // ドラッグ中のアイコン
     private UIcon dragedIcon;
     // ドロップ中のアイコン
-    private UIcon dropedIcon;
+//    private UIcon dropedIcon;
 
     private WindowState state = WindowState.none;
     private WindowState nextState = WindowState.none;
@@ -194,6 +198,19 @@ public class UIconWindow extends UWindow {
 
         this.state = state;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Constructor
@@ -315,6 +332,7 @@ public class UIconWindow extends UWindow {
 
     /**
      * 描画処理
+     * UIconManagerに登録されたIconを描画する
      * @param canvas
      * @param paint
      * @return trueなら描画継続
@@ -581,10 +599,8 @@ public class UIconWindow extends UWindow {
             return false;
         }
 
-            // 現在のドロップフラグをクリア
-            if (dropedIcon != null) {
-                dropedIcon.isDroping = false;
-            }
+        // 現在のドロップフラグをクリア
+        mIconManager.setDropedIcon(null);
 
         for (UIconWindow window : windows.getWindows()) {
             // ドラッグ中のアイコンが別のアイコンの上にあるかをチェック
@@ -611,8 +627,7 @@ public class UIconWindow extends UWindow {
             }
             if (dropIcon != null) {
                 isDone = true;
-                dropedIcon = dropIcon;
-                dropedIcon.isDroping = true;
+                mIconManager.setDropedIcon(dropIcon);
             }
         }
 
@@ -649,10 +664,7 @@ public class UIconWindow extends UWindow {
         if (dragedIcon == null) return false;
         boolean isDroped = false;
 
-        if (dropedIcon != null) {
-            dropedIcon.isDroping = false;
-            dropedIcon = null;
-        }
+        mIconManager.setDropedIcon(null);
 
         List<UIcon> srcIcons = getIcons();
         for (UIconWindow window : windows.getWindows()) {
@@ -761,10 +773,7 @@ public class UIconWindow extends UWindow {
         // 他のアイコンの上にドロップされたらドロップ処理を呼び出す
         boolean isDroped = false;
 
-        if (dropedIcon != null) {
-            dropedIcon.isDroping = false;
-            dropedIcon = null;
-        }
+        mIconManager.setDropedIcon(null);
 
         List<UIcon> srcIcons = getIcons();
         List<UIcon> checkedIcons = mIconManager.getCheckedIcons();
