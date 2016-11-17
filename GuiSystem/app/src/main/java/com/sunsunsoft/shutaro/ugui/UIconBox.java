@@ -38,8 +38,8 @@ public class UIconBox extends UIcon {
         return subWindow;
     }
 
-    public UIconBox(View parentView, UIconWindow parentWindow) {
-        super(parentWindow, IconType.BOX, 0, 0, ICON_W, ICON_W);
+    public UIconBox(View parentView, UIconWindow parentWindow, UIconCallbacks iconCallbacks) {
+        super(parentWindow, iconCallbacks, IconType.BOX, 0, 0, ICON_W, ICON_W);
         mParentView = parentView;
 
         color = UColor.getRandomColor();
@@ -48,7 +48,7 @@ public class UIconBox extends UIcon {
         UIconWindows windows = parentWindow.getWindows();
         subWindow = windows.getSubWindow();
 
-        mIconManager = UIconManager.createInstance(parentView, subWindow);
+        mIconManager = UIconManager.createInstance(parentView, subWindow, iconCallbacks);
         for (int i=0; i<DUMMY_ICON_NUM; i++) {
             UIcon icon = mIconManager.addIcon(IconType.RECT, AddPos.Tail);
             icon.setColor(color);

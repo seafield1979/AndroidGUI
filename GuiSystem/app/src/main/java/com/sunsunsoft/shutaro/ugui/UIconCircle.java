@@ -14,12 +14,12 @@ public class UIconCircle extends UIcon {
 
     protected int radius;
 
-    public UIconCircle(UIconWindow parent) {
-        this(parent, 0, 0, ICON_W);
+    public UIconCircle(UIconWindow parent, UIconCallbacks iconCallbacks) {
+        this(parent, iconCallbacks, 0, 0, ICON_W);
     }
 
-    public UIconCircle(UIconWindow parent, int x, int y, int width) {
-        super(parent, IconType.CIRCLE, x,y,width,width);
+    public UIconCircle(UIconWindow parent, UIconCallbacks iconCallbacks, int x, int y, int width) {
+        super(parent, iconCallbacks, IconType.CIRCLE, x,y,width,width);
 
         color = Color.rgb(0,255,255);
         this.radius = width / 2;

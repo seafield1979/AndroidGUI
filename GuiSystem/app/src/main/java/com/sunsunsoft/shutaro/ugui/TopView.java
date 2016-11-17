@@ -304,8 +304,6 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
      * ViewTouchCallbacks
      */
     public void longPressed() {
-//        WindowTouchEvent(vt);
-//        invalidate();
         ((Activity)mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {

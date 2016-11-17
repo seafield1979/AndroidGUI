@@ -20,14 +20,24 @@ enum AddPos {
  * Rect判定の高速化のためにいくつかのアイコンをまとめたブロックのRectを作成し、個々のアイコンのRect判定前に
  * ブロックのRectと判定を行う
  */
-public class UIconManager {
+public class UIconManager implements UIconCallbacks{
+    /**
+     * Consts
+     */
 
+    /**
+     * Member Variables
+     */
     private View mParentView;
     private UIconWindow mParentWindow;
+    private UIconCallbacks mIconCallbacks;
     private LinkedList<UIcon> icons;
     private UIconsBlockManager mBlockManager;
+    private UIcon selectedIcon;
 
-    // Get/Set
+    /**
+     * Get/Set
+     */
     public List<UIcon> getIcons() {
         return icons;
     }
@@ -38,6 +48,14 @@ public class UIconManager {
 
     public UIconWindow getParentWindow() {
         return mParentWindow;
+    }
+
+    public UIcon getSelectedIcon() {
+        return selectedIcon;
+    }
+
+    public void setSelectedIcon(UIcon selectedIcon) {
+        this.selectedIcon = selectedIcon;
     }
 
     /**
@@ -62,10 +80,12 @@ public class UIconManager {
         return mBlockManager;
     }
 
-    public static UIconManager createInstance(View parentView, UIconWindow parentWindow) {
+    public static UIconManager createInstance(View parentView,
+                                              UIconWindow parentWindow, UIconCallbacks iconCallbacks) {
         UIconManager instance = new UIconManager();
         instance.mParentView = parentView;
         instance.mParentWindow = parentWindow;
+        instance.mIconCallbacks = iconCallbacks;
         instance.icons = new LinkedList<>();
         instance.mBlockManager = UIconsBlockManager.createInstance(instance.icons);
         return instance;
@@ -82,18 +102,18 @@ public class UIconManager {
         UIcon icon = null;
         switch (type) {
             case RECT:
-                icon = new UIconRect(mParentWindow);
+                icon = new UIconRect(mParentWindow, this);
                 break;
             case CIRCLE:
-                icon = new UIconCircle(mParentWindow);
+                icon = new UIconCircle(mParentWindow, this);
                 break;
             case IMAGE: {
                 Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), R.drawable.hogeman);
-                icon = new UIconBmp(mParentWindow, bmp);
+                icon = new UIconBmp(mParentWindow, this, bmp);
                 break;
             }
             case BOX:
-                icon = new UIconBox(mParentView, mParentWindow);
+                icon = new UIconBox(mParentView, mParentWindow, this);
                 break;
         }
         if (icon == null) return null;
@@ -147,5 +167,24 @@ public class UIconManager {
      */
     public UIcon getOverlappedIcon(Point pos, List<UIcon> exceptIcons) {
         return mBlockManager.getOverlapedIcon(pos, exceptIcons);
+    }
+
+    /**
+     * UIconCallbacks
+     */
+    public void clickIcon(UIcon icon) {
+        selectedIcon = icon;
+        if (mIconCallbacks != null) {
+            mIconCallbacks.clickIcon(icon);
+        }
+    }
+    public void longClickIcon(UIcon icon) {
+        if (mIconCallbacks != null) {
+            mIconCallbacks.clickIcon(icon);
+        }
+    }
+
+    public  void dropToIcon(UIcon icon) {
+
     }
 }

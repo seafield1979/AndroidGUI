@@ -141,6 +141,13 @@ abstract public class UDrawable {
         return new Rect(rect.left + (int)offset.x, rect.top + (int)offset.y,
                 rect.right + (int)offset.x, rect.bottom + (int)offset.y);
     }
+    // 枠の分太いRectを返す
+    public Rect getRectWithOffset(PointF offset, int frameWidth) {
+        return new Rect(rect.left + (int)offset.x - frameWidth,
+                rect.top + (int)offset.y - frameWidth,
+                rect.right + (int)offset.x + frameWidth,
+                rect.bottom + (int)offset.y + frameWidth);
+    }
 
     public int getColor() {
         return color;

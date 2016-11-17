@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.view.SurfaceView;
 import android.view.View;
 
@@ -64,8 +65,6 @@ public class UIconWindow extends UWindow {
      * Member veriables
      */
     private WindowType type;
-    private View mParentView;
-    private UIconCallbacks mIconCallbacks;
     private UIconManager mIconManager;
     private PointF basePos;
     private WindowDir dir;
@@ -78,8 +77,6 @@ public class UIconWindow extends UWindow {
     private UIcon dragedIcon;
     // ドロップ中のアイコン
     private UIcon dropedIcon;
-    // 選択中のアイコン
-    private UIcon selectedIcon;
 
     private WindowState state = WindowState.none;
     private WindowState nextState = WindowState.none;
@@ -115,30 +112,14 @@ public class UIconWindow extends UWindow {
         return mIconManager.getIcons();
     }
 
-    public WindowDir getDir() {
-        return dir;
-    }
-
-    public void setDir(WindowDir dir) {
-        this.dir = dir;
-    }
-
     public void setWindows(UIconWindows windows) {
         this.windows = windows;
     }
 
     public UIconWindows getWindows() { return this.windows; }
 
-    public void setParentView(SurfaceView mParentView) {
-        this.mParentView = mParentView;
-    }
-
     public void setAnimating(boolean animating) {
         isAnimating = animating;
-    }
-
-    public UIconCallbacks getIconCallbacks() {
-        return mIconCallbacks;
     }
 
     public void setDragedIcon(UIcon dragedIcon) {
@@ -151,10 +132,6 @@ public class UIconWindow extends UWindow {
             UDrawManager.getInstance().addWithNewPriority(dragedIcon, DrawPriority.DragIcon.p());
         }
         this.dragedIcon = dragedIcon;
-    }
-
-    public void setSelectedIcon(UIcon selectedIcon) {
-        this.selectedIcon = selectedIcon;
     }
 
     public void setPos(float x, float y) {
@@ -238,14 +215,12 @@ public class UIconWindow extends UWindow {
         UIconWindow instance = new UIconWindow(x, y, width, height, bgColor);
         if (isHome) {
             instance.type = WindowType.Home;
-            instance.mIconManager = UIconManager.createInstance(parent, instance);
+            instance.mIconManager = UIconManager.createInstance(parent, instance, iconCallbacks);
         } else {
             instance.type = WindowType.Sub;
             instance.addCloseButton();
         }
-        instance.mParentView = parent;
         instance.windowCallbacks = windowCallbacks;
-        instance.mIconCallbacks = iconCallbacks;
         instance.dir = dir;
 
         // 描画はDrawManagerに任せるのでDrawManagerに登録
@@ -296,7 +271,7 @@ public class UIconWindow extends UWindow {
                 icon.setColor(color);
             }
             for (int i = 0; i < BOX_ICON_NUM; i++) {
-                UIcon icon = mIconManager.addIcon(IconType.BOX, AddPos.Tail);
+                mIconManager.addIcon(IconType.BOX, AddPos.Tail);
             }
         }
 
@@ -309,7 +284,7 @@ public class UIconWindow extends UWindow {
      */
     public boolean doAction() {
         boolean redraw = false;
-        boolean allFinished = true;
+        boolean allFinished;
         List<UIcon> icons = getIcons();
 
         // Windowの移動
@@ -366,22 +341,21 @@ public class UIconWindow extends UWindow {
         canvas.save();
         canvas.clipRect(rect);
 
-        int clipCount = 0;
+        // 選択中のアイコンに枠を表示する
+        if (mIconManager.getSelectedIcon() != null) {
+            UDraw.drawRoundRectFill(canvas, paint,
+                    new RectF(mIconManager.getSelectedIcon().getRectWithOffset
+                    (_offset, 5)), 10.0f, Color.argb(160, 255, 0, 0));
+        }
         for (UIcon icon : mIconManager.getIcons()) {
             if (icon == dragedIcon) continue;
             // 矩形範囲外なら描画しない
             if (URect.intersect(windowRect, icon.getRect())) {
                 icon.draw(canvas, paint, _offset);
 
-                // 選択中のアイコンに枠を表示する
-                if (icon == selectedIcon) {
-                    UDraw.drawRect(canvas, paint, icon.getRectWithOffset(_offset), 5, Color.RED);
-                }
             } else {
-                clipCount++;
             }
         }
-
 
         if (UDebug.DRAW_ICON_BLOCK_RECT) {
             mIconManager.getBlockManager().draw(canvas, paint, getToScreenPos());
@@ -1172,4 +1146,6 @@ public class UIconWindow extends UWindow {
             isShow = false;
         }
     }
+
+
 }

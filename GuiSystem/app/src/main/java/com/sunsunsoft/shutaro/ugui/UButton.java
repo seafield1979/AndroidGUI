@@ -7,36 +7,50 @@ import android.graphics.RectF;
 import android.util.Log;
 
 
-enum UButtonType {
-    BGColor,    // color changing
-    Press       // pressed down
-}
 
 /**
- * 自前のボタン
+ * クリックでイベントが発生するボタン
+ *
  * 生成後ViewのonDraw内で draw メソッドを呼ぶと表示される
  * ボタンが押されたときの動作はtypeで指定できる
  *   BGColor ボタンの背景色が変わる
  *   Press   ボタンがへこむ
  */
+enum UButtonType {
+    BGColor,    // color changing
+    Press       // pressed down
+}
 
 public class UButton extends UDrawable {
+    /**
+     * Consts
+     */
     public static final String TAG = "UButton";
-    public static final int DRAW_PRIORITY = 100;
     protected static final int PRESS_Y = 12;
     protected static final int BUTTON_RADIUS = 20;
 
+    /**
+     * Member Variables
+     */
     protected int id;
     protected UButtonType type;
     protected UButtonCallbacks buttonCallback;
     protected boolean isPressed;
     protected int pressedColor;
 
-    // Get/Set
+
+
+    /**
+     * Get/Set
+     */
     public int getId() {
         return id;
     }
 
+
+    /**
+     * Constructor
+     */
     public UButton(UButtonCallbacks callbacks, UButtonType type, int id, int priority,
                    float x, float y, int width, int height, int color)
     {
@@ -52,6 +66,9 @@ public class UButton extends UDrawable {
         }
     }
 
+    /**
+     * Methods
+     */
     /**
      * 描画オフセットを取得する
      * @return
@@ -107,13 +124,6 @@ public class UButton extends UDrawable {
                 BUTTON_RADIUS, _color);
     }
 
-    public void click() {
-        Log.v(TAG, "click");
-        if (buttonCallback != null) {
-            buttonCallback.click(id);
-        }
-    }
-
     /**
      * Touchable Interface
      */
@@ -152,7 +162,7 @@ public class UButton extends UDrawable {
             case LongClick:
                 isPressed = false;
                 if (rect.contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
-                    buttonCallback.click(id);
+                    click();
                     done = true;
                 }
                 break;
@@ -162,4 +172,12 @@ public class UButton extends UDrawable {
         }
         return done;
     }
+
+    public void click() {
+        Log.v(TAG, "click");
+        if (buttonCallback != null) {
+            buttonCallback.click(id);
+        }
+    }
+
 }

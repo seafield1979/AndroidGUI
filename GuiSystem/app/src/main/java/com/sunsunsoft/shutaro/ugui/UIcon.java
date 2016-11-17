@@ -19,6 +19,7 @@ enum IconType {
     BOX
 }
 
+
 /**
  * ViewのonDrawで描画するアイコンの情報
  */
@@ -32,7 +33,7 @@ abstract public class UIcon extends UDrawable {
 
     public int id;
     protected UIconWindow parentWindow;
-    private UIconCallbacks mCallbacks;
+    private UIconCallbacks callbacks;
     protected DrawList drawList;
 
     // アニメーション用
@@ -79,12 +80,14 @@ abstract public class UIcon extends UDrawable {
     /**
      * Constructor
      */
-    public UIcon(UIconWindow parentWindow, IconType type, float x, float y, int width, int
+    public UIcon(UIconWindow parentWindow, UIconCallbacks iconCallbacks, IconType type, float x,
+                 float y, int
+            width, int
             height)
     {
         super(DRAW_PRIORITY, x, y, width, height);
         this.parentWindow = parentWindow;
-        this.mCallbacks = parentWindow.getIconCallbacks();
+        this.callbacks = iconCallbacks;
         this.id = count;
         this.type = type;
         this.setPos(x, y);
@@ -122,15 +125,15 @@ abstract public class UIcon extends UDrawable {
                 this.drawPriority = DrawPriority.DragIcon.p();
             }
         } else {
-            if (mCallbacks != null) {
-                mCallbacks.clickIcon(this);
+            if (callbacks != null) {
+                callbacks.clickIcon(this);
             }
         }
     }
     public void longClick() {
         Log.v(TAG, "long click");
-        if (mCallbacks != null) {
-            mCallbacks.longClickIcon(this);
+        if (callbacks != null) {
+            callbacks.longClickIcon(this);
         }
     }
     public void moving() {
@@ -138,8 +141,8 @@ abstract public class UIcon extends UDrawable {
     }
     public void drop() {
         Log.v(TAG, "drop");
-        if (mCallbacks != null) {
-            mCallbacks.dropToIcon(this);
+        if (callbacks != null) {
+            callbacks.dropToIcon(this);
         }
     }
 

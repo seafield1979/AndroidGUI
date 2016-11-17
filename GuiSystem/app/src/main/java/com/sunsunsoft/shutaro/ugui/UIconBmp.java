@@ -16,11 +16,11 @@ public class UIconBmp extends UIcon {
     private Bitmap bmp;
 
 
-    public UIconBmp(UIconWindow parent, Bitmap bmp) {
-        this(parent, 0, 0, ICON_W, ICON_W, bmp);
+    public UIconBmp(UIconWindow parent, UIconCallbacks iconCallbacks, Bitmap bmp) {
+        this(parent, iconCallbacks, 0, 0, ICON_W, ICON_W, bmp);
     }
-    public UIconBmp(UIconWindow parent, int x, int y, int width, int height, Bitmap bmp) {
-        super(parent, IconType.IMAGE, x, y, width, height);
+    public UIconBmp(UIconWindow parent, UIconCallbacks iconCallbacks, int x, int y, int width, int height, Bitmap bmp) {
+        super(parent, iconCallbacks, IconType.IMAGE, x, y, width, height);
 
         this.bmp = bmp;
     }

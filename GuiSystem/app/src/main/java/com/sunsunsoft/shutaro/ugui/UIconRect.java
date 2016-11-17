@@ -15,12 +15,12 @@ public class UIconRect extends UIcon {
     private static final int ICON_W = 200;
     private static final int ICON_H = 150;
 
-    public UIconRect(UIconWindow parent) {
-        this(parent, 0, 0, ICON_W, ICON_H);
+    public UIconRect(UIconWindow parent, UIconCallbacks iconCallbacks) {
+        this(parent, iconCallbacks, 0, 0, ICON_W, ICON_H);
     }
 
-    public UIconRect(UIconWindow parent, int x, int y, int width, int height) {
-        super(parent, IconType.RECT, x,y,width,height);
+    public UIconRect(UIconWindow parent, UIconCallbacks iconCallbacks, int x, int y, int width, int height) {
+        super(parent, iconCallbacks, IconType.RECT, x,y,width,height);
 
         color = Color.rgb(0,255,255);
     }
