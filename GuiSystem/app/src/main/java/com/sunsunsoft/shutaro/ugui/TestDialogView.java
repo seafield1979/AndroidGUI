@@ -1,6 +1,8 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,16 +17,22 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     enum DialogTest{
         Test1,
         Test2,
-        Test3
+        Test3,
+        Test4,
+        Test5
     }
 
+    // Dialogに配置されるボタンのID
     private static final int DialogButton1 = 100;
     private static final int DialogButton2 = 101;
     private static final int DialogButton3 = 102;
 
+    // Viewに配置されるボタンのID
     private static final int TestButton1 = 200;
     private static final int TestButton2 = 201;
     private static final int TestButton3 = 202;
+    private static final int TestButton4 = 203;
+    private static final int TestButton5 = 204;
 
     private static final int[] dialogButtonIds = {
             DialogButton1,
@@ -34,7 +42,9 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     private static final int[] testButtonIds = {
             TestButton1,
             TestButton2,
-            TestButton3
+            TestButton3,
+            TestButton4,
+            TestButton5
     };
 
     public static final String TAG = "TestButtonView";
@@ -163,6 +173,44 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
             }
                 break;
+            case Test4:
+            {
+                dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Normal,
+                        this, this,
+                        UDialogWindow.ButtonDir.Horizontal, true,
+                        width, height, UColor.getRandomColor(), UColor.getRandomColor());
+
+                Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
+                Bitmap image2 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman2);
+
+                for (int i=0; i<dialogButtonIds.length; i++) {
+                    int buttonId = dialogButtonIds[i];
+                    dialogWindow.addImageButton(buttonId, image1, image2, 150, 150);
+                }
+                dialogWindow.addButton(100, "Test" + 1, Color.BLACK, Color
+                        .WHITE);
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
+            }
+                break;
+            case Test5:
+            {
+                dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Normal,
+                        this, this,
+                        UDialogWindow.ButtonDir.Vertical, true,
+                        width, height, UColor.getRandomColor(), UColor.getRandomColor());
+
+                Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
+                Bitmap image2 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman2);
+
+                for (int i=0; i<dialogButtonIds.length; i++) {
+                    int buttonId = dialogButtonIds[i];
+                    dialogWindow.addImageButton(buttonId, image1, image2, 150, 150);
+                }
+                dialogWindow.addButton(100, "Test" + 1, Color.BLACK, Color
+                        .WHITE);
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
+            }
+                break;
         }
     }
 
@@ -254,6 +302,12 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 break;
             case TestButton3:
                 initDialog(DialogTest.Test3, getWidth(), getHeight());
+                break;
+            case TestButton4:
+                initDialog(DialogTest.Test4, getWidth(), getHeight());
+                break;
+            case TestButton5:
+                initDialog(DialogTest.Test5, getWidth(), getHeight());
                 break;
         }
     }

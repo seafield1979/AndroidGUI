@@ -1,6 +1,8 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,6 +27,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
 
     public static final String TAG = "TestButtonView";
     private static final int BUTTON_PRIORITY = 100;
+    private static final int IMAGE_BUTTON_ID = 10;
 
     // SurfaceView用
     SurfaceHolder surfaceHolder;
@@ -112,11 +115,26 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
         }
         y += 300 + 50;
 
-        row = 4;
-        column = 1;
-        buttons3 = new UButtons(this, UButtonType.Press, BUTTON_PRIORITY, Color.rgb(255, 80, 80),
-                Color.WHITE, row, column, 0, y, width, 300);
-        buttons3.addFull(200, "hoge");
+//        row = 4;
+//        column = 1;
+//        buttons3 = new UButtons(this, UButtonType.Press, BUTTON_PRIORITY, Color.rgb(255, 80, 80),
+//                Color.WHITE, row, column, 0, y, width, 300);
+//        buttons3.addFull(200, "hoge");
+//        y += 300 + 50;
+
+        // UButtonImage
+        Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
+        Bitmap image2 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman2);
+        UButtonImage imageButton = UButtonImage.createButton(this,
+                IMAGE_BUTTON_ID,
+                BUTTON_PRIORITY, 100, y, 150, 150, image1, image2);
+        UDrawManager.getInstance().addDrawable(imageButton);
+
+        UButtonImage imageButton2 = UButtonImage.createButton(this,
+                IMAGE_BUTTON_ID + 1,
+                BUTTON_PRIORITY, 300, y, 150, 150, image1, null);
+        UDrawManager.getInstance().addDrawable(imageButton2);
+
     }
 
     // Surfaceが作られた時のイベント処理
@@ -254,7 +272,11 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
                     break;
             }
         } else {
+            switch(id) {
+                case IMAGE_BUTTON_ID:
 
+                    break;
+            }
         }
     }
     public void longClick(int id) {

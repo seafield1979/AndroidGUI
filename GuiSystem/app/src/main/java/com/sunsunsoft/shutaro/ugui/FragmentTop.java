@@ -37,14 +37,10 @@ public class FragmentTop extends Fragment implements View.OnTouchListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top, null);
 
+        // Viewを追加
         topView = new TopView(getContext());
         LinearLayout containerView = (LinearLayout)view.findViewById(R.id.view_container);
         containerView.addView(topView);
-
-        // SurfaceViewを追加
-//        TopSurfaceView topView = new TopSurfaceView(getContext());
-//        LinearLayout containerView = (LinearLayout)view.findViewById(R.id.view_container);
-//        containerView.addView(topView);
 
         return view;
     }

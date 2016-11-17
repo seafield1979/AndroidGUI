@@ -31,13 +31,15 @@ public class UButtonClose extends UButton {
     /**
      * Constructor
      */
-
-
     public UButtonClose(UButtonCallbacks callbacks, UButtonType type, int id, int priority,
                    float x, float y, int color)
     {
-        super(callbacks, type, id, priority, x + 30, y + 30, RADIUS * 2, RADIUS * 2, color);
+        super(callbacks, type, id, priority, x, y, RADIUS * 2, RADIUS * 2, color);
 
+        this.buttonCallback = callbacks;
+        this.type = type;
+        this.id = id;
+        this.color = color;
         this.radius = RADIUS;
     }
 
