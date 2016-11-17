@@ -12,7 +12,7 @@ import java.util.LinkedList;
  * 領域内に均等な大きさのボタンを並べて配置する
  */
 
-public class UButtons extends Drawable {
+public class UButtons extends UDrawable {
     public static final String TAG = "UButtons";
     private static final int BUTTON_MARGIN = 10;
 

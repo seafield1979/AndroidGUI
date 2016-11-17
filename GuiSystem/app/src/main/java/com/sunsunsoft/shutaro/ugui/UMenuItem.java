@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.view.View;
 
 import java.util.LinkedList;
 
@@ -14,7 +13,7 @@ import java.util.LinkedList;
  * メニューに表示する項目
  * アイコンを表示してタップされたらIDを返すぐらいの機能しか持たない
  */
-public class UMenuItem extends Drawable{
+public class UMenuItem extends UDrawable {
     public static final String TAG = "UMenuItem";
 
     public static final int DRAW_PRIORITY = 200;

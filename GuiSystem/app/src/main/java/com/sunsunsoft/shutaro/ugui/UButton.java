@@ -1,11 +1,8 @@
 package com.sunsunsoft.shutaro.ugui;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
@@ -23,7 +20,7 @@ enum UButtonType {
  *   Press   ボタンがへこむ
  */
 
-public class UButton extends Drawable {
+public class UButton extends UDrawable {
     public static final String TAG = "UButton";
     public static final int DRAW_PRIORITY = 100;
     protected static final int PRESS_Y = 12;

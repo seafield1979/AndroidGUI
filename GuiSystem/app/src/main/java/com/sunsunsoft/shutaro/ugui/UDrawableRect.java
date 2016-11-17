@@ -8,7 +8,7 @@ import android.graphics.PointF;
  * Created by shutaro on 2016/11/15.
  */
 
-public class UDrawableRect extends Drawable {
+public class UDrawableRect extends UDrawable {
 
     /**
      * Constructor

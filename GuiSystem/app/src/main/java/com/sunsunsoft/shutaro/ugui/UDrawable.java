@@ -15,8 +15,8 @@ import android.graphics.Rect;
  * 描画の他に、自動移動、アニメーション等の機能も持っている
  */
 
-abstract public class Drawable {
-    private static final String TAG = "Drawable";
+abstract public class UDrawable {
+    private static final String TAG = "UDrawable";
 
     public static double RAD = 3.1415 / 180.0;
 
@@ -48,7 +48,7 @@ abstract public class Drawable {
     protected int animeFrameMax;
     protected float animeRatio;
 
-    public Drawable(int priority, float x, float y, int width, int height)
+    public UDrawable(int priority, float x, float y, int width, int height)
     {
         this.setPos(x, y);
         this.setSize(width, height);

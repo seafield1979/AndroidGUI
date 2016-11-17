@@ -55,7 +55,7 @@ public class UButtonImage extends UButton {
 
 
     /**
-     * Drawable
+     * UDrawable
      */
     /**
      * 描画処理

@@ -44,21 +44,21 @@ public class UDrawManager {
 
     // タッチ中のDrawableオブジェクト
     // タッチを放すまで他のオブジェクトのタッチ処理はしない
-    private Drawable touchingObj;
+    private UDrawable touchingObj;
 
     // 同じプライオリティーのDrawableリストを管理するリスト
     private TreeMap<Integer, DrawList> lists;
 
-    private LinkedList<Drawable> removeRequest = new LinkedList<>();
+    private LinkedList<UDrawable> removeRequest = new LinkedList<>();
 
 
     // Get/Set
 
-    public Drawable getTouchingObj() {
+    public UDrawable getTouchingObj() {
         return touchingObj;
     }
 
-    public void setTouchingObj(Drawable touchingObj) {
+    public void setTouchingObj(UDrawable touchingObj) {
         this.touchingObj = touchingObj;
     }
 
@@ -75,11 +75,11 @@ public class UDrawManager {
      * @param obj
      * @return
      */
-    public DrawList addWithNewPriority(Drawable obj, int priority) {
+    public DrawList addWithNewPriority(UDrawable obj, int priority) {
         obj.drawPriority = priority;
         return addDrawable(obj);
     }
-    public DrawList addDrawable(Drawable obj) {
+    public DrawList addDrawable(UDrawable obj) {
         // 挿入するリストを探す
         Integer _priority = new Integer(obj.getDrawPriority());
         DrawList list = lists.get(_priority);
@@ -99,7 +99,7 @@ public class UDrawManager {
      * @param obj
      * @return
      */
-    public void removeDrawable(Drawable obj) {
+    public void removeDrawable(UDrawable obj) {
         removeRequest.add(obj);
     }
 
@@ -107,7 +107,7 @@ public class UDrawManager {
      * 削除要求のリストの描画オブジェクトを削除する
      */
     private void removeRequestedList() {
-        for (Drawable obj : removeRequest) {
+        for (UDrawable obj : removeRequest) {
             Integer _priority = new Integer(obj.getDrawPriority());
             DrawList list = lists.get(_priority);
             if (list != null) {
@@ -150,7 +150,7 @@ public class UDrawManager {
      * @param obj
      * @param priority
      */
-    public void setPriority(Drawable obj, int priority) {
+    public void setPriority(UDrawable obj, int priority) {
         // 探す
         for (Integer pri : lists.keySet()) {
             DrawList list = lists.get(pri);
@@ -215,7 +215,7 @@ class DrawList
     // 描画範囲 この範囲外には描画しない
 //    public Rect clipRect;
     private int priority;
-    private LinkedList<Drawable> list = new LinkedList<>();
+    private LinkedList<UDrawable> list = new LinkedList<>();
 
     public DrawList(int priority) {
         this.priority = priority;
@@ -231,16 +231,16 @@ class DrawList
      * すでにリストにあった場合は末尾に移動
      * @param obj
      */
-    public void add(Drawable obj) {
+    public void add(UDrawable obj) {
         list.remove(obj);
         list.add(obj);
     }
 
-    public boolean remove(Drawable obj) {
+    public boolean remove(UDrawable obj) {
         return list.remove(obj);
     }
 
-    public void toLast(Drawable obj) {
+    public void toLast(UDrawable obj) {
         list.remove(obj);
         list.add(obj);
     }
@@ -250,8 +250,8 @@ class DrawList
      * @param obj
      * @return
      */
-    public boolean contains(Drawable obj) {
-        for (Drawable _obj : list) {
+    public boolean contains(UDrawable obj) {
+        for (UDrawable _obj : list) {
             if (obj == _obj) {
                 return true;
             }
@@ -268,7 +268,7 @@ class DrawList
     public boolean draw(Canvas canvas, Paint paint) {
         // 分けるのが面倒なのでアニメーションと描画を同時に処理する
         boolean allDone = true;
-        for (Drawable obj : list) {
+        for (UDrawable obj : list) {
             Rect objRect = obj.getRect();
 
             if (obj.animate()) {
@@ -330,7 +330,7 @@ class DrawList
         }
 
         for(ListIterator it = list.listIterator(list.size()); it.hasPrevious();){
-            Drawable obj = (Drawable)it.previous();
+            UDrawable obj = (UDrawable)it.previous();
             if (obj.touchEvent(vt)) {
                 if (vt.type == TouchType.Touch) {
                     UDrawManager.getInstance().setTouchingObj(obj);

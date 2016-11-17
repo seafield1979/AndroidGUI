@@ -16,7 +16,7 @@ interface UWindowCallbacks {
  * Viewの中に表示できるWindow
  * 座標、サイズを持ち自由に配置が行える
  */
-abstract public class UWindow extends Drawable implements UButtonCallbacks{
+abstract public class UWindow extends UDrawable implements UButtonCallbacks{
 
     /**
      * Consts

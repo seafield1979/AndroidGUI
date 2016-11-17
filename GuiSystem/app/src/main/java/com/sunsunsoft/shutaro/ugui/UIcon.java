@@ -6,9 +6,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.Log;
 
-import java.util.Collections;
-import java.util.List;
-
 import static com.sunsunsoft.shutaro.ugui.UDebug.drawIconId;
 
 /**
@@ -26,7 +23,7 @@ enum IconType {
  * ViewのonDrawで描画するアイコンの情報
  */
 
-abstract public class UIcon extends Drawable {
+abstract public class UIcon extends UDrawable {
 
     private static final String TAG = "UIcon";
     private static final int DRAW_PRIORITY = 200;

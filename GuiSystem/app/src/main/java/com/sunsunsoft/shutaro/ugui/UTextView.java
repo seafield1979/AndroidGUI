@@ -3,17 +3,15 @@ package com.sunsunsoft.shutaro.ugui;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
 
 /**
  * テキストを表示する
  */
 
-public class UTextView extends Drawable{
+public class UTextView extends UDrawable {
     enum UAlignment {
         None,
         CenterX,
