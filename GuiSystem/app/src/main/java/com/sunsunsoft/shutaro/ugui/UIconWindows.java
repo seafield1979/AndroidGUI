@@ -92,12 +92,13 @@ public class UIconWindows implements UWindowCallbacks {
      * 指定のウィンドウを非表示にする
      * @param window
      */
-    public void hideWindow(UIconWindow window, boolean animation) {
+    public boolean hideWindow(UIconWindow window, boolean animation) {
         // すでに非表示なら何もしない
-        if (!window.isShow || !window.isAppearance()) return;
+        if (!window.isShow || !window.isAppearance()) return false;
 
         window.setAppearance(false);
         updateLayout(animation);
+        return true;
     }
 
     /**
@@ -167,6 +168,12 @@ public class UIconWindows implements UWindowCallbacks {
      * UWindowCallbacks
      */
     public void windowClose(UWindow window) {
-
+        // Windowを閉じる
+        for (UIconWindow _window : windows) {
+            if (window == _window) {
+                hideWindow(_window, true);
+                break;
+            }
+        }
     }
 }

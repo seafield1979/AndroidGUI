@@ -199,6 +199,21 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
     }
 
     /**
+     * Androidのバックキーが押された時の処理
+     * @return
+     */
+    public boolean onBackKeyDown() {
+        // サブウィンドウが表示されていたら閉じる
+        UIconWindow subWindow = mIconWindows.getSubWindow();
+        if (subWindow.isShow()) {
+            if (mIconWindows.hideWindow(subWindow, true)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * UMenuItemCallbacks
      */
     /**

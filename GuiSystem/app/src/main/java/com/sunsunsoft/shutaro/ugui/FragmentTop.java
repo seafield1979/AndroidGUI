@@ -17,6 +17,8 @@ public class FragmentTop extends Fragment implements View.OnTouchListener {
     public static final String FRAMGMENT_NAME = FragmentTop.class.getName();
     private final static String BACKGROUND_COLOR = "background_color";
 
+    private TopView topView;
+
     public static FragmentTop newInstance(@ColorRes int IdRes) {
         FragmentTop frag = new FragmentTop();
         Bundle b = new Bundle();
@@ -35,7 +37,7 @@ public class FragmentTop extends Fragment implements View.OnTouchListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top, null);
 
-        TopView topView = new TopView(getContext());
+        topView = new TopView(getContext());
         LinearLayout containerView = (LinearLayout)view.findViewById(R.id.view_container);
         containerView.addView(topView);
 
@@ -49,5 +51,14 @@ public class FragmentTop extends Fragment implements View.OnTouchListener {
 
     public boolean onTouch(View v, MotionEvent e) {
         return true;
+    }
+
+
+    public boolean onBackKeyDown() {
+        if (topView.onBackKeyDown()) {
+            topView.invalidate();
+            return true;
+        }
+        return false;
     }
 }

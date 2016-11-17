@@ -9,16 +9,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            // データを渡す為のBundleを生成し、渡すデータを内包させる
-            Bundle bundle = new Bundle();
-            bundle.putString("URL", "http://hogehoge.com");
-
-            // Fragmentを生成し、setArgumentsで先ほどのbundleをセットする
             FragmentMenu fragment = new FragmentMenu();
-            fragment.setArguments(bundle);
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             // コンテナにMainFragmentを格納

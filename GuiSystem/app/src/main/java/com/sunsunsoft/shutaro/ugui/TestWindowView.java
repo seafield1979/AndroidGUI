@@ -218,6 +218,7 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
      * UWindowCallbacks
      */
     public void windowClose(UWindow window) {
+        UDrawManager.getInstance().removeDrawable(window);
         windows.remove(window);
     }
 }

@@ -63,6 +63,7 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
 
     protected int textColor;
     protected int dialogColor;
+    protected int bgColor;
 
     protected UButtonCallbacks buttonCallbacks;
     protected UDialogCallbacks dialogCallbacks;
@@ -105,6 +106,9 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
         instance.isAnimation = isAnimation;
         if (isAnimation) {
             instance.startAnimation(AnimationType.Opening);
+        }
+        if (type == DialogType.Mordal) {
+            instance.bgColor = Color.argb(160,0,0,0);
         }
 
         // 描画はDrawManagerに任せるのでDrawManagerに登録
@@ -246,9 +250,13 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
             udpateLayout(canvas);
         }
 
+        // BG
+        if (type == DialogType.Mordal) {
+            UDraw.drawRectFill(canvas, paint, new Rect(0,0,size.width,size
+                    .height), bgColor);
+        }
+
         drawContent(canvas, paint);
-
-
     }
 
     /**

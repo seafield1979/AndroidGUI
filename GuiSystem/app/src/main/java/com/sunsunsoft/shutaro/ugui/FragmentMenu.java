@@ -1,5 +1,6 @@
 package com.sunsunsoft.shutaro.ugui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -52,8 +53,9 @@ public class FragmentMenu extends Fragment implements OnClickListener{
         switch(v.getId()) {
             case R.id.buttonHome:
             {
-                Fragment fragment = new FragmentTop();
-                showFragment(fragment);
+                Intent i = new Intent(getContext().getApplicationContext(),SubActivity.class);
+                i.putExtra("testMode", 1);
+                startActivity(i);
             }
                 break;
             case R.id.buttonButton:
