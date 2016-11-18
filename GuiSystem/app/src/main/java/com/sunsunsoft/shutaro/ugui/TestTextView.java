@@ -4,9 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import java.util.LinkedList;
 
@@ -44,10 +48,26 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     // UTextView
     private LinkedList<UTextView> textViews = new LinkedList<>();
 
+    // UEditText
+    private UEditText editText;
+
     // ULogWindow
     private ULogWindow logWindow;
 
+    private EditText mEditText;
+    private RelativeLayout topLayout;
+
     // get/set
+    public void setTopLayout(RelativeLayout topLayout) {
+        this.topLayout = topLayout;
+        mEditText.setVisibility(INVISIBLE);
+        topLayout.addView(mEditText);
+    }
+
+    public EditText getEditText() {
+        return mEditText;
+    }
+
     public TestTextView(Context context) {
         this(context, null);
     }
@@ -55,6 +75,15 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     public TestTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setOnTouchListener(this);
+
+        // EditText
+        mEditText = new EditText(getContext());
+        RelativeLayout.LayoutParams layout = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layout.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.top_layout);
+        layout.addRule(RelativeLayout.ALIGN_PARENT_LEFT, R.id.top_layout);
+        mEditText.setLayoutParams(layout);
     }
 
     private UTextView addTextView(String text, int textSize, int priority, UTextView.UAlignment
@@ -78,21 +107,26 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
      * @param height
      */
     private void initDrawables(int width, int height) {
+        float y = 50;
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 
         // TextView
-        for (int i=0; i<10; i++) {
+        for (int i=0; i<5; i++) {
             String text = "hoge" + (i + 1);
 
             addTextView(text, 70, TEXT_PRIORITY, UTextView
-                    .UAlignment.Center, width / 2, 50 + 100 * i, UColor.getRandomColor(), UColor
+                    .UAlignment.Center, width / 2, y, UColor.getRandomColor(), UColor
                     .getRandomColor());
+            y += 100;
         }
         addTextView("aaa\nbbb\nccc", 70, TEXT_PRIORITY, UTextView
-                .UAlignment.Center, width / 2, 50 + 100 * 10, UColor.getRandomColor(), UColor
+                .UAlignment.Center, width / 2, y, UColor.getRandomColor(), UColor
                 .getRandomColor());
+        y += 200;
 
+        editText = new UEditText(getContext(), mEditText, 71, 100, y, 300, 100);
+        UDrawManager.getInstance().addDrawable(editText);
 
         // LogWindow
         logWindow = ULogWindow.createInstance(getContext(), this,LogWindowType.AutoDisappear,
