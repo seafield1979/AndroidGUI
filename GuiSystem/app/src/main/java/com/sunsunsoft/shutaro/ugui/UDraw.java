@@ -8,6 +8,9 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 
 /**
  * 自前の描画処理
@@ -15,6 +18,13 @@ import android.graphics.RectF;
  */
 
 public class UDraw {
+    enum UAlignment {
+        None,
+        CenterX,
+        CenterY,
+        Center
+    }
+
     // ラジアン角度
     public static final double RAD = 3.1415 / 180.0;
 
@@ -202,5 +212,83 @@ public class UDraw {
             // 枠
             drawRoundRect(canvas, paint, rect, 10, 15, Color.rgb(140,140,140) );
         }
+    }
+
+    /**
+     * テキストを描画（複数行対応)
+     * @param canvas
+     * @param paint
+     * @param text
+     * @param alignment
+     * @param textSize
+     * @param x
+     * @param y
+     * @param color
+     * @return
+     */
+    public static Size drawText(Canvas canvas, Paint paint, String text,
+                                UAlignment alignment, int textSize,
+                                float x, float y, int color)
+    {
+        if (text == null) return null;
+        Size size = getTextRect(canvas.getWidth(), text, textSize);
+        switch (alignment) {
+            case CenterX:
+                x = x - size.width / 2;
+                break;
+            case CenterY:
+                y = y - size.height / 2;
+                break;
+            case Center:
+                x = x - size.width / 2;
+                y = y - size.height / 2;
+                break;
+        }
+
+        // 改行ができるようにTextPaintとStaticLayoutを使用する
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(textSize);
+        textPaint.setColor(color);
+
+        StaticLayout mTextLayout = new StaticLayout(text, textPaint,
+                canvas.getWidth() * 4 / 5, Layout.Alignment.ALIGN_NORMAL,
+                1.0f, 0.0f, false);
+
+        canvas.save();
+        canvas.translate(x, y);
+
+        ///テキストの描画位置の指定
+        textPaint.setColor(color);
+        mTextLayout.draw(canvas);
+        canvas.restore();
+
+        return size;
+    }
+
+    /**
+     * テキストのサイズを取得する（マルチライン対応）
+     * @param canvasW
+     * @return
+     */
+    private static Size getTextRect(int canvasW, String text, int size) {
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(size);
+        StaticLayout textLayout = new StaticLayout(text, textPaint,
+                canvasW, Layout.Alignment.ALIGN_NORMAL,
+                1.0f, 0.0f, false);
+
+        int height = textLayout.getHeight();
+        int maxWidth = 0;
+        int _width;
+
+        // 各行の最大の幅を計算する
+        for (int i = 0; i < textLayout.getLineCount(); i++) {
+            _width = (int)textLayout.getLineWidth(i);
+            if (_width > maxWidth) {
+                maxWidth = _width;
+            }
+        }
+
+        return new Size(maxWidth, height);
     }
 }

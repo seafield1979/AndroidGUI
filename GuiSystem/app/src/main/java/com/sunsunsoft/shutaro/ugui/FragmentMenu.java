@@ -66,8 +66,9 @@ public class FragmentMenu extends Fragment implements OnClickListener{
                 break;
             case R.id.buttonTextview:
             {
-                Fragment fragment = new FragmentTestTextview();
-                showFragment(fragment);
+                Intent i = new Intent(getContext().getApplicationContext(),SubActivity.class);
+                i.putExtra("testMode", 3);
+                startActivity(i);
             }
             break;
             case R.id.buttonMenuBar:

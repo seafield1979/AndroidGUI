@@ -9,7 +9,7 @@ import android.view.KeyEvent;
 
 public class SubActivity extends AppCompatActivity {
 
-    private FragmentTop fragment;
+    private MyFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,12 @@ public class SubActivity extends AppCompatActivity {
                 case 1: {
                     fragment = new FragmentTop();
                     transaction.add(R.id.fragment_container, fragment, FragmentTop.FRAMGMENT_NAME);
+                }
+                    break;
+                case 3: {
+                    fragment = new FragmentTestTextview();
+                    transaction.add(R.id.fragment_container, fragment, FragmentTestTextview
+                            .TAG);
                 }
                     break;
             }

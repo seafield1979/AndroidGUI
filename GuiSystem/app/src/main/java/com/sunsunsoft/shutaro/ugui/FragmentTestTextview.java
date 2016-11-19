@@ -16,7 +16,7 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentTestTextview extends Fragment {
+public class FragmentTestTextview extends MyFragment {
     public static final String TAG = "FragmentTestTextview";
 
     public FragmentTestTextview() {
@@ -31,23 +31,6 @@ public class FragmentTestTextview extends Fragment {
         View view = inflater.inflate(R.layout.fragment_test_textview, container, false);
 
         TestTextView textView = ((TestTextView)view.findViewById(R.id.textView));
-        RelativeLayout topLayout = (RelativeLayout)textView.getParent();
-
-        textView.setTopLayout(topLayout);
-
-        EditText edit1 = textView.getEditText();
-        if (edit1 != null) {
-            edit1.setText("hoge");
-            edit1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                        ULog.print(TAG, "Enter!!");
-                    }
-                    return false;
-                }
-            });
-        }
 
         // キーボードのON/OFFイベントの検出
         DetectableKeyboardEventLayout root = (DetectableKeyboardEventLayout)view.findViewById(R.id
@@ -65,5 +48,15 @@ public class FragmentTestTextview extends Fragment {
         return view;
     }
 
+    /**
+     * MyFragment
+     */
 
+    /**
+     * 戻るボタンが押された時の処理
+     * @return false:デフォルトの処理を行う
+     */
+    public boolean onBackKeyDown() {
+        return false;
+    }
 }

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +20,8 @@ import java.util.LinkedList;
  * UTextViewのテスト用View
  */
 
-public class TestTextView extends View implements View.OnTouchListener, UButtonCallbacks{
+public class TestTextView extends View implements View.OnTouchListener, UButtonCallbacks,
+        UEditTextCallbacks{
     // ボタンのID
     enum ButtonId {
         Sort("sort window");
@@ -36,6 +39,10 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
 
     public static final String TAG = "TestButtonView";
     private static final int TEXT_PRIORITY = 100;
+    private static final int TEXT_SIZE = 70;
+
+
+    private Context mContext;
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -54,20 +61,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     // ULogWindow
     private ULogWindow logWindow;
 
-    private EditText mEditText;
-    private RelativeLayout topLayout;
-
     // get/set
-    public void setTopLayout(RelativeLayout topLayout) {
-        this.topLayout = topLayout;
-        mEditText.setVisibility(INVISIBLE);
-        topLayout.addView(mEditText);
-    }
-
-    public EditText getEditText() {
-        return mEditText;
-    }
-
     public TestTextView(Context context) {
         this(context, null);
     }
@@ -75,21 +69,14 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     public TestTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setOnTouchListener(this);
-
-        // EditText
-        mEditText = new EditText(getContext());
-        RelativeLayout.LayoutParams layout = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layout.addRule(RelativeLayout.ALIGN_PARENT_TOP, R.id.top_layout);
-        layout.addRule(RelativeLayout.ALIGN_PARENT_LEFT, R.id.top_layout);
-        mEditText.setLayoutParams(layout);
+        mContext = context;
     }
 
     private UTextView addTextView(String text, int textSize, int priority, UTextView.UAlignment
             alignment, float x, float y, int color, int bgColor) {
         UTextView textView = UTextView.createInstance(text, textSize, priority, alignment,
-                getWidth(), x, y, color, bgColor);
+                getWidth(), true, x, y,
+                getWidth() - 200, color, bgColor);
         textViews.add(textView);
         UDrawManager.getInstance().addDrawable(textView);
 
@@ -115,17 +102,21 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         for (int i=0; i<5; i++) {
             String text = "hoge" + (i + 1);
 
-            addTextView(text, 70, TEXT_PRIORITY, UTextView
+            addTextView(text, TEXT_SIZE, TEXT_PRIORITY, UTextView
                     .UAlignment.Center, width / 2, y, UColor.getRandomColor(), UColor
                     .getRandomColor());
             y += 100;
         }
-        addTextView("aaa\nbbb\nccc", 70, TEXT_PRIORITY, UTextView
-                .UAlignment.Center, width / 2, y, UColor.getRandomColor(), UColor
+        addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY, UTextView
+                .UAlignment.CenterX, width / 2, y, UColor.getRandomColor(), UColor
                 .getRandomColor());
         y += 200;
 
-        editText = new UEditText(getContext(), mEditText, 71, 100, y, 300, 100);
+        // UEditText
+        editText = new UEditText(this, this, 71, TEXT_SIZE, UTextView.UAlignment.None,
+                width, true,
+                100, y, 300, Color.GREEN, Color.argb(128,0,
+                0,0));
         UDrawManager.getInstance().addDrawable(editText);
 
         // LogWindow
@@ -173,6 +164,13 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
             refresh = true;
         }
 
+        for (UTextView textView : textViews) {
+            if (textView.getRect().contains((int)viewTouch.touchX(), (int)viewTouch.touchY())) {
+                textView.setText("hogehoge\nhogehoge");
+                refresh = true;
+            }
+        }
+
         if (refresh) {
             invalidate();
         }
@@ -194,14 +192,23 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         return ret;
     }
 
+
+    /**
+     * UEditText上のEditTextを非表示にする
+     */
+    public void hideEditTexts() {
+        editText.showEditView(false);
+    }
+
+
     /**
      * UButtonCallbacks
      */
     public void click(int id) {
         ULog.print(TAG, "button click:" + id);
 
-        if (id < com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values().length) {
-            com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId buttonId = com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values()[id];
+        if (id < ButtonId.values().length) {
+            ButtonId buttonId = ButtonId.values()[id];
             switch (buttonId) {
                 case Sort:
                     invalidate();
@@ -212,5 +219,16 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
 
     public void longClick(int id) {
 
+    }
+
+
+    /**
+     * UEditTextCallbacks
+     */
+    public void showDialog(UEditText edit, boolean isShow) {
+        UEditDialogFragment dialogFragment = UEditDialogFragment.createInstance("hoge");
+        dialogFragment.show(((AppCompatActivity)mContext).getSupportFragmentManager(),
+                "fragment_dialog");
+        dialogFragment.setCallingEditText(edit);
     }
 }

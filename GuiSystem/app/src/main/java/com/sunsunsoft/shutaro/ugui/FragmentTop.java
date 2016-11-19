@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
  * SubViewのテスト
  * 今までViewがアイコンのWindowを管理していたが、２つに増やすためにIconWindowクラスを作成する
  */
-public class FragmentTop extends Fragment implements View.OnTouchListener {
+public class FragmentTop extends MyFragment implements View.OnTouchListener {
     public static final String FRAMGMENT_NAME = FragmentTop.class.getName();
     private final static String BACKGROUND_COLOR = "background_color";
 
@@ -50,6 +50,9 @@ public class FragmentTop extends Fragment implements View.OnTouchListener {
     }
 
 
+    /**
+     * MyFragment
+     */
     public boolean onBackKeyDown() {
         if (topView.onBackKeyDown()) {
             topView.invalidate();
