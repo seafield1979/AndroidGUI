@@ -239,21 +239,21 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
         // タイトル、メッセージ
         int y = TEXT_MARGIN_V;
         if (title != null && titleView == null) {
-            titleView = UTextView.createInstance(title, 70, 0, UTextView.UAlignment.CenterX,
+            titleView = UTextView.createInstance(title, 70, 0, UDraw.UAlignment.CenterX,
                     canvas.getWidth(), true,
                     dialogSize.width / 2, y,
                     dialogSize.width - 100, color, 0);
-            Size titleSize = titleView.getTextRect(getWidth());
+            Size titleSize = titleView.getTextSize(getWidth());
             y += titleSize.height + BUTTON_MARGIN_H;
         }
 
         if (message != null && messageView == null) {
-            messageView = UTextView.createInstance(message, MESSAGE_TEXT_SIZE, 0, UTextView
-                    .UAlignment.CenterX,
+            messageView = UTextView.createInstance(message, MESSAGE_TEXT_SIZE, 0,
+                    UDraw.UAlignment.CenterX,
                     canvas.getWidth(), true,
                     dialogSize.width / 2, y,
                     dialogSize.width - 100, color, 0);
-            Size messageSize = messageView.getTextRect(getWidth());
+            Size messageSize = messageView.getTextSize(getWidth());
             y += messageSize.height + BUTTON_MARGIN_H;
         }
 

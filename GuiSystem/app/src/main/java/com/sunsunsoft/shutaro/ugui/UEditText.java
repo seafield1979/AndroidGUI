@@ -43,7 +43,7 @@ public class UEditText extends UTextView {
 
     private void updateSize() {
         // サイズは元々のサイズ(size)とテキストを内包するサイズ(_size)で大きい方を使用する
-        Size _size = getTextRect(canvasW);
+        Size _size = getTextSize(canvasW);
         int _width = (_size.width > baseSize.width) ? _size.width : baseSize.width;
         int _height = (_size.height > baseSize.height) ? _size.height : baseSize.height;
         if (isDrawBG) {
@@ -56,25 +56,33 @@ public class UEditText extends UTextView {
     /**
      * Constructor
      */
-    public UEditText(View parentView, UEditTextCallbacks editTextCallbacks,
-                     String text, int textSize, int priority, UAlignment alignment, int canvasW,
-                     boolean isDrawBG,
+    public UEditText(String text, int textSize, int priority, UDraw.UAlignment alignment, int
+            canvasW,
                      float x, float y, int width,
                      int color, int bgColor)
     {
-        super(priority, x, y, width, textSize + MARGIN_V * 2);
-        this.parentView = parentView;
-        this.alignment = alignment;
-        this.editTextCallbacks = editTextCallbacks;
-        this.baseSize = new Size(size);
-        this.text = text;
-        this.textSize = textSize;
-        this.color = color;
-        this.bgColor = bgColor;
-        this.isDrawBG = isDrawBG;
-        this.canvasW = canvasW;
+        super(text, textSize, priority, alignment, canvasW, true,
+                x, y, width, color, bgColor);
 
-        updateSize();
+        this.baseSize = new Size(size);
+
+    }
+    public static UEditText createInstance(View parentView, UEditTextCallbacks editTextCallbacks,
+                                           String text, int textSize, int priority, UDraw.UAlignment alignment, int canvasW,
+                                           float x, float y, int width,
+                                           int color, int bgColor)
+    {
+        UEditText instance = new UEditText(text, textSize, priority, alignment, canvasW,
+                x, y, width, color, bgColor);
+
+        instance.parentView = parentView;
+        instance.editTextCallbacks = editTextCallbacks;
+
+        // テキストを描画した時のサイズを取得
+        Size size = instance.getTextSize(canvasW);
+        instance.setSize(size.width + MARGIN_H * 2, size.height);
+        instance.updateSize();
+        return instance;
     }
 
     /**

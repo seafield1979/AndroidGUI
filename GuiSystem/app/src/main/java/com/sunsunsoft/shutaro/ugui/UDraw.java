@@ -215,18 +215,57 @@ public class UDraw {
     }
 
     /**
-     * テキストを描画（複数行対応)
+     * テキストを描画する（最初の１行のみ）
      * @param canvas
      * @param paint
      * @param text
      * @param alignment
      * @param textSize
-     * @param x
-     * @param y
-     * @param color
      * @return
      */
-    public static Size drawText(Canvas canvas, Paint paint, String text,
+    public static Size drawTextOneLine(Canvas canvas, Paint paint, String text,
+                                UAlignment alignment, int textSize,
+                                float x, float y, int color) {
+        if (text == null) return null;
+
+        int pos = text.indexOf("\n");
+        String _text = null;
+        if ( pos != -1 ) {
+            _text = text.substring(0, pos);
+        } else {
+            _text = text;
+        }
+
+        Size size = getTextRect(canvas.getWidth(), _text, textSize);
+        switch (alignment) {
+            case CenterX:
+                x = x - size.width / 2;
+                break;
+            case CenterY:
+                y = y - size.height / 2;
+                break;
+            case Center:
+                x = x - size.width / 2;
+                y = y - size.height / 2;
+                break;
+        }
+
+        paint.setColor(color);
+        paint.setTextSize(textSize);
+        canvas.drawText(_text, x, y, paint);
+
+        return size;
+    }
+
+    /**
+     * テキストを描画（複数行対応)
+     * @param canvas
+     * @param text
+     * @param alignment
+     * @param textSize
+     * @return
+     */
+    public static Size drawText(Canvas canvas, String text,
                                 UAlignment alignment, int textSize,
                                 float x, float y, int color)
     {

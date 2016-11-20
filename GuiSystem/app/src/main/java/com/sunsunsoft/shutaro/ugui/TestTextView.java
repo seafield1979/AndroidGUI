@@ -54,9 +54,8 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
 
     // UTextView
     private LinkedList<UTextView> textViews = new LinkedList<>();
-
-    // UEditText
     private UEditText editText;
+    private UTextViewOpenClose textView2;
 
     // ULogWindow
     private ULogWindow logWindow;
@@ -72,7 +71,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         mContext = context;
     }
 
-    private UTextView addTextView(String text, int textSize, int priority, UTextView.UAlignment
+    private UTextView addTextView(String text, int textSize, int priority, UDraw.UAlignment
             alignment, float x, float y, int color, int bgColor) {
         UTextView textView = UTextView.createInstance(text, textSize, priority, alignment,
                 getWidth(), true, x, y,
@@ -102,22 +101,33 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         for (int i=0; i<5; i++) {
             String text = "hoge" + (i + 1);
 
-            addTextView(text, TEXT_SIZE, TEXT_PRIORITY, UTextView
+            addTextView(text, TEXT_SIZE, TEXT_PRIORITY, UDraw
                     .UAlignment.Center, width / 2, y, UColor.getRandomColor(), UColor
                     .getRandomColor());
             y += 100;
         }
-        addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY, UTextView
+        addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY, UDraw
                 .UAlignment.CenterX, width / 2, y, UColor.getRandomColor(), UColor
                 .getRandomColor());
         y += 200;
 
         // UEditText
-        editText = new UEditText(this, this, "aaa", 71, TEXT_SIZE, UTextView.UAlignment.None,
-                width, true,
+        editText = UEditText.createInstance(this, this, "aaa", 71, TEXT_SIZE, UDraw.UAlignment.None,
+                width,
                 100, y, 300, Color.GREEN, Color.argb(128,0,
                 0,0));
         UDrawManager.getInstance().addDrawable(editText);
+        y += editText.getHeight() + 50;
+
+        // UTextViewOpenClose
+        textView2 = UTextViewOpenClose.createInstance(
+                "aaa\naaa\naaa\naaa", 71, TEXT_SIZE, UDraw.UAlignment.None,
+                width,
+                100, y, 300, Color.GREEN, Color.argb(128,0,
+                        0,0));
+        UDrawManager.getInstance().addDrawable(textView2);
+        y += textView2.getHeight() + 50;
+
 
         // LogWindow
         logWindow = ULogWindow.createInstance(getContext(), this,LogWindowType.AutoDisappear,

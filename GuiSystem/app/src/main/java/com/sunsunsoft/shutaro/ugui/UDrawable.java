@@ -85,7 +85,7 @@ abstract public class UDrawable {
     public void setPos(float x, float y, boolean update) {
         pos.x = x;
         pos.y = y;
-        if (update) {
+        if (rect != null && update) {
             updateRect();
         }
     }

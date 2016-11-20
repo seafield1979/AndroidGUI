@@ -14,13 +14,6 @@ import android.text.TextPaint;
  */
 
 public class UTextView extends UDrawable {
-    enum UAlignment {
-        None,
-        CenterX,
-        CenterY,
-        Center
-    }
-
     /**
      * Constracts
      */
@@ -32,7 +25,7 @@ public class UTextView extends UDrawable {
      * Member variables
      */
     protected String text;
-    protected UAlignment alignment;
+    protected UDraw.UAlignment alignment;
     protected int textSize;
     protected int bgColor;
     protected int canvasW;
@@ -50,47 +43,69 @@ public class UTextView extends UDrawable {
         this.text = text;
 
         // サイズを更新
-        Size size = getTextRect(canvasW);
+        Size size = getTextSize(canvasW);
         if (isDrawBG) {
             setSize(size.width + MARGIN_H * 2, size.height + MARGIN_V * 2);
         } else {
             setSize(size.width, size.height);
         }
+        updateRect();
     }
 
     /**
      * Constructor
      */
-    public UTextView(int priority, float x, float y, int width, int height) {
-        super( priority, x, y, width, height);
+    public UTextView(String text, int textSize, int priority,
+                     UDraw.UAlignment alignment, int canvasW,
+                     boolean isDrawBG,
+                     float x, float y,
+                     int width,
+                     int color, int bgColor)
+    {
+        super( priority, x, y, width, textSize);
 
+        this.text = text;
+        this.alignment = alignment;
+        this.isDrawBG = isDrawBG;
+        this.textSize = textSize;
+        this.canvasW = canvasW;
+        this.color = color;
+        this.bgColor = bgColor;
+
+        // テキストを描画した時のサイズを取得
+        Size size = getTextSize(canvasW);
+        if (isDrawBG) {
+            size = addBGPadding(size);
+        }
+        setSize(size.width, size.height);
     }
+
     public static UTextView createInstance(String text, int textSize, int priority,
-                                           UAlignment alignment, int canvasW,
+                                           UDraw.UAlignment alignment, int canvasW,
                                            boolean isDrawBG,
                                            float x, float y,
                                            int width,
                                            int color, int bgColor)
     {
-        UTextView instance = new UTextView(priority, x, y, width, 0);
-        instance.text = text;
-        instance.alignment = alignment;
-        instance.isDrawBG = isDrawBG;
-        instance.textSize = textSize;
-        instance.canvasW = canvasW;
-        instance.color = color;
-        instance.bgColor = bgColor;
-
-        // テキストを描画した時のサイズを取得
-        Size size = instance.getTextRect(canvasW);
-        if (isDrawBG) {
-            instance.setSize(size.width + MARGIN_H * 2, size.height + MARGIN_V * 2);
-        } else {
-            instance.setSize(size.width, size.height);
-        }
+        UTextView instance = new UTextView(text, textSize, priority, alignment, canvasW, isDrawBG,
+                x, y, width, color, bgColor);
 
         return instance;
     }
+
+    /**
+     * Methods
+     */
+
+    /**
+     * テキストを囲むボタン部分のマージンを追加する
+     * @param size
+     * @return マージンを追加した Size
+     */
+    protected Size addBGPadding(Size size) {
+        return new Size(size.width + MARGIN_H * 2, size.height + MARGIN_V * 2);
+    }
+
 
     /**
      * 描画処理
@@ -150,7 +165,7 @@ public class UTextView extends UDrawable {
      * @param canvas
      * @param paint
      */
-    private void drawBG(Canvas canvas, Paint paint, PointF pos) {
+    protected void drawBG(Canvas canvas, Paint paint, PointF pos) {
         paint.setColor(bgColor);
         UDraw.drawRoundRectFill(canvas, paint,
                 new RectF(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
@@ -162,7 +177,7 @@ public class UTextView extends UDrawable {
      * @param canvasW
      * @return
      */
-    public Size getTextRect(int canvasW) {
+    public Size getTextSize(int canvasW) {
         TextPaint textPaint = new TextPaint();
         textPaint.setTextSize(textSize);
         StaticLayout textLayout = new StaticLayout(text, textPaint,
