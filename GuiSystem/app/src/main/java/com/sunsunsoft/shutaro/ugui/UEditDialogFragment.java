@@ -29,10 +29,18 @@ import java.util.LinkedList;
  * DialogFragmentのサブクラス
  */
 public class UEditDialogFragment extends DialogFragment {
+    /**
+     * Constract
+     */
     private final static String KEY_NAME = "key_name";
-    public static final String KEY_RET = "key_ret";
 
+    // key names
+    public static final String KEY_RET = "key_ret";
+    public static final String KEY_TEXT1 = "key_text1";
+
+    // ダイアログの名前
     String mName;
+    String mText;
 
     EditText edit1;
 
@@ -49,12 +57,13 @@ public class UEditDialogFragment extends DialogFragment {
      * Create a new instance of MyDialogFragment, providing "num"
      * as an argument.
      */
-    static UEditDialogFragment createInstance(String name) {
+    static UEditDialogFragment createInstance(String name, String text) {
         UEditDialogFragment f = new UEditDialogFragment();
 
         // set arguments
         Bundle args = new Bundle();
         args.putString(KEY_NAME, name);
+        args.putString(KEY_TEXT1, text);
         f.setArguments(args);
 
         return f;
@@ -86,6 +95,7 @@ public class UEditDialogFragment extends DialogFragment {
 
         // 引数を取得
         mName = getArguments().getString(KEY_NAME);
+        mText = getArguments().getString(KEY_TEXT1);
     }
 
     @Override
@@ -101,16 +111,27 @@ public class UEditDialogFragment extends DialogFragment {
         TextView textView = (TextView)view.findViewById(R.id.text);
         textView.setText(mName);
 
-        Button button = (Button)view.findViewById(R.id.show);
-        button.setOnClickListener(new View.OnClickListener() {
+        EditText editText = (EditText)view.findViewById(R.id.editText) ;
+        editText.setText(mText);
+        editText.setHint("text1");
+
+
+        // Listener
+        (view.findViewById(R.id.buttonOK)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 submit();
             }
         });
 
+        (view.findViewById(R.id.buttonCancel)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                cancel();
+            }
+        });
+
         edit1 = (EditText)view.findViewById(R.id.editText);
 
-        setMyStyle(0,0);
+        setMyStyle(3,0);
     }
 
     /**
@@ -133,15 +154,23 @@ public class UEditDialogFragment extends DialogFragment {
     }
 
     /**
+     * キャンセルしたときの処理
+     */
+    private void cancel() {
+        if (callingEditText != null) {
+            callingEditText.closeDialog();
+        }
+        dismiss();
+    }
+
+    /**
      *
      * @param dialog
      */
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        if (callingEditText != null) {
-            callingEditText.closeDialog();
-        }
+        cancel();
     }
 
     /**

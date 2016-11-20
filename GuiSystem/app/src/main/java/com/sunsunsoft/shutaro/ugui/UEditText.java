@@ -1,16 +1,14 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
 
 
 interface UEditTextCallbacks {
-    void showDialog(UEditText edit, boolean isShow);
+    void showDialog(UEditText edit, String title, String text);
 }
 
 /**
@@ -31,16 +29,35 @@ public class UEditText extends UTextView {
     private View parentView;
     private UEditTextCallbacks editTextCallbacks;
     private boolean isEditing;
+    private Size baseSize;
 
     /**
      * Get/Set
      */
+    public void setText(String text) {
+        this.text = text;
+
+        // サイズを更新
+        updateSize();
+    }
+
+    private void updateSize() {
+        // サイズは元々のサイズ(size)とテキストを内包するサイズ(_size)で大きい方を使用する
+        Size _size = getTextRect(canvasW);
+        int _width = (_size.width > baseSize.width) ? _size.width : baseSize.width;
+        int _height = (_size.height > baseSize.height) ? _size.height : baseSize.height;
+        if (isDrawBG) {
+            setSize(_width + MARGIN_H * 2, _height + MARGIN_V * 2);
+        } else {
+            setSize(_width, _height);
+        }
+    }
 
     /**
      * Constructor
      */
     public UEditText(View parentView, UEditTextCallbacks editTextCallbacks,
-                     int textSize, int priority, UAlignment alignment, int canvasW,
+                     String text, int textSize, int priority, UAlignment alignment, int canvasW,
                      boolean isDrawBG,
                      float x, float y, int width,
                      int color, int bgColor)
@@ -49,15 +66,15 @@ public class UEditText extends UTextView {
         this.parentView = parentView;
         this.alignment = alignment;
         this.editTextCallbacks = editTextCallbacks;
+        this.baseSize = new Size(size);
+        this.text = text;
         this.textSize = textSize;
         this.color = color;
         this.bgColor = bgColor;
         this.isDrawBG = isDrawBG;
         this.canvasW = canvasW;
 
-        // サイズを更新
-        // サイズは元々のサイズ(size)とテキストを内包するサイズ(_size)で大きい方を使用する
-
+        updateSize();
     }
 
     /**
@@ -76,32 +93,6 @@ public class UEditText extends UTextView {
     void draw(Canvas canvas, Paint paint, PointF offset) {
         super.draw(canvas, paint, offset);
     }
-//    void draw(Canvas canvas, Paint paint, PointF offset) {
-//        // 編集中はEditTextを表示するので不要
-//        if (isEditing) {
-//            return;
-//        } else {
-//            Rect _rect = new Rect(rect);
-//            if (offset != null) {
-//                rect.left += offset.x;
-//                rect.top += offset.y;
-//                rect.right += offset.x;
-//                rect.bottom += offset.y;
-//            }
-//
-//            Size _size = UDraw.drawText(canvas, paint, text, UDraw.UAlignment.None, 50, pos.x,
-//                    pos.y,
-//                    textColor);
-//            if (_size != null) {
-//                size.width = _size.width;
-//                size.height = _size.height;
-//                updateRect();
-//            }
-//            if (color != 0) {
-//                UDraw.drawRectFill(canvas, paint, _rect, color);
-//            }
-//        }
-//    }
 
     /**
      * タッチ処理
@@ -135,7 +126,7 @@ public class UEditText extends UTextView {
     public void showEditView(boolean isShow) {
         if (isShow) {
             isEditing = true;
-            editTextCallbacks.showDialog(this, true);
+            editTextCallbacks.showDialog(this, "たいとる", text);
 
         } else {
             isEditing = false;
@@ -152,7 +143,7 @@ public class UEditText extends UTextView {
             String retStr = args.getString(UEditDialogFragment.KEY_RET);
             // 末尾の改行を除去
             retStr = retStr.trim();
-            text = String.copyValueOf(retStr.toCharArray());
+            setText(String.copyValueOf(retStr.toCharArray()));
         }
     }
 

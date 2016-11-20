@@ -186,17 +186,9 @@ public class UTextView extends UDrawable {
 
     /**
      * 矩形を取得
-     * 開いている時と閉じている時でサイズが異なる
      * @return
      */
     public Rect getRect() {
-//        if (isOpened) {
-//            return new Rect((int)pos.x, (int)pos.y, (int)pos.x + contentSize.width, (int)pos.y +
-//                    contentSize.height);
-//        } else {
-//            return new Rect((int)pos.x, (int)pos.y, (int)pos.x + size.width, (int)pos.y +
-//                    size.height);
-//        }
         return new Rect((int)pos.x, (int)pos.y, (int)pos.x + size.width, (int)pos.y +
                 size.height);
     }

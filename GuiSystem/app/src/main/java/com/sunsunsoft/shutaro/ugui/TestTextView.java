@@ -113,7 +113,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         y += 200;
 
         // UEditText
-        editText = new UEditText(this, this, 71, TEXT_SIZE, UTextView.UAlignment.None,
+        editText = new UEditText(this, this, "aaa", 71, TEXT_SIZE, UTextView.UAlignment.None,
                 width, true,
                 100, y, 300, Color.GREEN, Color.argb(128,0,
                 0,0));
@@ -225,8 +225,13 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     /**
      * UEditTextCallbacks
      */
-    public void showDialog(UEditText edit, boolean isShow) {
-        UEditDialogFragment dialogFragment = UEditDialogFragment.createInstance("hoge");
+    /**
+     * ダイアログを表示する
+     * @param edit
+     */
+    public void showDialog(UEditText edit, String title, String text) {
+        UEditDialogFragment dialogFragment = UEditDialogFragment.createInstance(title, text);
+
         dialogFragment.show(((AppCompatActivity)mContext).getSupportFragmentManager(),
                 "fragment_dialog");
         dialogFragment.setCallingEditText(edit);
