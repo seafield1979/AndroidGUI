@@ -1,45 +1,55 @@
 package com.sunsunsoft.shutaro.ugui;
 
+/**
+ * Created by shutaro on 2016/11/20.
+ */
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-
-
-import android.support.v4.app.DialogFragment;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.TextView;
 
-interface UEditDialogCallbacks {
+import java.util.LinkedList;
+
+
+interface UTest1DialogCallbacks {
     void submit(Bundle args);
     void cancel();
 }
 
 /**
- * ダイアログ用のFragmentサンプル
- * DialogFragmentのサブクラス
+ * 複数の入力項目があるダイアログ
+ *
+ * 全画面表示
  */
-public class UEditDialogFragment extends DialogFragment {
+public class UTest1DialogFragment extends DialogFragment {
     /**
      * Constract
      */
     private final static String KEY_NAME = "key_name";
 
+    private static final int[] editIds = {
+            R.id.editText,
+            R.id.editText2,
+            R.id.editText3,
+            R.id.editText4,
+            R.id.editText5
+    };
+
     // key names
-    public static final String KEY_RET = "key_ret";
-    public static final String KEY_TEXT1 = "key_text1";
+    public static final String KEY_RETS = "key_rets";
+    public static final String KEY_TEXTS = "key_texts";
 
-    // ダイアログの名前
-    String mName;
-    String mText;
-
-    EditText edit1;
-
-    UEditDialogCallbacks editCallbacks;
+    /**
+     * Member variables
+     */
+    private UTest1DialogCallbacks dialogCallbacks;
+    private LinkedList<EditText> edits = new LinkedList<>();
+    private String[] argTexts;
 
     /**
      * Get/Set
@@ -48,16 +58,15 @@ public class UEditDialogFragment extends DialogFragment {
     /**
      * Constructor
      */
-    static UEditDialogFragment createInstance(UEditDialogCallbacks callbacks, String name, String
-            text) {
-        UEditDialogFragment dialog = new UEditDialogFragment();
+    static UTest1DialogFragment createInstance(UTest1DialogCallbacks callbacks, String[]
+            texts) {
+        UTest1DialogFragment dialog = new UTest1DialogFragment();
 
-        dialog.editCallbacks = callbacks;
+        dialog.dialogCallbacks = callbacks;
 
         // set arguments
         Bundle args = new Bundle();
-        args.putString(KEY_NAME, name);
-        args.putString(KEY_TEXT1, text);
+        args.putStringArray(KEY_TEXTS, texts);
         dialog.setArguments(args);
 
         return dialog;
@@ -69,8 +78,7 @@ public class UEditDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
 
         // 引数を取得
-        mName = getArguments().getString(KEY_NAME);
-        mText = getArguments().getString(KEY_TEXT1);
+        argTexts = getArguments().getStringArray(KEY_TEXTS);
     }
 
     @Override
@@ -79,20 +87,25 @@ public class UEditDialogFragment extends DialogFragment {
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        return inflater.inflate(R.layout.uedit_dialog_contents, container, false);
+        return inflater.inflate(R.layout.edit_dialog_texts, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView textView = (TextView)view.findViewById(R.id.text);
-        textView.setText(mName);
 
-        EditText editText = (EditText)view.findViewById(R.id.editText) ;
-        editText.setText(mText);
-        editText.setHint("text1");
-
+        for (int id : editIds) {
+            EditText edit = (EditText)view.findViewById(id);
+            if (edit != null) {
+                edits.add(edit);
+            }
+        }
+        if (argTexts.length >= edits.size()) {
+            for (int i=0; i<edits.size(); i++) {
+                edits.get(i).setText(argTexts[i]);
+            }
+        }
 
         // Listener
         (view.findViewById(R.id.buttonOK)).setOnClickListener(new View.OnClickListener() {
@@ -107,8 +120,6 @@ public class UEditDialogFragment extends DialogFragment {
             }
         });
 
-        edit1 = (EditText)view.findViewById(R.id.editText);
-
         setStyle(STYLE_NORMAL, android.R.style.Theme);
     }
 
@@ -117,13 +128,17 @@ public class UEditDialogFragment extends DialogFragment {
      */
     private void submit() {
         Bundle args = new Bundle();
-        String str = edit1.getText().toString() + "\n";
 
-        args.putString(KEY_RET, str);
+        LinkedList<String> textLists = new LinkedList<>();
+        for (EditText edit : edits) {
+            textLists.add(edit.getText().toString());
+        }
 
-        if (editCallbacks != null) {
+        args.putStringArray(KEY_RETS, textLists.toArray(new String[0]));
+
+        if (dialogCallbacks != null) {
             if (args != null) {
-                editCallbacks.submit(args);
+                dialogCallbacks.submit(args);
             }
         }
 
@@ -134,8 +149,8 @@ public class UEditDialogFragment extends DialogFragment {
      * キャンセルしたときの処理
      */
     private void cancel() {
-        if (editCallbacks != null) {
-            editCallbacks.cancel();
+        if (dialogCallbacks != null) {
+            dialogCallbacks.cancel();
         }
         dismiss();
     }

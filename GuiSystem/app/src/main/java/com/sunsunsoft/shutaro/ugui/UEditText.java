@@ -15,7 +15,7 @@ interface UEditTextCallbacks {
  * テキストを編集できる
  * 編集中のmiEditTextを表示する
  */
-public class UEditText extends UTextView {
+public class UEditText extends UTextView implements UEditDialogCallbacks{
     /**
      * Consts
      */
@@ -143,19 +143,25 @@ public class UEditText extends UTextView {
 
 
     /**
+     * UEditDialogClallback
+     */
+    /**
      * ダイアログで設定された値を渡してもらう
      * @param args
      */
-    public void setEditDialogValues(Bundle args) {
+    public void submit(Bundle args)
+    {
         if (args != null) {
             String retStr = args.getString(UEditDialogFragment.KEY_RET);
             // 末尾の改行を除去
             retStr = retStr.trim();
             setText(String.copyValueOf(retStr.toCharArray()));
         }
+        showEditView(false);
+        parentView.invalidate();
     }
 
-    public void closeDialog() {
+    public void cancel() {
         showEditView(false);
         parentView.invalidate();
     }

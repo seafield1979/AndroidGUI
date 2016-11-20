@@ -4,15 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
 
 import java.util.LinkedList;
 
@@ -21,10 +17,10 @@ import java.util.LinkedList;
  */
 
 public class TestTextView extends View implements View.OnTouchListener, UButtonCallbacks,
-        UEditTextCallbacks{
+        UEditTextCallbacks, UTest1DialogCallbacks {
     // ボタンのID
     enum ButtonId {
-        Sort("sort window");
+        Edit("edit text");
 
         private final String text;
 
@@ -37,8 +33,10 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         }
     }
 
+
     public static final String TAG = "TestButtonView";
     private static final int TEXT_PRIORITY = 100;
+    private static final int BUTTON_PRIORITY = 90;
     private static final int TEXT_SIZE = 70;
 
 
@@ -51,6 +49,9 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     private ViewTouch viewTouch = new ViewTouch();
 
     private Paint paint = new Paint();
+
+    // UButton
+    private UButton button1;
 
     // UTextView
     private LinkedList<UTextView> textViews = new LinkedList<>();
@@ -96,6 +97,15 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         float y = 50;
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
+
+        // UButton
+        button1 = new UButtonText(this, UButtonType.Press, ButtonId.Edit.ordinal(), BUTTON_PRIORITY,
+                "edit", 100, y,
+                width - 100*2, 120,
+                Color.WHITE,
+                Color.rgb(0,128,0));
+        UDrawManager.getInstance().addDrawable(button1);
+        y += 120 + 50;
 
         // TextView
         for (int i=0; i<5; i++) {
@@ -220,8 +230,18 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         if (id < ButtonId.values().length) {
             ButtonId buttonId = ButtonId.values()[id];
             switch (buttonId) {
-                case Sort:
-                    invalidate();
+                case Edit:
+                {
+                    LinkedList<String> args = new LinkedList();
+                    for (UTextView textView : textViews) {
+                        args.add(textView.getText());
+                    }
+                    UTest1DialogFragment dialogFragment = UTest1DialogFragment.createInstance
+                            (this, args.toArray(new String[0]));
+
+                    dialogFragment.show(((AppCompatActivity)mContext).getSupportFragmentManager(),
+                            "fragment_dialog");
+                }
                     break;
             }
         }
@@ -240,10 +260,26 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
      * @param edit
      */
     public void showDialog(UEditText edit, String title, String text) {
-        UEditDialogFragment dialogFragment = UEditDialogFragment.createInstance(title, text);
+        UEditDialogFragment dialogFragment = UEditDialogFragment.createInstance(edit, title, text);
 
         dialogFragment.show(((AppCompatActivity)mContext).getSupportFragmentManager(),
                 "fragment_dialog");
-        dialogFragment.setCallingEditText(edit);
+    }
+
+    /**
+     * UTest1DialogCallbacks
+     */
+    public void submit(Bundle args) {
+        String[] texts = args.getStringArray(UTest1DialogFragment.KEY_RETS);
+        if (texts != null) {
+            for (int i = 0; i < texts.length; i++) {
+                textViews.get(i).setText(texts[i]);
+            }
+        }
+        invalidate();
+    }
+
+    public void cancel() {
+
     }
 }
