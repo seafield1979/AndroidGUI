@@ -15,6 +15,20 @@ enum TouchType {
     MoveEnd,      // 移動終了
     MoveCancel    // 移動キャンセル
 }
+
+/**
+ * ViewTouchで長押しされた時のコールバック
+ */
+
+interface ViewTouchCallbacks {
+
+    /**
+     * 長押しされたときに呼ばれる
+     */
+    void longPressed();
+}
+
+
 /**
  * View上のタッチ処理を判定する
  *

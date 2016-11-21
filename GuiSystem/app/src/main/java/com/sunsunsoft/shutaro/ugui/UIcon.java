@@ -19,6 +19,15 @@ enum IconType {
     BOX
 }
 
+/**
+ * アイコンをクリックしたりドロップした時のコールバック
+ */
+
+interface UIconCallbacks {
+    void clickIcon(UIcon icon);
+    void longClickIcon(UIcon icon);
+    void dropToIcon(UIcon icon);
+}
 
 /**
  * ViewのonDrawで描画するアイコンの情報

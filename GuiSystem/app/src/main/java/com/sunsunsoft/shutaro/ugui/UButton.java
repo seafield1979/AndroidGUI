@@ -7,6 +7,11 @@ import android.graphics.RectF;
 import android.util.Log;
 
 
+interface UButtonCallbacks {
+    void click(int id);
+    void longClick(int id);
+}
+
 
 /**
  * クリックでイベントが発生するボタン

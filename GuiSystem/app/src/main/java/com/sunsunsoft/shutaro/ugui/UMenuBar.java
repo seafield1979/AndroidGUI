@@ -39,6 +39,12 @@ enum MenuItemId {
     Debug3
 }
 
+
+interface UMenuItemCallbacks {
+    void menuItemClicked(MenuItemId id);
+    void menuItemCallback2();
+}
+
 /**
  * メニューバー
  * メニューに表示する項目を管理する
