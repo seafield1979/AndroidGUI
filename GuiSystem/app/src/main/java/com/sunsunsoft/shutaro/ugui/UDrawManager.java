@@ -319,6 +319,9 @@ class DrawList
     protected boolean touchEvent(ViewTouch vt) {
         UDrawManager manager = UDrawManager.getInstance();
 
+        if (vt.isTouchUp()) {
+            manager.setTouchingObj(null);
+        }
         // タッチを放すまではタッチしたオブジェクトのみ処理する
         if (manager.getTouchingObj() != null &&
                 vt.type != TouchType.Touch)
@@ -333,9 +336,7 @@ class DrawList
             UDrawable obj = (UDrawable)it.previous();
             if (obj.touchEvent(vt)) {
                 if (vt.type == TouchType.Touch) {
-                    UDrawManager.getInstance().setTouchingObj(obj);
-                } else if (vt.isTouchUp()) {
-                    UDrawManager.getInstance().setTouchingObj(null);
+                    manager.setTouchingObj(obj);
                 }
                 return true;
             }
