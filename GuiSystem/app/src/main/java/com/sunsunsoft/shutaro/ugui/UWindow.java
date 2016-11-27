@@ -17,12 +17,20 @@ interface UWindowCallbacks {
  * 座標、サイズを持ち自由に配置が行える
  */
 abstract public class UWindow extends UDrawable implements UButtonCallbacks{
+    /**
+     * Enums
+     */
+    enum CloseIconPos {
+        LeftTop,
+        RightTop
+    }
+
 
     /**
      * Consts
      */
     public static final String TAG = "UWindow";
-    private static final int CloseButtonId = 1000123;
+    public static final int CloseButtonId = 1000123;
 
     protected static final int SCROLL_BAR_W = 100;
 
@@ -30,7 +38,6 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * Member Variables
      */
     protected UWindowCallbacks windowCallbacks;
-    protected boolean isShow = true;
     protected int bgColor;
 
     /**
@@ -41,7 +48,8 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
     protected UScrollBar mScrollBarH;
     protected UScrollBar mScrollBarV;
-    protected UButtonClose closeButton;         // 閉じるボタン
+    protected UButtonClose closeIcon;            // 閉じるボタン
+    protected CloseIconPos closeIconPos;     // 閉じるボタンの位置
 
     public boolean isShow() {
         return isShow;
@@ -116,7 +124,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         return new PointF(
                 win1.pos.x - win1.contentTop.x - win2.pos.x + win2.contentTop.x,
                 win1.pos.y - win1.contentTop.y - win2.pos.y + win2.contentTop.y
-                );
+        );
     }
 
     /**
@@ -172,6 +180,9 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
             mScrollBarH.updateSize(width, height);
             contentTop.x = mScrollBarH.updateContent(contentSize);
         }
+
+        // 閉じるボタン
+        updateCloseIconPos();
     }
 
     /**
@@ -180,7 +191,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     public void closeWindow() {
         // 描画オブジェクトから削除する
         if (drawList != null) {
-//            UDrawManager.getInstance().removeDrawable(this);
+            UDrawManager.getInstance().removeDrawable(this);
 //            drawList = null;
         }
     }
@@ -222,8 +233,8 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      */
     public void drawFrame(Canvas canvas, Paint paint) {
         // Close Button
-        if (closeButton != null) {
-            closeButton.draw(canvas, paint, pos);
+        if (closeIcon != null) {
+            closeIcon.draw(canvas, paint, pos);
         }
 
         // スクロールバー
@@ -279,8 +290,8 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * @return true:再描画
      */
     public boolean touchEvent(ViewTouch vt) {
-        if (closeButton != null) {
-            if (closeButton.touchEvent(vt, pos)) {
+        if (closeIcon != null) {
+            if (closeIcon.touchEvent(vt, pos)) {
                 return true;
             }
         }
@@ -298,14 +309,36 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     }
 
     /**
-     * 閉じるボタンを追加する
+     * アイコンタイプの閉じるボタンを追加する
      */
-    protected void addCloseButton() {
-        if (closeButton != null) return;
+    protected void addCloseIcon() {
+        this.addCloseIcon(CloseIconPos.LeftTop);
+    }
+    protected void addCloseIcon(CloseIconPos pos) {
+        if (closeIcon != null) return;
 
-        closeButton = new UButtonClose(this, UButtonType.Press, CloseButtonId, 0,
-                UButtonClose.BUTTON_RADIUS * 2, UButtonClose.BUTTON_RADIUS * 2,
+        closeIconPos = pos;
+
+        closeIcon = new UButtonClose(this, UButtonType.Press, CloseButtonId, 0, 0, 0,
                 Color.rgb(255,0,0));
+        updateCloseIconPos();
+    }
+
+    /**
+     * 閉じるボタンの座標を変更
+     */
+    protected void updateCloseIconPos() {
+        if (closeIcon == null) return;
+
+        float x, y;
+        y = UButtonClose.BUTTON_RADIUS * 2;
+        if (closeIconPos == CloseIconPos.LeftTop) {
+            x = UButtonClose.BUTTON_RADIUS * 2;
+        } else {
+            x = size.width - UButtonClose.BUTTON_RADIUS * 2;
+        }
+
+        closeIcon.setPos(x, y);
     }
 
     /**
@@ -319,18 +352,19 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * UButtonCallbacks
      */
 
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         switch (id) {
             case CloseButtonId:
                 // 閉じるボタンを押したら自身のWindowを閉じてから呼び出し元の閉じる処理を呼び出す
+                closeWindow();
                 if (windowCallbacks != null) {
-                    closeWindow();
                     windowCallbacks.windowClose(this);
                 }
-                break;
+                return true;
         }
+        return false;
     }
-    public void longClick(int id) {
-
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 }

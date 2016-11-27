@@ -256,7 +256,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
      * UButtonCallbacks
      */
 
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         ULog.print(TAG, "button click:" + (id + 1));
 
         if (id < ButtonId.values().length) {
@@ -271,6 +271,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
                 case Test4:
                     break;
             }
+            return true;
         } else {
             switch(id) {
                 case IMAGE_BUTTON_ID:
@@ -278,8 +279,9 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
                     break;
             }
         }
+        return false;
     }
-    public void longClick(int id) {
-
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 }

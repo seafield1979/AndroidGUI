@@ -153,7 +153,7 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
     /**
      * UButtonCallbacks
      */
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         ULog.print(TAG, "button click:" + id);
 
         if (id < com.sunsunsoft.shutaro.ugui.TestWindowView.ButtonId.values().length) {
@@ -161,11 +161,13 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
             switch (buttonId) {
                 case Sort:
                     invalidate();
-                    break;
+                    return true;
             }
         }
-    }
-    public void longClick(int id) {
 
+        return false;
+    }
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 }

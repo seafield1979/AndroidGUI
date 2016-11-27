@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.view.SurfaceView;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -233,15 +232,16 @@ public class UIconWindow extends UWindow {
     public static UIconWindow createInstance(View parent, UWindowCallbacks windowCallbacks,
                                              UIconCallbacks iconCallbacks,
                                              boolean isHome, WindowDir dir,
-                                             float x, float y, int width, int height, int bgColor)
+                                             int width, int height,
+                                             int bgColor)
     {
-        UIconWindow instance = new UIconWindow(x, y, width, height, bgColor);
+        UIconWindow instance = new UIconWindow(0, 0, width, height, bgColor);
         if (isHome) {
             instance.type = WindowType.Home;
             instance.mIconManager = UIconManager.createInstance(parent, instance, iconCallbacks);
         } else {
             instance.type = WindowType.Sub;
-            instance.addCloseButton();
+            instance.addCloseIcon();
         }
         instance.windowCallbacks = windowCallbacks;
         instance.dir = dir;
@@ -327,7 +327,7 @@ public class UIconWindow extends UWindow {
                     }
                 }
                 if (allFinished) {
-                    iconMovingEnd();
+                    endIconMoving();
                 }
                 redraw = true;
             }
@@ -1034,7 +1034,7 @@ public class UIconWindow extends UWindow {
     /**
      * アイコンの移動が完了
      */
-    private void iconMovingEnd() {
+    private void endIconMoving() {
         setState(nextState);
         mIconManager.updateBlockRect();
         changeIconCheckingAll(false);

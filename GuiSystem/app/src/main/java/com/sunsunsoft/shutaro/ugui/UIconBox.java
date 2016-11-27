@@ -15,18 +15,26 @@ import java.util.List;
  */
 
 public class UIconBox extends UIcon {
+    /**
+     * Constants
+     */
     public static final String TAG = "UIconBox";
 
     public static final int ICON_W = 150;
     public static final int DUMMY_ICON_NUM = 10;
 
+    /**
+     * Member variables
+     */
     private View mParentView;
     private UIconManager mIconManager;
 
     // ボックスの中身を表示しているウィンドウ
     private UIconWindow subWindow;
 
-    // Get/Set
+    /**
+     * Get/Set
+     */
     public UIconManager getIconManager() {
         return mIconManager;
     }
@@ -38,6 +46,9 @@ public class UIconBox extends UIcon {
         return subWindow;
     }
 
+    /**
+     * Constructor
+     */
     public UIconBox(View parentView, UIconWindow parentWindow, UIconCallbacks iconCallbacks) {
         super(parentWindow, iconCallbacks, IconType.BOX, 0, 0, ICON_W, ICON_W);
         mParentView = parentView;

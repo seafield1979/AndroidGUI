@@ -121,9 +121,19 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
         switch (id) {
             case Test1: {
                 // 横にボタンが並ぶダイアログ
+                /*
+                DialogType type, UButtonCallbacks buttonCallbacks,
+                                               UDialogCallbacks dialogCallbacks,
+                                               ButtonDir dir, DialogPosType posType,
+                                               boolean isAnimation,
+                                               int screenW, int screenH,
+                                               int textColor, int dialogColor)
+                 */
+
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Mordal,
                         this, this,
-                        UDialogWindow.ButtonDir.Horizontal, false,
+                        UDialogWindow.ButtonDir.Horizontal,
+                        UDialogWindow.DialogPosType.Center, false,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 dialogWindow.message = "message";
@@ -141,7 +151,8 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 // 縦にボタンが並ぶダイアログ
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Mordal,
                         this, this,
-                        UDialogWindow.ButtonDir.Vertical, true,
+                        UDialogWindow.ButtonDir.Vertical,
+                        UDialogWindow.DialogPosType.Center, true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 dialogWindow.message = "message";
@@ -160,7 +171,9 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 // ノーマルタイプ
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Normal,
                         this, this,
-                        UDialogWindow.ButtonDir.Vertical, true,
+                        UDialogWindow.ButtonDir.Vertical,
+                        UDialogWindow.DialogPosType.Center,
+                        true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 dialogWindow.message = "message";
@@ -177,7 +190,8 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
             {
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Normal,
                         this, this,
-                        UDialogWindow.ButtonDir.Horizontal, true,
+                        UDialogWindow.ButtonDir.Horizontal, UDialogWindow.DialogPosType.Center,
+                        true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
 
                 Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
@@ -196,7 +210,9 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
             {
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Normal,
                         this, this,
-                        UDialogWindow.ButtonDir.Vertical, true,
+                        UDialogWindow.ButtonDir.Vertical,
+                        UDialogWindow.DialogPosType.Center,
+                        true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
 
                 Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
@@ -278,41 +294,42 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     /**
      * UButtonCallbacks
      */
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         ULog.print(TAG, "button click:" + id);
 
         switch (id) {
             case DialogButton1:
-                break;
+                return true;
             case DialogButton2:
-                break;
+                return true;
             case DialogButton3:
-                break;
+                return true;
             case UDialogWindow.CloseDialogId:
                 if (dialogWindow != null) {
-                    dialogWindow.close();
+                    dialogWindow.closeDialog();
                     dialogWindow = null;
                 }
-                break;
+                return true;
             case TestButton1:
                 initDialog(DialogTest.Test1, getWidth(), getHeight());
-                break;
+                return true;
             case TestButton2:
                 initDialog(DialogTest.Test2, getWidth(), getHeight());
-                break;
+                return true;
             case TestButton3:
                 initDialog(DialogTest.Test3, getWidth(), getHeight());
-                break;
+                return true;
             case TestButton4:
                 initDialog(DialogTest.Test4, getWidth(), getHeight());
-                break;
+                return true;
             case TestButton5:
                 initDialog(DialogTest.Test5, getWidth(), getHeight());
-                break;
+                return true;
         }
+        return false;
     }
-    public void longClick(int id) {
-
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 
     /**

@@ -139,21 +139,22 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
      * UButtonCallbacks
      */
 
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         ULog.print(TAG, "button click:" + id);
 
         ButtonId buttonId = ButtonId.values()[id];
         switch(buttonId) {
             case Test1:
-                break;
+                return true;
             case Test2:
-                break;
+                return true;
             case Test3:
-                break;
+                return true;
         }
+        return false;
     }
-    public void longClick(int id) {
-
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 
     /**

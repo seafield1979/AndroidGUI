@@ -1,6 +1,7 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 複数のUIconWindowを管理する
@@ -16,6 +17,7 @@ public class UIconWindows implements UWindowCallbacks {
     /**
      * Consts
      */
+    public static final String TAG = "UIconWindows";
     public static final int MOVING_FRAME = 12;
 
     /**
@@ -26,6 +28,8 @@ public class UIconWindows implements UWindowCallbacks {
     private UIconWindow subWindow;
     private Size size;
     private DirectionType directionType;
+
+    public static UIconWindows publicInstance;
 
     /**
      * Get/Set
@@ -40,6 +44,11 @@ public class UIconWindows implements UWindowCallbacks {
 
     public LinkedList<UIconWindow> getWindows() {
         return windows;
+    }
+
+    // デバッグ用のどこからでも参照できるインスタンス
+    public static UIconWindows getPublicInstance() {
+        return publicInstance;
     }
 
     /**
@@ -69,6 +78,9 @@ public class UIconWindows implements UWindowCallbacks {
         } else {
             subWindow.setPos(0, screenH);
         }
+
+        publicInstance = instance;
+
         return instance;
     }
 
@@ -105,7 +117,7 @@ public class UIconWindows implements UWindowCallbacks {
      * レイアウトを更新する
      * ウィンドウを追加、削除した場合に呼び出す
      */
-    private void updateLayout(boolean animation) {
+    public void updateLayout(boolean animation) {
         LinkedList<UIconWindow> showWindows = new LinkedList<>();
         for (UIconWindow _window : windows) {
             if (_window.isAppearance()) {
@@ -141,6 +153,7 @@ public class UIconWindows implements UWindowCallbacks {
                     subWindow.setPos(0, size.height);
                     subWindow.startMoving(0, height, width, height, MOVING_FRAME);
                 }
+
             } else {
                 // disappear
                 if (directionType == DirectionType.Landscape) {

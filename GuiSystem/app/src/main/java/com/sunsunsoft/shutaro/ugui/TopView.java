@@ -57,13 +57,7 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
         UDrawManager.getInstance().init();
 
         // UIconWindow
-        PointF pos1, pos2;
-        Size size1, size2;
         UIconWindow.WindowDir winDir;
-        pos1 = new PointF(0, 0);
-        size1 = new Size(width, height);
-        pos2 = new PointF(0, 0);
-        size2 = new Size(width, height);
 
         if (width <= height) {
             winDir = UIconWindow.WindowDir.Vertical;
@@ -72,17 +66,20 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
         }
 
         // Main
-        UIconWindow mainWindow = UIconWindow.createInstance(this, this, this, true, winDir, pos1.x, pos1.y, size1.width, size1.height, Color.WHITE);
+        UIconWindow mainWindow = UIconWindow.createInstance(this, this, this, true, winDir,
+                width, height, Color.WHITE);
         mWindows[TopSurfaceView.WindowType.Icon1.ordinal()] = mainWindow;
 
         // Sub
-        UIconWindow subWindow = UIconWindow.createInstance(this, this, this, false, winDir, pos2.x, pos2.y, size2.width, size2.height, Color.LTGRAY);
+        UIconWindow subWindow = UIconWindow.createInstance(this, this, this, false, winDir,
+                width, height, Color.LTGRAY);
         subWindow.isShow = false;
         mWindows[TopSurfaceView.WindowType.Icon2.ordinal()] = subWindow;
 
         mIconWindows = UIconWindows.createInstance(mainWindow, subWindow, width, height);
         mainWindow.setWindows(mIconWindows);
         subWindow.setWindows(mIconWindows);
+        mIconWindows.updateLayout(false);
 
         // アイコンの登録はMainとSubのWindowを作成後に行う必要がある
         mainWindow.init();

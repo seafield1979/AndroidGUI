@@ -203,20 +203,22 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
     /**
      * UButtonCallbacks
      */
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         ULog.print(TAG, "button click:" + id);
 
         ButtonId buttonId = ButtonId.values()[id];
         switch(buttonId) {
             case Clear1:
                 logWindows[0].clear();
-                break;
+                return true;
             case Clear2:
                 logWindows[1].clear();
-                break;
+                return true;
         }
+        return false;
     }
-    public void longClick(int id) {
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 
     /**

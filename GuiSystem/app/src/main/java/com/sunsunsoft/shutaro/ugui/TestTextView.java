@@ -224,7 +224,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     /**
      * UButtonCallbacks
      */
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         ULog.print(TAG, "button click:" + id);
 
         if (id < ButtonId.values().length) {
@@ -245,10 +245,11 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                     break;
             }
         }
+        return false;
     }
 
-    public void longClick(int id) {
-
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 
 

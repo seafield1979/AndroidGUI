@@ -17,7 +17,7 @@ public class UButtonClose extends UButton {
      * Consts
      */
     private static final int X_LINE_WIDTH = 15;
-    private static final int RADIUS = 60;
+    private static final int RADIUS = 50;
 
     /**
      * Member Variables
@@ -32,7 +32,7 @@ public class UButtonClose extends UButton {
      * Constructor
      */
     public UButtonClose(UButtonCallbacks callbacks, UButtonType type, int id, int priority,
-                   float x, float y, int color)
+                        float x, float y, int color)
     {
         super(callbacks, type, id, priority, x, y, RADIUS * 2, RADIUS * 2, color);
 
@@ -121,7 +121,7 @@ public class UButtonClose extends UButton {
             case LongClick:
                 isPressed = false;
                 if (contains((int)vt.touchX(-offset.x), (int)vt.touchY(-offset.y))) {
-                    buttonCallback.click(id);
+                    buttonCallback.UButtonClick(id);
                     done = true;
                 }
                 break;

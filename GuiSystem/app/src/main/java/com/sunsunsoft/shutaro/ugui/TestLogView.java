@@ -151,29 +151,30 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
     /**
      * UButtonCallbacks
      */
-    public void click(int id) {
+    public boolean UButtonClick(int id) {
         ULog.print(TAG, "button click:" + id);
 
         ButtonId buttonId = ButtonId.values()[id];
         switch(buttonId) {
             case ShowToggle:
                 logWindows[0].toggle();
-                break;
+                return true;
             case AddLog:
                 logWindows[0].addLog("hoge", Color.WHITE);
-                break;
+                return true;
             case Clear:
                 logWindows[0].clear();
-                break;
+                return true;
             case MoveUp:
                 logWindows[0].startMovingPos(0,0, 20);
-                break;
+                return true;
             case MoveDown:
                 logWindows[0].startMovingPos(0,500, 20);
-                break;
+                return true;
         }
+        return false;
     }
-    public void longClick(int id) {
-
+    public boolean UButtonLongClick(int id) {
+        return false;
     }
 }

@@ -43,7 +43,7 @@ public class UTestWindow extends UWindow {
                                              int color) {
         UTestWindow instance = new UTestWindow(x, y, width, height, color);
         instance.windowCallbacks = callbacks;
-        instance.addCloseButton();
+        instance.addCloseIcon();
         UDrawManager.getInstance().addDrawable(instance);
         return instance;
     }

@@ -6,10 +6,9 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
-
 interface UButtonCallbacks {
-    void click(int id);
-    void longClick(int id);
+    boolean UButtonClick(int id);
+    boolean UButtonLongClick(int id);
 }
 
 
@@ -32,7 +31,7 @@ public class UButton extends UDrawable {
      */
     public static final String TAG = "UButton";
     protected static final int PRESS_Y = 12;
-    protected static final int BUTTON_RADIUS = 20;
+    protected static final int BUTTON_RADIUS = 16;
 
     /**
      * Member Variables
@@ -181,7 +180,7 @@ public class UButton extends UDrawable {
     public void click() {
         Log.v(TAG, "click");
         if (buttonCallback != null) {
-            buttonCallback.click(id);
+            buttonCallback.UButtonClick(id);
         }
     }
 
