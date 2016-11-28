@@ -144,10 +144,12 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         updateRect();
 
         // ScrollBar
-        mScrollBarV = new UScrollBar(ScrollBarType.Right, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
+        mScrollBarV = new UScrollBar(ScrollBarType.Right, ScrollBarInOut.In,
+                this.pos, width, height, SCROLL_BAR_W, height, contentSize.height);
         mScrollBarV.setBgColor(Color.rgb(128, 128, 128));
 
-        mScrollBarH = new UScrollBar(ScrollBarType.Bottom, ScrollBarInOut.In, this.pos, width, height, SCROLL_BAR_W, contentSize.height);
+        mScrollBarH = new UScrollBar(ScrollBarType.Bottom, ScrollBarInOut.In,
+                this.pos, width, height, SCROLL_BAR_W, width, contentSize.height);
         mScrollBarH.setBgColor(Color.rgb(128, 128, 128));
 
         // 描画オブジェクトに登録する

@@ -16,11 +16,16 @@ import android.view.View;
  */
 
 public class TopView extends View implements View.OnTouchListener, UMenuItemCallbacks, UIconCallbacks, ViewTouchCallbacks, UWindowCallbacks {
-
+    enum WindowType {
+        Icon1,
+        Icon2,
+        MenuBar,
+        Log
+    }
     public static final String TAG = "TopView";
 
     // Windows
-    private UWindow[] mWindows = new UWindow[TopSurfaceView.WindowType.values().length];
+    private UWindow[] mWindows = new UWindow[WindowType.values().length];
     // UIconWindow
     private UIconWindows mIconWindows;
 
@@ -68,13 +73,13 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
         // Main
         UIconWindow mainWindow = UIconWindow.createInstance(this, this, this, true, winDir,
                 width, height, Color.WHITE);
-        mWindows[TopSurfaceView.WindowType.Icon1.ordinal()] = mainWindow;
+        mWindows[WindowType.Icon1.ordinal()] = mainWindow;
 
         // Sub
         UIconWindow subWindow = UIconWindow.createInstance(this, this, this, false, winDir,
                 width, height, Color.LTGRAY);
         subWindow.isShow = false;
-        mWindows[TopSurfaceView.WindowType.Icon2.ordinal()] = subWindow;
+        mWindows[WindowType.Icon2.ordinal()] = subWindow;
 
         mIconWindows = UIconWindows.createInstance(mainWindow, subWindow, width, height);
         mainWindow.setWindows(mIconWindows);
@@ -89,14 +94,14 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
         if (mMenuBar == null) {
             mMenuBar = UMenuBar.createInstance(this, this, width, height,
                     Color.BLACK);
-            mWindows[TopSurfaceView.WindowType.MenuBar.ordinal()] = mMenuBar;
+            mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
 
         // ULogWindow
         if (mLogWin == null) {
             mLogWin = ULogWindow.createInstance(getContext(), this, LogWindowType.AutoDisappear,
                     0, 0, width / 2, height);
-            mWindows[TopSurfaceView.WindowType.Log.ordinal()] = mLogWin;
+            mWindows[WindowType.Log.ordinal()] = mLogWin;
         }
     }
 
@@ -112,7 +117,7 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
         // アンチエリアシング(境界のぼかし)
         paint.setAntiAlias(true);
 
-        // アイコンWindow
+        // Windowの処理
         // アクション(手前から順に処理する)
         for (int i=mWindows.length - 1; i >= 0; i--) {
             UWindow win = mWindows[i];
