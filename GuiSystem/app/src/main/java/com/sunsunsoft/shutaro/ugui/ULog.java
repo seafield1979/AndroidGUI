@@ -53,7 +53,7 @@ public class ULog {
         count = count + 1;
         counters.put(tag, count);
     }
-    public static void endCount(String tag) {
+    public static void showCount(String tag) {
         // 有効無効判定
         Boolean enable = enables.get(tag);
         if (enable != null && !enable) {

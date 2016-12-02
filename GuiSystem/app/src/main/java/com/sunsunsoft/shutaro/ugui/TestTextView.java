@@ -43,6 +43,12 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     private static final int PageButtonId = 100;
     private static final int PAGE_NUM = 4;
 
+    // UDrawManagerの描画ページID
+    private static final int PAGE1 = 0;
+    private static final int PAGE2 = 2;
+    private static final int PAGE3 = 3;
+    private static final int PAGE4 = 4;
+
     /**
      * Member variables
      */
@@ -119,83 +125,115 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     private void initDrawables(int width, int height) {
         float y = 50;
 
-        // 描画オブジェクトクリア
-        UDrawManager.getInstance().init();
-
         // pageButtons
         pageButtons = new UButtons(this, UButtonType.Press, 100, Color.rgb(200,100,100),
                 Color.BLACK, PAGE_NUM, 1, 100, y, getWidth() - 200, 120);
         pageButtons.addFull( PageButtonId, "p");
 
-        y += 150;
+        // 各ページの描画登録
+        initDrawablesPage(PAGE1, y);
+        initDrawablesPage(PAGE2, y);
+        initDrawablesPage(PAGE3, y);
+        initDrawablesPage(PAGE4, y);
 
-        // 描画マネージャに登録
-        UDrawManager.getInstance().addDrawable(pageButtons);
-
-
-        // UButton
-        button1 = new UButtonText(this, UButtonType.Press, ButtonId.Edit.ordinal(), BUTTON_PRIORITY,
-                "edit", 100, y,
-                width - 100*2, 120,
-                Color.WHITE,
-                Color.rgb(0,128,0));
-        UDrawManager.getInstance().addDrawable(button1);
-        y += 120 + 50;
-
-        // TextView
-        for (int i=0; i<4; i++) {
-            UDraw.UAlignment alignment = UDraw.UAlignment.None;
-            switch (i) {
-                case 1:
-                    alignment = UDraw.UAlignment.CenterX;
-                    break;
-                case 2:
-                    alignment = UDraw.UAlignment.CenterY;
-                    break;
-                case 3:
-                    alignment = UDraw.UAlignment.Center;
-                    break;
-            }
-            String text = "hoge" + (i + 1);
-
-            addTextView(text, TEXT_SIZE, TEXT_PRIORITY, alignment, false,
-                    width / 2, y, UColor.getRandomColor(), UColor
-                    .getRandomColor());
-            y += 100;
-        }
-
-        // Multi line
-        addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY,
-                UDraw.UAlignment.CenterX, true,
-                width / 2, y, UColor.getRandomColor(), UColor
-                .getRandomColor());
-        y += 200;
-
-        // EditText
-        editText = UEditText.createInstance(this, this, "aaa", TEXT_SIZE, 71,
-                UDraw.UAlignment.None, width, false,
-                100, y, 300, Color.GREEN, Color.argb(128,0,
-                0,0));
-        UDrawManager.getInstance().addDrawable(editText);
-        y += editText.getHeight() + 50;
-
-        // UTextViewOpenClose
-        textView2 = UTextViewOpenClose.createInstance(
-                "aaa\naaa\naaa\naaa", 71, TEXT_SIZE, UDraw.UAlignment.None,
-                width,
-                100, y, 300, Color.GREEN, Color.argb(128,0,
-                        0,0));
-        UDrawManager.getInstance().addDrawable(textView2);
-        y += textView2.getHeight() + 50;
-
+        UDrawManager.getInstance().setCurrentPage(PAGE1);
 
         // LogWindow
         logWindow = ULogWindow.createInstance(getContext(), this,LogWindowType.AutoDisappear,
                 0, 500, getWidth(), getHeight() - 500);
     }
 
-    private void initDrawablesPage() {
+    /**
+     * 各ページの描画オブジェクトを登録する
+     * @param page
+     */
+    private void initDrawablesPage(int page, float topY) {
+        float y = topY;
 
+        UDrawManager drawManager = UDrawManager.getInstance();
+
+        // 登録先のページを切り替える
+        drawManager.setCurrentPage(page);
+
+        // 描画オブジェクトクリア
+        drawManager.initPage(page);
+
+        // 全てのページに表示するページ切り替えボタンを登録
+        drawManager.addDrawable(pageButtons);
+
+        y += 150;
+
+        switch (page) {
+            case PAGE1:
+            {
+                // UButton
+                button1 = new UButtonText(this, UButtonType.Press, ButtonId.Edit.ordinal(), BUTTON_PRIORITY,
+                        "edit", 100, y,
+                        getWidth() - 100*2, 120,
+                        Color.WHITE,
+                        Color.rgb(0,128,0));
+                drawManager.addDrawable(button1);
+                y += 120 + 50;
+
+                // TextView
+                for (int i=0; i<4; i++) {
+                    UDraw.UAlignment alignment = UDraw.UAlignment.None;
+                    switch (i) {
+                        case 1:
+                            alignment = UDraw.UAlignment.CenterX;
+                            break;
+                        case 2:
+                            alignment = UDraw.UAlignment.CenterY;
+                            break;
+                        case 3:
+                            alignment = UDraw.UAlignment.Center;
+                            break;
+                    }
+                    String text = "hoge" + (i + 1);
+
+                    addTextView(text, TEXT_SIZE, TEXT_PRIORITY, alignment, false,
+                            getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                    .getRandomColor());
+                    y += 100;
+                }
+
+            }
+
+                break;
+            case PAGE2:
+            {
+                // Multi line
+                addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.CenterX, true,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+
+            }
+                break;
+            case PAGE3:
+            {
+                // EditText
+                editText = UEditText.createInstance(this, this, "aaa", TEXT_SIZE, 71,
+                        UDraw.UAlignment.None, getWidth(), false,
+                        100, y, 300, Color.GREEN, Color.argb(128,0,
+                                0,0));
+                drawManager.addDrawable(editText);
+                y += editText.getHeight() + 50;
+
+                // UTextViewOpenClose
+                textView2 = UTextViewOpenClose.createInstance(
+                        "aaa\naaa\naaa\naaa", 71, TEXT_SIZE, UDraw.UAlignment.None,
+                        getWidth(),
+                        100, y, 300, Color.GREEN, Color.argb(128,0,
+                                0,0));
+                drawManager.addDrawable(textView2);
+                y += textView2.getHeight() + 50;
+            }
+                break;
+            case PAGE4:
+                break;
+        }
     }
 
     @Override
@@ -301,12 +339,16 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
 
         switch(id) {
             case PageButtonId:
+                UDrawManager.getInstance().setCurrentPage(PAGE1);
                 break;
             case PageButtonId + 1:
+                UDrawManager.getInstance().setCurrentPage(PAGE2);
                 break;
             case PageButtonId + 2:
+                UDrawManager.getInstance().setCurrentPage(PAGE3);
                 break;
             case PageButtonId + 3:
+                UDrawManager.getInstance().setCurrentPage(PAGE4);
                 break;
 
         }
