@@ -72,7 +72,8 @@ public class UTextViewOpenClose extends UTextView {
                               int width,
                               int color, int bgColor)
     {
-        super(text, textSize, priority, alignment, canvasW, true, x, y, width, color, bgColor);
+        super(text, textSize, priority, alignment, canvasW, false, true, x, y, width, color,
+                bgColor);
 
         Size _size = getTextSize(canvasW);
         baseSize = addBGPadding(new Size(width, textSize));
@@ -192,7 +193,6 @@ public class UTextViewOpenClose extends UTextView {
             drawRect = new RectF(pos.x, pos.y, pos.x + baseSize.width, pos.y + baseSize.height);
         }
         UDraw.drawRoundRectFill(canvas, paint,
-                drawRect,
-                20, bgColor);
+                drawRect, 20, bgColor, 0, 0);
     }
 }

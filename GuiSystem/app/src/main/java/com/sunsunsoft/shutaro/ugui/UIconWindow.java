@@ -369,7 +369,7 @@ public class UIconWindow extends UWindow {
         if (mIconManager.getSelectedIcon() != null) {
             UDraw.drawRoundRectFill(canvas, paint,
                     new RectF(mIconManager.getSelectedIcon().getRectWithOffset
-                    (_offset, 5)), 10.0f, Color.argb(160, 255, 0, 0));
+                    (_offset, 5)), 10.0f, Color.argb(160, 255, 0, 0), 0, 0);
         }
         for (UIcon icon : mIconManager.getIcons()) {
             if (icon == dragedIcon) continue;
@@ -424,11 +424,11 @@ public class UIconWindow extends UWindow {
 
         int i=0;
         if (dir == WindowDir.Vertical) {
-            int column = (clientSize.width - ICON_MARGIN) / (ICON_W + ICON_MARGIN);
+            int column = ((int)clientSize.width - ICON_MARGIN) / (ICON_W + ICON_MARGIN);
             if (column <= 0) {
                 return;
             }
-            int margin = (clientSize.width - ICON_W * column) / (column + 1);
+            int margin = ((int)clientSize.width - ICON_W * column) / (column + 1);
             for (UIcon icon : icons) {
                 int x = margin + (i % column) * (ICON_W + margin);
                 int y = margin + (i / column) * (ICON_H + margin);
@@ -444,11 +444,11 @@ public class UIconWindow extends UWindow {
                 i++;
             }
         } else {
-            int column = (clientSize.height - ICON_MARGIN) / (ICON_H + ICON_MARGIN);
+            int column = ((int)clientSize.height - ICON_MARGIN) / (ICON_H + ICON_MARGIN);
             if (column <= 0) {
                 return;
             }
-            int margin = (clientSize.height - ICON_H * column) / (column + 1);
+            int margin = ((int)clientSize.height - ICON_H * column) / (column + 1);
             for (UIcon icon : icons) {
                 int x = margin + (i / column) * (ICON_W + margin);
                 int y = margin + (i % column) * (ICON_H + margin);

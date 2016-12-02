@@ -39,9 +39,6 @@ public class UButtons extends UDrawable {
         this.textColor = textColor;
         this.column = (column < 1) ? 1 : column;
         this.row = (row < 1) ? 1 : row;
-
-        // 描画マネージャに登録
-        UDrawManager.getInstance().addDrawable(this);
     }
 
     /**

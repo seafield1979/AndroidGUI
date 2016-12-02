@@ -33,13 +33,19 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         }
     }
 
-
+    /**
+     * Constants
+     */
     public static final String TAG = "TestButtonView";
     private static final int TEXT_PRIORITY = 100;
     private static final int BUTTON_PRIORITY = 90;
     private static final int TEXT_SIZE = 70;
+    private static final int PageButtonId = 100;
+    private static final int PAGE_NUM = 4;
 
-
+    /**
+     * Member variables
+     */
     private Context mContext;
 
     // サイズ更新用
@@ -49,6 +55,9 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     private ViewTouch viewTouch = new ViewTouch();
 
     private Paint paint = new Paint();
+
+    // Page buttons
+    private UButtons pageButtons;
 
     // UButton
     private UButton button1;
@@ -61,7 +70,13 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     // ULogWindow
     private ULogWindow logWindow;
 
-    // get/set
+    /**
+     * Get/Set
+     */
+
+    /**
+     * Constructor
+     */
     public TestTextView(Context context) {
         this(context, null);
     }
@@ -72,11 +87,19 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         mContext = context;
     }
 
-    private UTextView addTextView(String text, int textSize, int priority, UDraw.UAlignment
-            alignment, float x, float y, int color, int bgColor) {
-        UTextView textView = UTextView.createInstance(text, textSize, priority, alignment,
-                getWidth(), true, x, y,
-                getWidth() - 200, color, bgColor);
+    /**
+     * UTextViewを追加
+     *
+     * @return
+     */
+    private UTextView addTextView(String text, int textSize, int priority,
+                                  UDraw.UAlignment alignment, boolean multiLine,
+                                  float x, float y, int color, int bgColor) {
+        UTextView textView = UTextView.createInstance(text, textSize, priority,
+                alignment,
+                getWidth(), multiLine, true,
+                x, y,
+                getWidth() - 100, color, bgColor);
         textViews.add(textView);
         UDrawManager.getInstance().addDrawable(textView);
 
@@ -95,8 +118,20 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
      */
     private void initDrawables(int width, int height) {
         float y = 50;
+
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
+
+        // pageButtons
+        pageButtons = new UButtons(this, UButtonType.Press, 100, Color.rgb(200,100,100),
+                Color.BLACK, PAGE_NUM, 1, 100, y, getWidth() - 200, 120);
+        pageButtons.addFull( PageButtonId, "p");
+
+        y += 150;
+
+        // 描画マネージャに登録
+        UDrawManager.getInstance().addDrawable(pageButtons);
+
 
         // UButton
         button1 = new UButtonText(this, UButtonType.Press, ButtonId.Edit.ordinal(), BUTTON_PRIORITY,
@@ -108,22 +143,37 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         y += 120 + 50;
 
         // TextView
-        for (int i=0; i<5; i++) {
+        for (int i=0; i<4; i++) {
+            UDraw.UAlignment alignment = UDraw.UAlignment.None;
+            switch (i) {
+                case 1:
+                    alignment = UDraw.UAlignment.CenterX;
+                    break;
+                case 2:
+                    alignment = UDraw.UAlignment.CenterY;
+                    break;
+                case 3:
+                    alignment = UDraw.UAlignment.Center;
+                    break;
+            }
             String text = "hoge" + (i + 1);
 
-            addTextView(text, TEXT_SIZE, TEXT_PRIORITY, UDraw
-                    .UAlignment.Center, width / 2, y, UColor.getRandomColor(), UColor
+            addTextView(text, TEXT_SIZE, TEXT_PRIORITY, alignment, false,
+                    width / 2, y, UColor.getRandomColor(), UColor
                     .getRandomColor());
             y += 100;
         }
-        addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY, UDraw
-                .UAlignment.CenterX, width / 2, y, UColor.getRandomColor(), UColor
+
+        // Multi line
+        addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY,
+                UDraw.UAlignment.CenterX, true,
+                width / 2, y, UColor.getRandomColor(), UColor
                 .getRandomColor());
         y += 200;
 
-        // UEditText
-        editText = UEditText.createInstance(this, this, "aaa", 71, TEXT_SIZE, UDraw.UAlignment.None,
-                width,
+        // EditText
+        editText = UEditText.createInstance(this, this, "aaa", TEXT_SIZE, 71,
+                UDraw.UAlignment.None, width, false,
                 100, y, 300, Color.GREEN, Color.argb(128,0,
                 0,0));
         UDrawManager.getInstance().addDrawable(editText);
@@ -142,6 +192,10 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         // LogWindow
         logWindow = ULogWindow.createInstance(getContext(), this,LogWindowType.AutoDisappear,
                 0, 500, getWidth(), getHeight() - 500);
+    }
+
+    private void initDrawablesPage() {
+
     }
 
     @Override
@@ -212,7 +266,6 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         return ret;
     }
 
-
     /**
      * UEditText上のEditTextを非表示にする
      */
@@ -244,6 +297,18 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                 }
                     break;
             }
+        }
+
+        switch(id) {
+            case PageButtonId:
+                break;
+            case PageButtonId + 1:
+                break;
+            case PageButtonId + 2:
+                break;
+            case PageButtonId + 3:
+                break;
+
         }
         return false;
     }

@@ -39,12 +39,6 @@ enum MenuItemId {
     Debug3
 }
 
-
-interface UMenuItemCallbacks {
-    void menuItemClicked(MenuItemId id);
-    void menuItemCallback2();
-}
-
 /**
  * メニューバー
  * メニューに表示する項目を管理する
@@ -145,6 +139,7 @@ public class UMenuBar extends UWindow {
         Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
         UMenuItem item = new UMenuItem(this, menuId, bmp);
         item.setCallbacks(mCallbackClass);
+        item.setShow(true);
 
         topItems[topId.ordinal()] = item;
         items[menuId.ordinal()] = item;
@@ -166,6 +161,9 @@ public class UMenuBar extends UWindow {
         UMenuItem item = new UMenuItem(this, menuId, bmp);
         item.setCallbacks(mCallbackClass);
         item.setParentItem(parent);
+        // 子要素は初期状態では非表示。オープン時に表示される
+        item.setShow(false);
+
         parent.addItem(item);
 
         items[menuId.ordinal()] = item;
@@ -281,7 +279,7 @@ public class UMenuBar extends UWindow {
 
         // トップのアイテムから描画
         for (UMenuItem item : topItems) {
-            if (item != null) {
+            if (item != null && item.isShow) {
                 item.draw(canvas, paint, pos);
             }
         }

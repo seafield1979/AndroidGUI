@@ -9,6 +9,12 @@ import android.graphics.Rect;
 
 import java.util.LinkedList;
 
+
+interface UMenuItemCallbacks {
+    void menuItemClicked(MenuItemId id);
+}
+
+
 /**
  * メニューに表示する項目
  * アイコンを表示してタップされたらIDを返すぐらいの機能しか持たない
@@ -44,6 +50,9 @@ public class UMenuItem extends UDrawable {
     // アイコン用画像
     protected Bitmap icon;
     protected int animeColor;
+
+    // 閉じている移動中かどうか
+    protected boolean isClosing;
 
     /**
      * Get/Set
@@ -127,6 +136,8 @@ public class UMenuItem extends UDrawable {
         // 子要素
         if (childItems != null) {
             for (UMenuItem item : childItems) {
+                if (!item.isShow) continue;
+
                 item.draw(canvas, paint, drawPos);
             }
         }
@@ -229,6 +240,9 @@ public class UMenuItem extends UDrawable {
         for (UMenuItem item : childItems) {
             item.setPos(0, 0);
             // 親の階層により開く方向が変わる
+            item.isClosing = false;
+            item.setShow(true);
+
             if (nestCount == 0) {
                 // 縦方向
                 item.startMovingPos(0, -count * (ITEM_H + CHILD_MARGIN_V), ANIME_FRAME);
@@ -250,6 +264,7 @@ public class UMenuItem extends UDrawable {
 
         for (UMenuItem item : childItems) {
             item.startMovingPos(0, 0, ANIME_FRAME);
+            item.isClosing = true;
             if (item.isOpened) {
                 item.closeMenu();
             }
@@ -267,7 +282,10 @@ public class UMenuItem extends UDrawable {
         // 移動
         if (autoMoving()) {
             allFinished = false;
+        } else if (isClosing) {
+            setShow(false);
         }
+
         // アニメーション
         if (animate()) {
            allFinished = false;

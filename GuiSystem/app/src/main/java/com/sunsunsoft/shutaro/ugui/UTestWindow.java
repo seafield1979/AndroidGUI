@@ -96,7 +96,7 @@ public class UTestWindow extends UWindow {
      */
     public void drawContent(Canvas canvas, Paint paint ) {
         // BG
-        UDraw.drawRectFill(canvas, paint, getRect(), bgColor);
+        UDraw.drawRectFill(canvas, paint, getRect(), bgColor, 0, 0);
     }
 
 

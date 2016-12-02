@@ -6,7 +6,6 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.view.View;
 
-
 interface UEditTextCallbacks {
     void showDialog(UEditText edit, String title, String text);
 }
@@ -57,22 +56,24 @@ public class UEditText extends UTextView implements UEditDialogCallbacks{
      * Constructor
      */
     public UEditText(String text, int textSize, int priority, UDraw.UAlignment alignment, int
-            canvasW,
+            canvasW, boolean multiLine,
                      float x, float y, int width,
                      int color, int bgColor)
     {
-        super(text, textSize, priority, alignment, canvasW, true,
+        super(text, textSize, priority, alignment, canvasW, multiLine, true,
                 x, y, width, color, bgColor);
 
         this.baseSize = new Size(size);
 
     }
     public static UEditText createInstance(View parentView, UEditTextCallbacks editTextCallbacks,
-                                           String text, int textSize, int priority, UDraw.UAlignment alignment, int canvasW,
+                                           String text, int textSize, int priority,
+                                           UDraw.UAlignment alignment, int canvasW, boolean
+                                                   multiLine,
                                            float x, float y, int width,
                                            int color, int bgColor)
     {
-        UEditText instance = new UEditText(text, textSize, priority, alignment, canvasW,
+        UEditText instance = new UEditText(text, textSize, priority, alignment, canvasW, multiLine,
                 x, y, width, color, bgColor);
 
         instance.parentView = parentView;

@@ -19,6 +19,13 @@ enum ScrollBarInOut {
     Out
 }
 
+// スクロールバーのバーの位置設定用
+enum ScrollBarPos {
+    Top,
+    Center,
+    Bottom
+}
+
 /**
  * 自前で描画するスクロールバー
  * タッチ操作あり
@@ -32,22 +39,27 @@ enum ScrollBarInOut {
 public class UScrollBar {
     public static final String TAG = "UScrollBar";
 
+    /**
+     * Membar Variables
+     */
     private ScrollBarType type;
     private ScrollBarInOut inOut;
+    private boolean isShow;
 
     private PointF pos = new PointF();
-    private long contentLen;       // コンテンツ領域のサイズ
-    private long pageLen;          // 表示画面のサイズ
-    private float topPos;         // スクロールの現在の位置
-    private boolean isDraging;
     private PointF parentPos;
+    private int bgColor, barColor;
+    private boolean isDraging;
 
+    // スクリーン座標系
     private int bgLength, bgWidth;
-
     private float barPos;        // バーの座標（縦ならy,横ならx)
     private int barLength;       // バーの長さ(縦バーなら高さ、横バーなら幅)
 
-    private int bgColor, barColor;
+    // コンテンツ座標系
+    private long contentLen;       // コンテンツ領域のサイズ
+    private long pageLen;          // 表示画面のサイズ
+    private long topPos;         // スクロールの現在の位置
 
     // 縦のスクロールバーか
     private boolean isVertical() {
@@ -79,30 +91,41 @@ public class UScrollBar {
             // 表示領域よりコンテンツの領域が小さいので表示不要
             barLength = 0;
             topPos = 0;
+            isShow = false;
         } else {
-            barLength = (int) (this.bgLength * ((float)pageLen / (float) contentLen));
+            barLength = (int) (this.bgLength * ((float) pageLen / (float) contentLen));
+            isShow = true;
         }
     }
 
     public int getBgWidth() {
         return bgWidth;
     }
+
     public void setPageLen(long pageLen) {
         this.pageLen = pageLen;
     }
 
+    public boolean isShow() {
+        return isShow;
+    }
 
     /**
      * コンストラクタ
      * 指定のViewに張り付くタイプのスクロールバーを作成
+     *
      * @param type
+     * @param inOut
+     * @param parentPos
      * @param viewWidth
      * @param viewHeight
      * @param width
-     * @param contentLen
+     * @param pageLen   1ページ分のコンテンツの長さ
+     * @param contentLen  全体のコンテンツの長さ
      */
-    public UScrollBar(ScrollBarType type, ScrollBarInOut inOut, PointF parentPos,
-                      int viewWidth, int viewHeight, int width, long pageLen, long contentLen ) {
+    public UScrollBar(ScrollBarType type, ScrollBarInOut inOut,
+                      PointF parentPos, int viewWidth, int viewHeight, int width,
+                      long pageLen, long contentLen ) {
         this.type = type;
         this.inOut = inOut;
         this.parentPos = parentPos;
@@ -186,29 +209,47 @@ public class UScrollBar {
      * ※外部のスクロールを反映させる
      * @param topPos
      */
-    public void updateScroll(PointF topPos) {
-        float _pos = isVertical() ? topPos.y : topPos.x;
+    public void updateScroll(PointL topPos) {
+        long _pos = isVertical() ? topPos.y : topPos.x;
         barPos = (_pos / (float)contentLen) * bgLength;
         this.topPos = _pos;
     }
 
-    public void updateScroll(float topPos) {
+    public void updateBarPos() {
         barPos = (topPos / (float)contentLen) * bgLength;
-        this.topPos = topPos;
+    }
+
+    /**
+     * バーの位置を設定する
+     */
+    public long setBarPos(ScrollBarPos pos) {
+        switch(pos) {
+            case Top:
+                topPos = 0;
+                break;
+            case Center:
+                topPos = (contentLen - pageLen) / 2;
+                break;
+            case Bottom:
+                topPos = contentLen - pageLen;
+                break;
+        }
+        updateBarPos();
+        return topPos;
     }
 
     /**
      * バーの座標からスクロール量を求める
      * updateScrollの逆バージョン
      */
-    public void updateScrollByBarPos() {
-        topPos = (barPos / bgLength) * contentLen;
+    private void updateScrollByBarPos() {
+        topPos = (long)((barPos / bgLength) * contentLen);
     }
 
     /**
      * コンテンツやViewのサイズが変更された時の処理
      */
-    public float updateContent(Size contentSize) {
+    public float updateContent(SizeL contentSize) {
         if (isVertical()) {
             this.contentLen = contentSize.height;
         } else {
@@ -278,7 +319,7 @@ public class UScrollBar {
         if (topPos < 0) {
             topPos = 0;
         }
-        updateScroll(topPos);
+        updateBarPos();
     }
 
     /**
@@ -289,7 +330,7 @@ public class UScrollBar {
         if (topPos + pageLen > contentLen) {
             topPos = contentLen - pageLen;
         }
-        updateScroll(topPos);
+        updateBarPos();
     }
 
     /**

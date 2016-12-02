@@ -43,8 +43,8 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     /**
      * Get/Set
      */
-    protected Size contentSize = new Size();     // 領域全体のサイズ
-    protected Size clientSize = new Size();      // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
+    protected SizeL contentSize = new SizeL();     // 領域全体のサイズ
+    protected SizeL clientSize = new SizeL();      // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
     protected UScrollBar mScrollBarH;
     protected UScrollBar mScrollBarV;
@@ -196,6 +196,9 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
             UDrawManager.getInstance().removeDrawable(this);
 //            drawList = null;
         }
+        if (windowCallbacks != null) {
+            windowCallbacks.windowClose(this);
+        }
     }
 
     /**
@@ -235,15 +238,15 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      */
     public void drawFrame(Canvas canvas, Paint paint) {
         // Close Button
-        if (closeIcon != null) {
+        if (closeIcon != null && closeIcon.isShow()) {
             closeIcon.draw(canvas, paint, pos);
         }
 
         // スクロールバー
-        if (mScrollBarV != null) {
+        if (mScrollBarV != null && mScrollBarV.isShow()) {
             mScrollBarV.draw(canvas, paint);
         }
-        if (mScrollBarH != null) {
+        if (mScrollBarH != null && mScrollBarH.isShow()) {
             mScrollBarH.draw(canvas, paint);
         }
     }
@@ -281,7 +284,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
             }
         }
         // スクロールバーの表示を更新
-        mScrollBarV.updateScroll(contentTop);
+        mScrollBarV.updateScroll(new PointL((long)contentTop.x,(long)contentTop.y));
 
         return true;
     }
@@ -292,18 +295,18 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * @return true:再描画
      */
     public boolean touchEvent(ViewTouch vt) {
-        if (closeIcon != null) {
+        if (closeIcon != null && closeIcon.isShow()) {
             if (closeIcon.touchEvent(vt, pos)) {
                 return true;
             }
         }
 
         // スクロールバーのタッチ処理
-        if (mScrollBarV.touchEvent(vt)) {
+        if (mScrollBarV.touchEvent(vt) && mScrollBarV.isShow()) {
             contentTop.y = mScrollBarV.getTopPos();
             return true;
         }
-        if (mScrollBarH.touchEvent(vt)) {
+        if (mScrollBarH.touchEvent(vt) && mScrollBarH.isShow()) {
             contentTop.x = mScrollBarH.getTopPos();
             return true;
         }
@@ -359,9 +362,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
             case CloseButtonId:
                 // 閉じるボタンを押したら自身のWindowを閉じてから呼び出し元の閉じる処理を呼び出す
                 closeWindow();
-                if (windowCallbacks != null) {
-                    windowCallbacks.windowClose(this);
-                }
+
                 return true;
         }
         return false;

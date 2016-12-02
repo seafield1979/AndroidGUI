@@ -5,6 +5,13 @@ package com.sunsunsoft.shutaro.ugui;
  */
 
 public class UDebug {
-    public static final boolean DRAW_ICON_BLOCK_RECT = true;
-    public static boolean drawIconId = false;
+    // IconをまとめたブロックのRECTを描画するかどうか
+    public static final boolean DRAW_ICON_BLOCK_RECT = false;
+
+    public static final boolean drawIconId = false;
+
+    // UDrawableオブジェクトの描画範囲をライン描画
+    public static final boolean drawRectLine = false;
+
+    public static final boolean drawTextBaseLine = true;
 }
