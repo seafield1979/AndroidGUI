@@ -331,6 +331,8 @@ public class UDraw {
                 x = x - size.width / 2;
                 y = y - size.height / 2;
                 break;
+            case None:
+                break;
         }
 
         // 改行ができるようにTextPaintとStaticLayoutを使用する

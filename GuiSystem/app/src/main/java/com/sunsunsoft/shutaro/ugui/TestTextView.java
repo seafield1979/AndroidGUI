@@ -41,13 +41,14 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     private static final int BUTTON_PRIORITY = 90;
     private static final int TEXT_SIZE = 70;
     private static final int PageButtonId = 100;
-    private static final int PAGE_NUM = 4;
+    private static final int PAGE_NUM = 5;
 
     // UDrawManagerの描画ページID
     private static final int PAGE1 = 0;
     private static final int PAGE2 = 2;
     private static final int PAGE3 = 3;
     private static final int PAGE4 = 4;
+    private static final int PAGE5 = 5;
 
     /**
      * Member variables
@@ -100,10 +101,11 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
      */
     private UTextView addTextView(String text, int textSize, int priority,
                                   UDraw.UAlignment alignment, boolean multiLine,
+                                  boolean drawBG,
                                   float x, float y, int color, int bgColor) {
         UTextView textView = UTextView.createInstance(text, textSize, priority,
                 alignment,
-                getWidth(), multiLine, true,
+                getWidth(), multiLine, drawBG,
                 x, y,
                 getWidth() - 100, color, bgColor);
         textViews.add(textView);
@@ -135,6 +137,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         initDrawablesPage(PAGE2, y);
         initDrawablesPage(PAGE3, y);
         initDrawablesPage(PAGE4, y);
+        initDrawablesPage(PAGE5, y);
 
         UDrawManager.getInstance().setCurrentPage(PAGE1);
 
@@ -166,6 +169,31 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
         switch (page) {
             case PAGE1:
             {
+                // TextView
+                for (int i=0; i<4; i++) {
+                    UDraw.UAlignment alignment = UDraw.UAlignment.None;
+                    switch (i) {
+                        case 1:
+                            alignment = UDraw.UAlignment.CenterX;
+                            break;
+                        case 2:
+                            alignment = UDraw.UAlignment.CenterY;
+                            break;
+                        case 3:
+                            alignment = UDraw.UAlignment.Center;
+                            break;
+                    }
+                    String text = "hoge" + (i + 1);
+
+                    addTextView(text, TEXT_SIZE, TEXT_PRIORITY, alignment, false, false,
+                            getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                    .getRandomColor());
+                    y += 150;
+                }
+            }
+                break;
+            case PAGE2:
+            {
                 // UButton
                 button1 = new UButtonText(this, UButtonType.Press, ButtonId.Edit.ordinal(), BUTTON_PRIORITY,
                         "edit", 100, y,
@@ -191,27 +219,72 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                     }
                     String text = "hoge" + (i + 1);
 
-                    addTextView(text, TEXT_SIZE, TEXT_PRIORITY, alignment, false,
+                    addTextView(text, TEXT_SIZE, TEXT_PRIORITY, alignment, false, true,
                             getWidth() / 2, y, UColor.getRandomColor(), UColor
                                     .getRandomColor());
-                    y += 100;
+                    y += 150;
                 }
 
             }
 
                 break;
-            case PAGE2:
+            case PAGE3:
             {
                 // Multi line
-                addTextView("aaa\nbbb\nccc", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.CenterX, true,
+                addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.None, true, false,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+
+                addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.CenterX, true, false,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+                addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.CenterY, true, false,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+
+                addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.Center, true, false,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
 
             }
                 break;
-            case PAGE3:
+            case PAGE4:
+            {
+                // Multi line
+                addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.None, true, true,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+
+                addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.CenterX, true, true,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+                addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.CenterY, true, true,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+
+                addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
+                        UDraw.UAlignment.Center, true, true,
+                        getWidth() / 2, y, UColor.getRandomColor(), UColor
+                                .getRandomColor());
+                y += 200;
+
+            }
+                break;
+            case PAGE5:
             {
                 // EditText
                 editText = UEditText.createInstance(this, this, "aaa", TEXT_SIZE, 71,
@@ -230,9 +303,9 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                 drawManager.addDrawable(textView2);
                 y += textView2.getHeight() + 50;
             }
-                break;
-            case PAGE4:
-                break;
+
+            break;
+
         }
     }
 
@@ -349,6 +422,9 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                 break;
             case PageButtonId + 3:
                 UDrawManager.getInstance().setCurrentPage(PAGE4);
+                break;
+            case PageButtonId + 4:
+                UDrawManager.getInstance().setCurrentPage(PAGE5);
                 break;
 
         }

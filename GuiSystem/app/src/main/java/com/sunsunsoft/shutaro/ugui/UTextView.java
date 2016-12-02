@@ -73,13 +73,10 @@ public class UTextView extends UDrawable {
         this.bgColor = bgColor;
 
         // テキストを描画した時のサイズを取得
-        Size size = getTextSize(canvasW);
-        size = addBGPadding(size);
-
         if (width == 0) {
             setSize(size.width, size.height);
         } else {
-            setSize(width, size.height);
+            updateSize();
         }
     }
 
@@ -100,6 +97,12 @@ public class UTextView extends UDrawable {
     /**
      * Methods
      */
+
+    protected void updateSize() {
+        Size size = getTextSize(canvasW);
+        size = addBGPadding(size);
+        setSize(this.size.width, size.height);
+    }
 
     /**
      * テキストを囲むボタン部分のマージンを追加する
@@ -132,7 +135,7 @@ public class UTextView extends UDrawable {
             switch (alignment) {
                 case CenterX:
                     bgPos.x -= size.width / 2;
-                    _pos.y += MARGIN_V + textSize / 2;
+                    _pos.y += MARGIN_V;
                     break;
                 case CenterY:
                     bgPos.y -= size.height / 2;
@@ -144,9 +147,16 @@ public class UTextView extends UDrawable {
                     break;
                 case None:
                     _pos.x += MARGIN_H;
-                    _pos.y += MARGIN_V + textSize / 2;
+                    _pos.y += MARGIN_V;
                     break;
             }
+
+            if (!multiLine) {
+                if (alignment == UDraw.UAlignment.CenterX || alignment == UDraw.UAlignment.None) {
+                    _pos.y += textSize / 2;
+                }
+            }
+
             drawBG(canvas, paint, bgPos);
 
             // BGの中央にテキストを表示したいため、aligmentを書き換える
