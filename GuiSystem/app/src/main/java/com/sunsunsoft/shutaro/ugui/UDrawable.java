@@ -5,22 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-
-/**
- * 描画可能なクラス
- * Drawableの共通処理を実装済み
- *
- * このクラスのサブクラスをDrawManagerで管理できる
- *
- * 描画の他に、自動移動、アニメーション等の機能も持っている
- */
-
-
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.Rect;
+import android.graphics.RectF;
 
 /**
  * 描画可能なクラス
@@ -159,6 +144,10 @@ abstract public class UDrawable {
         return new Rect(rect.left + (int)offset.x, rect.top + (int)offset.y,
                 rect.right + (int)offset.x, rect.bottom + (int)offset.y);
     }
+    public RectF getRectF() {
+        return new RectF(rect);
+    }
+
     // 枠の分太いRectを返す
     public Rect getRectWithOffset(PointF offset, int frameWidth) {
         return new Rect(rect.left + (int)offset.x - frameWidth,
@@ -189,6 +178,17 @@ abstract public class UDrawable {
      * @param offset 独自の座標系を持つオブジェクトをスクリーン座標系に変換するためのオフセット値
      */
     abstract void draw(Canvas canvas, Paint paint, PointF offset);
+
+    /**
+     * Rectをライン描画する for Debug
+     */
+    public void drawRectLine(Canvas canvas, Paint paint, PointF offset, int color) {
+        Rect _rect = new Rect(rect.left + (int)offset.x,
+                rect.top + (int)offset.y,
+                rect.right + (int)offset.x,
+                rect.bottom + (int)offset.y );
+        UDraw.drawRect(canvas, paint, _rect, 2, color);
+    }
 
     /**
      * タッチ処理

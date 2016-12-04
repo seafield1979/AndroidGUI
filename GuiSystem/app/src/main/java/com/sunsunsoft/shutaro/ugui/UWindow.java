@@ -3,6 +3,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 
 /**
@@ -39,6 +41,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      */
     protected UWindowCallbacks windowCallbacks;
     protected int bgColor;
+    protected int frameColor;
 
     /**
      * Get/Set
@@ -79,6 +82,11 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         contentTop.x = x;
         contentTop.y = y;
     }
+
+    public void setFrameColor(int frameColor) {
+        this.frameColor = frameColor;
+    }
+
 
     // 座標系を変換する
     // 座標系は以下の３つある
@@ -230,6 +238,25 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * @param paint
      */
     abstract public void drawContent(Canvas canvas, Paint paint );
+
+    /**
+     * Windowの背景を描画する
+     * @param canvas
+     * @param paint
+     * @param rect
+     */
+    protected void drawBG(Canvas canvas, Paint paint, RectF rect) {
+        int frameWidth = (frameColor == 0) ? 0 : 5;
+        UDraw.drawRoundRectFill(canvas, paint, rect, 20, bgColor, frameWidth, frameColor);
+    }
+    protected void drawBG(Canvas canvas, Paint paint, Rect rect) {
+        // BG,Frame
+        int frameWidth = (frameColor == 0) ? 0 : 5;
+        UDraw.drawRoundRectFill(canvas, paint, new RectF(rect), 20, bgColor, frameWidth, frameColor);
+    }
+    protected void drawBG(Canvas canvas, Paint paint) {
+        this.drawBG(canvas, paint, rect);
+    }
 
     /**
      * Windowの枠やバー、ボタンを描画する

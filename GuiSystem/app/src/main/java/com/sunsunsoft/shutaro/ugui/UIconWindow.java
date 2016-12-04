@@ -351,11 +351,7 @@ public class UIconWindow extends UWindow {
         if (icons == null) return;
 
         // 背景を描画
-        if (bgColor != 0) {
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(bgColor);
-            canvas.drawRect(rect, paint);
-        }
+        drawBG(canvas, paint);
 
         // ウィンドウの座標とスクロールの座標を求める
         PointF _offset = new PointF(pos.x - contentTop.x, pos.y - contentTop.y);
