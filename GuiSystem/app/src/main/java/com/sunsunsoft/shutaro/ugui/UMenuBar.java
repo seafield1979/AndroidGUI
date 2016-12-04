@@ -54,7 +54,7 @@ public class UMenuBar extends UWindow {
 
 
     private View mParentView;
-    private UMenuItemCallbacks mCallbackClass;
+    private UMenuItemCallbacks mMenuItemCallbacks;
     UMenuItem[] topItems = new UMenuItem[TOP_MENU_MAX];
     UMenuItem[] items = new UMenuItem[MenuItemId.values().length];
     private DrawList mDrawList;
@@ -69,7 +69,7 @@ public class UMenuBar extends UWindow {
     {
         super(null, DRAW_PRIORITY, 0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
         mParentView = parentView;
-        mCallbackClass = callbackClass;
+        mMenuItemCallbacks = callbackClass;
     }
 
     /**
@@ -92,8 +92,8 @@ public class UMenuBar extends UWindow {
      * メニューバーを初期化
      */
     private void initMenuBar() {
-        UMenuItem item = null;
-        UMenuItem item2 = null;
+        UMenuItem item;
+        UMenuItem item2;
 
         // Add
         item = addTopMenuItem(TopMenu.Add, MenuItemId.AddTop, R.drawable.hogeman);
@@ -138,7 +138,7 @@ public class UMenuBar extends UWindow {
     private UMenuItem addTopMenuItem(TopMenu topId, MenuItemId menuId, int bmpId) {
         Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
         UMenuItem item = new UMenuItem(this, menuId, bmp);
-        item.setCallbacks(mCallbackClass);
+        item.setCallbacks(mMenuItemCallbacks);
         item.setShow(true);
 
         topItems[topId.ordinal()] = item;
@@ -159,7 +159,7 @@ public class UMenuBar extends UWindow {
     private UMenuItem addMenuItem(UMenuItem parent, MenuItemId menuId, int bmpId) {
         Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
         UMenuItem item = new UMenuItem(this, menuId, bmp);
-        item.setCallbacks(mCallbackClass);
+        item.setCallbacks(mMenuItemCallbacks);
         item.setParentItem(parent);
         // 子要素は初期状態では非表示。オープン時に表示される
         item.setShow(false);
@@ -206,7 +206,7 @@ public class UMenuBar extends UWindow {
         for (UMenuItem item : topItems) {
             if (item == null) continue;
 
-            if (item.checkClick(vt, clickX, clickY)) {
+            if (item.checkTouch(vt, clickX, clickY)) {
                 done = true;
                 if (item.isOpened()) {
                     // 他に開かれたメニューを閉じる

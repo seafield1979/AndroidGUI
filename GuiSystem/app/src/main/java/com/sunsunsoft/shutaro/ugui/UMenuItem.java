@@ -11,9 +11,8 @@ import java.util.LinkedList;
 
 
 interface UMenuItemCallbacks {
-    void menuItemClicked(MenuItemId id);
+    void menuItemClicked(MenuItemId itemId, int stateId);
 }
-
 
 /**
  * メニューに表示する項目
@@ -36,8 +35,10 @@ public class UMenuItem extends UDrawable {
      */
     protected UMenuBar menuBar;
     protected UMenuItemCallbacks mCallbacks;
-    protected MenuItemId id;
+    protected MenuItemId itemId;
     protected int nestCount;
+    protected int stateId;          // 現在の状態
+    protected int stateMax;         // 状態の最大値 addState で増える
 
     // 親アイテム
     protected UMenuItem parentItem;
@@ -48,7 +49,7 @@ public class UMenuItem extends UDrawable {
     protected boolean isOpened;
 
     // アイコン用画像
-    protected Bitmap icon;
+    protected LinkedList<Bitmap> icons = new LinkedList<>();
     protected int animeColor;
 
     // 閉じている移動中かどうか
@@ -84,8 +85,12 @@ public class UMenuItem extends UDrawable {
     public UMenuItem(UMenuBar menuBar, MenuItemId id, Bitmap icon) {
         super(DRAW_PRIORITY, 0,0,0,0);
         this.menuBar = menuBar;
-        this.id = id;
-        this.icon = icon;
+        this.itemId = id;
+        this.stateId = 0;
+        this.stateMax = 1;
+        if (icon != null) {
+            this.icons.add(icon);
+        }
     }
 
     public void setParentItem(UMenuItem parentItem) {
@@ -107,6 +112,39 @@ public class UMenuItem extends UDrawable {
         childItems.add(child);
     }
 
+    /**
+     * 状態を追加する
+     * @param icon 追加した状態の場合に表示するアイコン
+     */
+    public void addState(Bitmap icon) {
+        icons.add(icon);
+        stateMax++;
+    }
+
+    /**
+     * 次の状態にすすむ
+     */
+    public int setNextState() {
+        if (stateMax >= 2) {
+            stateId = (stateId + 1) % stateMax;
+        }
+        return stateId;
+    }
+
+    private int getNextStateId() {
+        if (stateMax >= 2) {
+            return (stateId + 1) % stateMax;
+        }
+        return 0;
+    }
+
+
+    /**
+     * 描画処理
+     * @param canvas
+     * @param paint
+     * @param parentPos
+     */
     public void draw(Canvas canvas, Paint paint, PointF parentPos) {
         // スタイル(内部を塗りつぶし)
         paint.setStyle(Paint.Style.FILL);
@@ -117,7 +155,10 @@ public class UMenuItem extends UDrawable {
         drawPos.x = pos.x + parentPos.x;
         drawPos.y = pos.y + parentPos.y;
 
-        if (icon != null) {
+        if (icons.size() > 0) {
+            // 次の状態のアイコンを表示する
+            Bitmap icon = icons.get(getNextStateId());
+
             // アニメーション処理
             // フラッシュする
             if (isAnimating) {
@@ -182,15 +223,14 @@ public class UMenuItem extends UDrawable {
 
     /**
      * クリック処理
-     * @param clickX
-     * @param clickY
+     * @param touchX
+     * @param touchY
      * @return
      */
-    public boolean checkClick(ViewTouch vt, float clickX, float clickY) {
-        if (pos.x <= clickX && clickX <= pos.x + ITEM_W &&
-                pos.y <= clickY && clickY <= pos.y + ITEM_H)
+    public boolean checkTouch(ViewTouch vt, float touchX, float touchY) {
+        if (vt.checkInsideCircle(touchX, touchY, pos.x + ITEM_W / 2, pos.y + ITEM_W / 2, ITEM_W / 2))
         {
-            if (vt.type != TouchType.Click) return false;
+            if (vt.type != TouchType.Touch) return false;
 
             // 子要素を持っていたら Open/Close
             if (childItems != null) {
@@ -204,8 +244,10 @@ public class UMenuItem extends UDrawable {
                 ULog.print(TAG, "isOpened " + isOpened);
             } else {
                 // タッチされた時の処理
+                setNextState();
+
                 if (mCallbacks != null) {
-                    mCallbacks.menuItemClicked(id);
+                    mCallbacks.menuItemClicked(itemId, stateId);
                 }
             }
             // アニメーション
@@ -218,9 +260,7 @@ public class UMenuItem extends UDrawable {
         if (isOpened() && childItems != null) {
             for (UMenuItem child : childItems) {
                 // この座標系(親原点)に変換
-                float _clickX = clickX - pos.x;
-                float _clickY = clickY - pos.y;
-                if (child.checkClick(vt, _clickX, _clickY)) {
+                if (child.checkTouch(vt, touchX - pos.x, touchY - pos.y)) {
                     return true;
                 }
             }
@@ -288,7 +328,7 @@ public class UMenuItem extends UDrawable {
 
         // アニメーション
         if (animate()) {
-           allFinished = false;
+            allFinished = false;
         }
 
         // 子要素のdoAction

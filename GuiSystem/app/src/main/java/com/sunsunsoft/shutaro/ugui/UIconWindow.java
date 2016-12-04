@@ -1249,7 +1249,16 @@ public class UIconWindow extends UWindow {
         } else {
             isShow = false;
         }
+        mScrollBarH.setShow(true);
+        mScrollBarV.setShow(true);
     }
 
+
+    public void startMoving() {
+        super.startMoving();
+
+        mScrollBarH.setShow(false);
+        mScrollBarV.setShow(false);
+    }
 
 }

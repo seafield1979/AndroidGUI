@@ -27,17 +27,17 @@ public class UPopupWindow extends UDialogWindow {
     /**
      * Constructor
      */
-    public UPopupWindow(UPopupType popupType,
+    public UPopupWindow(UButtonCallbacks buttonCallbacks,
+            UPopupType popupType,
                         String title,
                         boolean isAnimation,
                         int screenW, int screenH)
     {
-        super(DialogType.Mordal, null, null,
+        super(DialogType.Mordal, buttonCallbacks, null,
                 ButtonDir.Horizontal, DialogPosType.Center,
                 isAnimation, 0, 0, screenW, screenH,
                 Color.BLACK, Color.WHITE);
 
-        this.buttonCallbacks = this;
         this.frameColor = Color.BLACK;
         this.title = title;
 
@@ -59,6 +59,12 @@ public class UPopupWindow extends UDialogWindow {
 
         switch(id) {
             case OKButtonId:
+                if (buttonCallbacks != null) {
+                    buttonCallbacks.UButtonClick(id);
+                }
+                startClosing();
+                return true;
+            case CloseDialogId:
                 startClosing();
                 return true;
         }

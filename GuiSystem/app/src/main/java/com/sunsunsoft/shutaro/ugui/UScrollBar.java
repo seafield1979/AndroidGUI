@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
+
 // スクロールバーの配置場所
 enum ScrollBarType {
     Top,
@@ -81,7 +82,7 @@ public class UScrollBar {
         this.barColor = barColor;
     }
 
-    public float getTopPos() {
+    public long getTopPos() {
         return topPos;
     }
 
@@ -108,6 +109,10 @@ public class UScrollBar {
 
     public boolean isShow() {
         return isShow;
+    }
+
+    public void setShow(boolean show) {
+        this.isShow = show;
     }
 
     /**
@@ -249,7 +254,7 @@ public class UScrollBar {
     /**
      * コンテンツやViewのサイズが変更された時の処理
      */
-    public float updateContent(SizeL contentSize) {
+    public long updateContent(SizeL contentSize) {
         if (isVertical()) {
             this.contentLen = contentSize.height;
         } else {

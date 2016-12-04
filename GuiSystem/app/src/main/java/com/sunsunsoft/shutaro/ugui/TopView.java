@@ -44,8 +44,6 @@ public class TopView extends View implements View.OnTouchListener, UMenuItemCall
     private Context mContext;
     private Paint paint = new Paint();
 
-
-
     // get/set
     public TopView(Context context) {
         this(context, null);
