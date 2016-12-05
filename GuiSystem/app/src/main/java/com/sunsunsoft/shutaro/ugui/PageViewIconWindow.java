@@ -43,11 +43,6 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
     // メニューバー
     private UMenuBar mMenuBar;
 
-    // サイズ更新用
-    private boolean isFirst = true;
-
-    private Context mContext;
-    private View mParentView;
     private Paint paint = new Paint();
 
     /**
@@ -60,14 +55,15 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
 
 
     public PageViewIconWindow(Context context, View parentView) {
-        mContext = context;
-        mParentView = parentView;
-
+        super(context, parentView, PageView.IconWindow.getDrawId());
     }
 
-    public void initDrawables(int width, int height) {
+    public void initDrawables() {
+        int width = mParentView.getWidth();
+        int height = mParentView.getHeight();
+
         // 描画オブジェクトクリア
-        UDrawManager.getInstance().init();
+        UDrawManager.getInstance().initPage(drawPageId);
 
         // UIconWindow
         UIconWindow.WindowDir winDir;
@@ -114,12 +110,26 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
     }
 
     /**
+     * スタックの先頭になって表示され始める前に呼ばれる
+     */
+    public void onShow() {
+        super.onShow();
+    }
+
+    /**
+     * スタックの先頭でなくなって表示されなくなる前に呼ばれる
+     */
+    public void onHide() {
+    }
+
+    /**
      * 描画処理
      * @param canvas
      * @param paint
      * @return true:再描画が必要
      */
     public boolean draw(Canvas canvas, Paint paint) {
+        super.draw(canvas, paint);
 
         // Windowの処理
         // アクション(手前から順に処理する)

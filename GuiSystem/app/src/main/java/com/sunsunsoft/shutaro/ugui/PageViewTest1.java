@@ -1,8 +1,10 @@
 package com.sunsunsoft.shutaro.ugui;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.view.View;
 
 /**
  * Created by shutaro on 2016/12/05.
@@ -42,13 +44,29 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
     /**
      * Constructor
      */
-    public PageViewTest1() {
+    public PageViewTest1(Context context, View parentView) {
+        super(context, parentView, PageView.Test1.getDrawId());
     }
 
     /**
      * Methods
      */
+    /**
+     * スタックの先頭になって表示され始める前に呼ばれる
+     */
+    public void onShow() {
+        super.onShow();
+    }
+
+    /**
+     * スタックの先頭でなくなって表示されなくなる前に呼ばれる
+     */
+    public void onHide() {
+    }
+
     public boolean draw(Canvas canvas, Paint paint) {
+        super.draw(canvas, paint);
+
         return false;
     }
 
@@ -56,7 +74,10 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
         return false;
     }
 
-    public void initDrawables(int width, int height) {
+    public void initDrawables() {
+        int width = mParentView.getWidth();
+        int height = mParentView.getHeight();
+
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 

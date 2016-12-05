@@ -25,8 +25,6 @@ public class TopView extends View implements View.OnTouchListener, ViewTouchCall
      * Member variables
      */
     private UPageViewManager mPageManager;
-    // サイズ更新用
-    private boolean isFirst = true;
 
     // クリック判定の仕組み
     private ViewTouch vt = new ViewTouch(this);
@@ -51,10 +49,7 @@ public class TopView extends View implements View.OnTouchListener, ViewTouchCall
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (isFirst) {
-            isFirst = false;
-            mPageManager.initDrawables(getWidth(), getHeight());
-        }
+
         // 背景塗りつぶし
         canvas.drawColor(Color.WHITE);
 

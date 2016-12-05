@@ -6,9 +6,20 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.View;
 
+import java.util.LinkedList;
+
 enum PageView {
     IconWindow,
-    Test1
+    Test1,
+    ;
+    private static final int[] drawIdTable = {
+            0,  // IconWindow
+            1   // Test1
+    };
+
+    public int getDrawId() {
+        return drawIdTable[ordinal()];
+    }
 }
 
 /**
@@ -31,8 +42,8 @@ public class UPageViewManager {
      */
     private Context mContext;
     private View mParentView;
-    private PageView mPageId;
     private UPageView[] pages = new UPageView[PageView.values().length];
+    private LinkedList<PageView> pageIdStack = new LinkedList<>();
 
     /**
      * Get/Set
@@ -44,7 +55,6 @@ public class UPageViewManager {
     public UPageViewManager(Context context, View parentView) {
         mContext = context;
         mParentView = parentView;
-        mPageId = PageView.Test1;
 
         initPages();
     }
@@ -53,16 +63,32 @@ public class UPageViewManager {
      * Methods
      */
     /**
+     * カレントのページIDを取得する
+     * @return カレントページID
+     */
+    public PageView currentPage() {
+        if (pageIdStack.size() > 0) {
+            return pageIdStack.getLast();
+        }
+        return null;
+    }
+
+    /**
      * 配下のページを追加する
      */
     public void initPages() {
+        // IconWindow
         UPageView page = new PageViewIconWindow(mContext, mParentView);
         pages[PageView.IconWindow.ordinal()] = page;
 
-        page = new PageViewTest1();
+        // Test1
+        page = new PageViewTest1(mContext, mParentView);
         pages[PageView.Test1.ordinal()] = page;
 
-
+        stackPage(PageView.IconWindow);
+        stackPage(PageView.Test1);
+        stackPage(PageView.IconWindow);
+        stackPage(PageView.Test1);
     }
 
     /**
@@ -73,7 +99,10 @@ public class UPageViewManager {
      * @return
      */
     public boolean draw(Canvas canvas, Paint paint) {
-        return pages[mPageId.ordinal()].draw(canvas, paint);
+        PageView pageId = currentPage();
+        if (pageId == null) return false;
+
+        return pages[pageId.ordinal()].draw(canvas, paint);
     }
 
     /**
@@ -91,7 +120,24 @@ public class UPageViewManager {
      * @return
      */
     public boolean onBackKeyDown() {
-        return pages[mPageId.ordinal()].onBackKeyDown();
+        // スタックをポップして１つ前の画面に戻る
+        PageView pageId = currentPage();
+        if (pageId == null) return false;
+
+        // 各ページで処理
+        if (pages[pageId.ordinal()].onBackKeyDown()) {
+            // 何かしら処理がされたら何もしない
+            return true;
+        }
+
+        // スタックを１つポップする
+        if (pageIdStack.size() > 1) {
+            if (popPage()) {
+                return true;
+            }
+        }
+        // スタックのページが１つだけなら終了
+        return false;
     }
 
     /**
@@ -99,21 +145,51 @@ public class UPageViewManager {
      * @param pageId
      */
     public void changePage(PageView pageId) {
-        if (pageId.ordinal() >= PageView.values().length) {
-            return;
+        if (pageIdStack.size() > 0) {
+            // 古いページの後処理
+            PageView page = pageIdStack.getLast();
+            pages[page.ordinal()].onHide();
+
+            pageIdStack.removeLast();
+
         }
-        mPageId = pageId;
+        pageIdStack.add(pageId);
+
+        // 新しいページの前処理
+        pageId = pageIdStack.getLast();
+        pages[pageId.ordinal()].onShow();
     }
 
     /**
-     * ページに表示するウィンドウを初期化する
-     * @param width
-     * @param height
+     * ページをスタックする
+     * ソフトウェアキーの戻るボタンを押すと元のページに戻れる
+     * @param pageId
      */
-    public void initDrawables(int width, int height) {
-        pages[mPageId.ordinal()].initDrawables(width, height);
+    public void stackPage(PageView pageId) {
+        pageIdStack.add(pageId);
+        pages[pageId.ordinal()].onShow();
     }
 
+    /**
+     * ページをポップする
+     * 下にページがあったら移動
+     */
+    public boolean popPage() {
+        if (pageIdStack.size() > 0) {
+            // 古いページの後処理
+            PageView page = pageIdStack.getLast();
+            pages[page.ordinal()].onHide();
+
+            pageIdStack.removeLast();
+
+            // 新しいページの前処理
+            page = pageIdStack.getLast();
+            pages[page.ordinal()].onShow();
+
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Callbacks

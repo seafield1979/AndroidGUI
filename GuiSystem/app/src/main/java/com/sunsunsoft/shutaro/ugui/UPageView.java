@@ -1,7 +1,9 @@
 package com.sunsunsoft.shutaro.ugui;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.View;
 
 /**
  * Created by shutaro on 2016/12/05.
@@ -20,6 +22,11 @@ abstract public class UPageView {
     /**
      * Member Variables
      */
+    protected Context mContext;
+    protected View mParentView;
+
+    protected int drawPageId;
+    private boolean isFirst = true;
 
     /**
      * Get/Set
@@ -28,15 +35,41 @@ abstract public class UPageView {
     /**
      * Constructor
      */
+    public UPageView(Context context, View parentView, int drawPageId) {
+        mContext = context;
+        mParentView = parentView;
+        this.drawPageId = drawPageId;
+    }
 
     /**
      * Methods
      */
-    abstract boolean draw(Canvas canvas, Paint paint);
+    /**
+     * スタックの先頭になって表示され始める前に呼ばれる
+     */
+    protected void onShow() {
+        // ページを切り替える
+        UDrawManager.getInstance().setCurrentPage(drawPageId);
+    }
+
+    /**
+     * スタックの先頭でなくなって表示されなくなる前に呼ばれる
+     */
+    protected void onHide() {
+
+    }
+
+    protected boolean draw(Canvas canvas, Paint paint) {
+        if (isFirst) {
+            isFirst = false;
+            initDrawables();
+        }
+        return false;
+    }
 
     abstract boolean touchEvent(ViewTouch vt);
 
-    abstract void initDrawables(int width, int height);
+    abstract void initDrawables();
 
     abstract boolean onBackKeyDown();
 
