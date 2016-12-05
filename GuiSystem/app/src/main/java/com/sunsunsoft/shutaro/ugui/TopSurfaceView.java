@@ -43,7 +43,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     private ULogWindow mLogWin;
 
     // メニューバー
-    private UMenuBar mMenuBar;
+    private MenuBarIconWindow mMenuBar;
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -99,7 +99,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
 
         // UMenuBar
         if (mMenuBar == null) {
-            mMenuBar = UMenuBar.createInstance(this, this, width, height,
+            mMenuBar = MenuBarIconWindow.createInstance(this, this, width, height,
                     Color.BLACK);
             mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
@@ -255,7 +255,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
      * @param shape
      * @param menuItemId
      */
-    private void addIcon(UIconWindow window, IconType shape, MenuItemId menuItemId) {
+    private void addIcon(UIconWindow window, IconType shape, int menuItemId) {
         UIconManager manager = window.getIconManager();
         UIcon icon = manager.addIcon(shape, AddPos.Top);
 
@@ -271,8 +271,10 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     /**
      * メニューアイテムをタップした時のコールバック
      */
-    public void menuItemClicked(MenuItemId id, int stateId) {
-        switch (id) {
+    public void menuItemClicked(int id, int stateId) {
+        MenuBarIconWindow.MenuItemId itemId = MenuBarIconWindow.MenuItemId.toEnum(id);
+
+        switch (itemId) {
             case AddTop:
                 break;
             case AddCard:

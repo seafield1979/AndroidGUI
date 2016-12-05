@@ -86,9 +86,6 @@ public class UPageViewManager {
         pages[PageView.Test1.ordinal()] = page;
 
         stackPage(PageView.IconWindow);
-        stackPage(PageView.Test1);
-        stackPage(PageView.IconWindow);
-        stackPage(PageView.Test1);
     }
 
     /**
@@ -112,6 +109,10 @@ public class UPageViewManager {
      * @return
      */
     public boolean touchEvent(ViewTouch vt) {
+        UPageView page = pages[currentPage().ordinal()];
+        if (page.touchEvent(vt)) {
+            return true;
+        }
         return false;
     }
 

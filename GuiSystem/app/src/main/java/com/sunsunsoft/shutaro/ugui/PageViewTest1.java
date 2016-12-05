@@ -51,29 +51,10 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
     /**
      * Methods
      */
-    /**
-     * スタックの先頭になって表示され始める前に呼ばれる
-     */
-    public void onShow() {
-        super.onShow();
-    }
 
     /**
-     * スタックの先頭でなくなって表示されなくなる前に呼ばれる
+     * ページの描画オブジェクトを初期化
      */
-    public void onHide() {
-    }
-
-    public boolean draw(Canvas canvas, Paint paint) {
-        super.draw(canvas, paint);
-
-        return false;
-    }
-
-    public boolean touchEvent(ViewTouch vt) {
-        return false;
-    }
-
     public void initDrawables() {
         int width = mParentView.getWidth();
         int height = mParentView.getHeight();
@@ -104,6 +85,16 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
             y += 150;
         }
 
+    }
+
+    public boolean draw(Canvas canvas, Paint paint) {
+        super.draw(canvas, paint);
+
+        return false;
+    }
+
+    public boolean touchEvent(ViewTouch vt) {
+        return false;
     }
 
     public boolean onBackKeyDown() {

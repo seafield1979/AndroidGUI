@@ -41,7 +41,7 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
     private ULogWindow mLogWin;
 
     // メニューバー
-    private UMenuBar mMenuBar;
+    private MenuBarIconWindow mMenuBar;
 
     private Paint paint = new Paint();
 
@@ -96,7 +96,7 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
 
         // UMenuBar
         if (mMenuBar == null) {
-            mMenuBar = UMenuBar.createInstance(mParentView, this, width, height,
+            mMenuBar = MenuBarIconWindow.createInstance(mParentView, this, width, height,
                     Color.BLACK);
             mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
@@ -107,19 +107,6 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
                     0, 0, width / 2, height);
             mWindows[WindowType.Log.ordinal()] = mLogWin;
         }
-    }
-
-    /**
-     * スタックの先頭になって表示され始める前に呼ばれる
-     */
-    public void onShow() {
-        super.onShow();
-    }
-
-    /**
-     * スタックの先頭でなくなって表示されなくなる前に呼ばれる
-     */
-    public void onHide() {
     }
 
     /**
@@ -162,7 +149,7 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
      * @param shape
      * @param menuItemId
      */
-    private void addIcon(UIconWindow window, IconType shape, MenuItemId menuItemId) {
+    private void addIcon(UIconWindow window, IconType shape, int menuItemId) {
         UIconManager manager = window.getIconManager();
         UIcon icon = manager.addIcon(shape, AddPos.Top);
 
@@ -193,8 +180,10 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
     /**
      * メニューアイテムをタップした時のコールバック
      */
-    public void menuItemClicked(MenuItemId id, int stateId) {
-        switch (id) {
+    public void menuItemClicked(int id, int stateId) {
+        MenuBarIconWindow.MenuItemId itemId = MenuBarIconWindow.MenuItemId.toEnum(id);
+
+        switch (itemId) {
             case AddTop:
                 break;
             case AddCard:

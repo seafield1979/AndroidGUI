@@ -34,7 +34,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
     private UButtonText[] buttons = new UButtonText[3];
 
     // MenuBar
-    private UMenuBar menuBar;
+    private MenuBarIconWindow menuBar;
 
     // get/set
     public TestMenubarView(Context context) {
@@ -67,7 +67,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         }
 
         // MenuBar
-        menuBar = UMenuBar.createInstance(this, this, getWidth(), getHeight(), Color.BLACK);
+        menuBar = MenuBarIconWindow.createInstance(this, this, getWidth(), getHeight(), Color.BLACK);
     }
 
     @Override
@@ -164,10 +164,12 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
      *
      * @param id
      */
-    public void menuItemClicked(MenuItemId id, int stateId)
+    public void menuItemClicked(int id, int stateId)
     {
+        MenuBarIconWindow.MenuItemId itemId = MenuBarIconWindow.MenuItemId.toEnum(id);
+
         ULog.print(TAG, "clicked:" + id);
-        switch (id) {
+        switch (itemId) {
             case AddCard1:
                 break;
             case AddCard2:

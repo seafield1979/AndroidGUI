@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 
 interface UMenuItemCallbacks {
-    void menuItemClicked(MenuItemId itemId, int stateId);
+    void menuItemClicked(int itemId, int stateId);
 }
 
 /**
@@ -35,7 +35,7 @@ public class UMenuItem extends UDrawable {
      */
     protected UMenuBar menuBar;
     protected UMenuItemCallbacks mCallbacks;
-    protected MenuItemId itemId;
+    protected int itemId;
     protected int nestCount;
     protected int stateId;          // 現在の状態
     protected int stateMax;         // 状態の最大値 addState で増える
@@ -82,7 +82,7 @@ public class UMenuItem extends UDrawable {
         mCallbacks = callbacks;
     }
 
-    public UMenuItem(UMenuBar menuBar, MenuItemId id, Bitmap icon) {
+    public UMenuItem(UMenuBar menuBar, int id, Bitmap icon) {
         super(DRAW_PRIORITY, 0,0,0,0);
         this.menuBar = menuBar;
         this.itemId = id;
