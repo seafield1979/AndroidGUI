@@ -1,22 +1,21 @@
 package com.sunsunsoft.shutaro.ugui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.View;
 
 /**
- * 単語帳トップ SurfaceView版
+ * Created by shutaro on 2016/12/05.
  */
 
-public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolder.Callback, UMenuItemCallbacks, UIconCallbacks, ViewTouchCallbacks, UWindowCallbacks {
+public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks, UIconCallbacks, UWindowCallbacks {
+
+    /**
+     * Enums
+     */
     enum WindowType {
         Icon1,
         Icon2,
@@ -24,15 +23,14 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         Log
     }
 
-    public static final String TAG = "TopView";
-    public static final int SUB_WINDOW_MOVE_FRAME = 10;
+    /**
+     * Consts
+     */
+    public static final String TAG = "PageViewIconWindow";
 
-    // SurfaceView用
-    SurfaceHolder surfaceHolder;
-    Thread thread;
-    Context mContext;
-    private boolean isInvalidate;
-    int screen_width, screen_height;
+    /**
+     * Member Variables
+     */
 
     // Windows
     private UWindow[] mWindows = new UWindow[WindowType.values().length];
@@ -48,24 +46,26 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     // サイズ更新用
     private boolean isFirst = true;
 
-    // クリック判定の仕組み
-    private ViewTouch viewTouch = new ViewTouch(this);
-
+    private Context mContext;
+    private View mParentView;
     private Paint paint = new Paint();
 
-    // get/set
-    public TopSurfaceView(Context context) {
-        this(context, null);
-    }
+    /**
+     * Get/Set
+     */
 
-    public TopSurfaceView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    /**
+     * Constructor
+     */
+
+
+    public PageViewIconWindow(Context context, View parentView) {
         mContext = context;
-        surfaceHolder = getHolder();
-        surfaceHolder.addCallback(this);
+        mParentView = parentView;
+
     }
 
-    private void initWindows(int width, int height) {
+    public void initDrawables(int width, int height) {
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 
@@ -79,12 +79,12 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         }
 
         // Main
-        UIconWindow mainWindow = UIconWindow.createInstance(this, this, this, true, winDir,
+        UIconWindow mainWindow = UIconWindow.createInstance(mParentView, this, this, true, winDir,
                 width, height, Color.WHITE);
         mWindows[WindowType.Icon1.ordinal()] = mainWindow;
 
         // Sub
-        UIconWindow subWindow = UIconWindow.createInstance(this, this, this, false, winDir,
+        UIconWindow subWindow = UIconWindow.createInstance(mParentView, this, this, false, winDir,
                 width, height, Color.LTGRAY);
         subWindow.isShow = false;
         mWindows[WindowType.Icon2.ordinal()] = subWindow;
@@ -92,6 +92,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         mIconWindows = UIconWindows.createInstance(mainWindow, subWindow, width, height);
         mainWindow.setWindows(mIconWindows);
         subWindow.setWindows(mIconWindows);
+        mIconWindows.updateLayout(false);
 
         // アイコンの登録はMainとSubのWindowを作成後に行う必要がある
         mainWindow.init();
@@ -99,144 +100,40 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
 
         // UMenuBar
         if (mMenuBar == null) {
-            mMenuBar = UMenuBar.createInstance(this, this, width, height,
+            mMenuBar = UMenuBar.createInstance(mParentView, this, width, height,
                     Color.BLACK);
             mWindows[WindowType.MenuBar.ordinal()] = mMenuBar;
         }
 
         // ULogWindow
         if (mLogWin == null) {
-            mLogWin = ULogWindow.createInstance(getContext(), this, LogWindowType.AutoDisappear,
+            mLogWin = ULogWindow.createInstance(mContext, mParentView, LogWindowType.AutoDisappear,
                     0, 0, width / 2, height);
             mWindows[WindowType.Log.ordinal()] = mLogWin;
         }
     }
 
-    // Surfaceが作られた時のイベント処理
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        initWindows(getWidth(), getHeight());
-        isInvalidate = true;
+    /**
+     * 描画処理
+     * @param canvas
+     * @param paint
+     * @return true:再描画が必要
+     */
+    public boolean draw(Canvas canvas, Paint paint) {
 
-        thread = new Thread(this);
-        thread.start();
-    }
-
-    // Surfaceが変更された時の処理
-    @Override
-    public void surfaceChanged(
-            SurfaceHolder holder,
-            int format,
-            int width,
-            int height) {
-        screen_width = width;
-        screen_height = height;
-
-        Log.i("myLog", "surfaceChanged");
-    }
-
-    // Surfaceが破棄された時の処理
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        thread = null;
-        Log.i("myLog", "surfaceDestroyed");
-    }
-
-    @Override
-    public void run() {
-        Canvas canvas = null;
-
-        long loopCount = 0;
-        while(thread != null){
-            try{
-                synchronized(this) {
-                    loopCount++;
-
-                    if (isInvalidate) {
-                        isInvalidate = false;
-
-                        canvas = surfaceHolder.lockCanvas();
-                        myDraw(canvas);
-                        surfaceHolder.unlockCanvasAndPost(canvas);
-                    }
-
-                       // 次のinvalidateが実行されるまで待ち(すでにinvalidate済みなら待たない)
-                    if (!isInvalidate) {
-                        wait();
-                    }
-                }
-            }
-            catch(Exception e){
-                Log.d(TAG, "exception:" + e.getMessage());
-                surfaceHolder.unlockCanvasAndPost(canvas);
-            }
-        }
-    }
-
-    public synchronized void invalidate() {
-        if (isInvalidate == false) {
-            isInvalidate = true;
-            notify();
-        }
-    }
-
-
-    public void myDraw(Canvas canvas) {
-        // 背景塗りつぶし
-        canvas.drawColor(Color.WHITE);
-
-        // アンチエリアシング(境界のぼかし)
-        paint.setAntiAlias(true);
-
-        // アイコンWindow
+        // Windowの処理
         // アクション(手前から順に処理する)
         for (int i=mWindows.length - 1; i >= 0; i--) {
             UWindow win = mWindows[i];
             if (win == null) continue;
             if (win.doAction()) {
-                invalidate();
+                return true;
             }
         }
-
-        // マネージャに登録した描画オブジェクトをまとめて描画
-        if (UDrawManager.getInstance().draw(canvas, paint)){
-            invalidate();
-        }
+        return false;
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        boolean ret = true;
-
-        viewTouch.checkTouchType(e);
-        if (WindoTouchEvent(viewTouch)) {
-            invalidate();
-        }
-
-        switch(e.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // trueを返す。こうしないと以降のMoveイベントが発生しなくなる。
-                ret = true;
-                break;
-            case MotionEvent.ACTION_UP:
-                ret = true;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                ret = true;
-                break;
-            default:
-        }
-
-        // コールバック
-        return ret;
-    }
-
-    /**
-     * 各Windowのタッチ処理を変更する
-     * @param vt
-     * @return
-     */
-    private boolean WindoTouchEvent(ViewTouch vt) {
+    public boolean touchEvent(ViewTouch vt) {
         // 手前から順に処理する
         for (int i=mWindows.length - 1; i >= 0; i--) {
             UWindow win = mWindows[i];
@@ -263,6 +160,21 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         PointF menuPos = mMenuBar.getItemPos(menuItemId);
         icon.setPos(window.toWinX(menuPos.x), window.toWinY(menuPos.y));
         window.sortIcons(true);
+    }
+
+    /**
+     * Androidのバックキーが押された時の処理
+     * @return
+     */
+    public boolean onBackKeyDown() {
+        // サブウィンドウが表示されていたら閉じる
+        UIconWindow subWindow = mIconWindows.getSubWindow();
+        if (subWindow.isShow()) {
+            if (mIconWindows.hideWindow(subWindow, true)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -302,7 +214,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
             case Debug1:
                 // ログウィンドウの表示切り替え
                 mLogWin.toggle();
-                invalidate();
+                mParentView.invalidate();
                 break;
             case Debug2:
                 mLogWin.addLog("hoge", UColor.getRandomColor());
@@ -317,6 +229,13 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         ULog.print(TAG, "menu item moved");
     }
 
+    /**
+     * Methods
+     */
+
+    /**
+     * Callbacks
+     */
     /**
      * UIconCallbacks
      */
@@ -337,7 +256,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
 
                     // SubWindowを画面外から移動させる
                     mIconWindows.showWindow(window, true);
-                    invalidate();
+                    mParentView.invalidate();
                 }
             }
             break;
@@ -353,19 +272,6 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
     }
 
     /**
-     * ViewTouchCallbacks
-     */
-    public void longPressed() {
-        ((Activity)mContext).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                WindoTouchEvent(viewTouch);
-                invalidate();
-            }
-        });
-    }
-
-    /**
      * UWindowCallbacks
      */
     public void windowClose(UWindow window) {
@@ -377,4 +283,5 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
             }
         }
     }
+
 }

@@ -164,7 +164,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
      *
      * @param id
      */
-    public void menuItemClicked(MenuItemId id)
+    public void menuItemClicked(MenuItemId id, int stateId)
     {
         ULog.print(TAG, "clicked:" + id);
         switch (id) {
