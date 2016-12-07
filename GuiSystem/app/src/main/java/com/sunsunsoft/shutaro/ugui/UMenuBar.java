@@ -36,6 +36,9 @@ abstract public class UMenuBar extends UWindow {
         isAnimating = animating;
     }
 
+    /**
+     * Constructor
+     */
     public UMenuBar(View parentView, UMenuItemCallbacks callbackClass,
                     int parentW, int parentH,
                     int bgColor)

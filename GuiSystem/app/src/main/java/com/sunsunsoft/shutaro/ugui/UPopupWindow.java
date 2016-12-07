@@ -52,15 +52,15 @@ public class UPopupWindow extends UDialogWindow {
     /**
      * UButtonCallbacks
      */
-    public boolean UButtonClick(int id) {
-        if (super.UButtonClick(id)) {
+    public boolean UButtonClicked(int id, boolean pressedOn) {
+        if (super.UButtonClicked(id, pressedOn)) {
             return true;
         }
 
         switch(id) {
             case OKButtonId:
                 if (buttonCallbacks != null) {
-                    buttonCallbacks.UButtonClick(id);
+                    buttonCallbacks.UButtonClicked(id, pressedOn);
                 }
                 startClosing();
                 return true;

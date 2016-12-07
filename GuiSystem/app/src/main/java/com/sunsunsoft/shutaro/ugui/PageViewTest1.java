@@ -109,7 +109,7 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
      * UButtonCallbacks
      */
 
-    public boolean UButtonClick(int id) {
+    public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + (id + 1));
 
         if (id < ButtonId.values().length) {

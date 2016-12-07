@@ -203,7 +203,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
     /**
      * UButtonCallbacks
      */
-    public boolean UButtonClick(int id) {
+    public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + id);
 
         ButtonId buttonId = ButtonId.values()[id];
@@ -215,9 +215,6 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
                 logWindows[1].clear();
                 return true;
         }
-        return false;
-    }
-    public boolean UButtonLongClick(int id) {
         return false;
     }
 

@@ -294,7 +294,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
     /**
      * UButtonCallbacks
      */
-    public boolean UButtonClick(int id) {
+    public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + id);
 
         switch (id) {
@@ -326,9 +326,6 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 initDialog(DialogTest.Test5, getWidth(), getHeight());
                 return true;
         }
-        return false;
-    }
-    public boolean UButtonLongClick(int id) {
         return false;
     }
 

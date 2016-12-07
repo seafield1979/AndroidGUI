@@ -22,7 +22,9 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
         Test1,
         Test2,
         Test3,
-        Test4
+        Test4,
+        Test5,
+        Test6
     }
 
     public static final String TAG = "TestButtonView";
@@ -51,7 +53,6 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
 
     // UButtons
     private UButtons buttons2;
-    private UButtons buttons3;
 
     // get/set
     public TestButtonView(Context context) {
@@ -75,14 +76,30 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
 
         // UButton
         float y = 100;
-        UButtonType buttonType;
+        UButtonType buttonType = UButtonType.BGColor;
 
         for (int i=0; i<buttons.length; i++) {
             ButtonId id = ButtonId.values()[i];
-            if (i < 2) {
-                buttonType = UButtonType.BGColor;
-            } else {
-                buttonType = UButtonType.Press;
+
+            switch (id) {
+                case Test1:
+                    buttonType = UButtonType.BGColor;
+                    break;
+                case Test2:
+                    buttonType = UButtonType.BGColor;
+                    break;
+                case Test3:
+                    buttonType = UButtonType.Press;
+                    break;
+                case Test4:
+                    buttonType = UButtonType.Press2;
+                    break;
+                case Test5:
+                    buttonType = UButtonType.Press3;
+                    break;
+                case Test6:
+                    buttonType = UButtonType.Press3;
+                    break;
             }
 
             buttons[i] = new UButtonText(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
@@ -90,7 +107,6 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
                     width - 100*2, 120,
                     Color.WHITE,
                     Color.rgb(0,128,0));
-
 
             UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
@@ -103,7 +119,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
 
 
         UDrawManager.getInstance().addDrawable(closingButton);
-        y += 150;
+        y += 50;
 
         // UButtons
         int row = 2;
@@ -113,14 +129,8 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
         for (int i=0; i < row * column; i++) {
             buttons2.add(100 + i, "button " + (100+i));
         }
-        y += 300 + 50;
-
-//        row = 4;
-//        column = 1;
-//        buttons3 = new UButtons(this, UButtonType.Press, BUTTON_PRIORITY, Color.rgb(255, 80, 80),
-//                Color.WHITE, row, column, 0, y, width, 300);
-//        buttons3.addFull(200, "hoge");
-//        y += 300 + 50;
+        UDrawManager.getInstance().addDrawable(buttons2);
+        y += 200 + 50;
 
         // UButtonImage
         Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
@@ -256,8 +266,8 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
      * UButtonCallbacks
      */
 
-    public boolean UButtonClick(int id) {
-        ULog.print(TAG, "button click:" + (id + 1));
+    public boolean UButtonClicked(int id, boolean pressedOn) {
+        ULog.print(TAG, "button click:" + (id + 1) + " pressedOn:" + pressedOn);
 
         if (id < ButtonId.values().length) {
             ButtonId buttonId = ButtonId.values()[id];
@@ -270,6 +280,14 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
                     break;
                 case Test4:
                     break;
+                case Test5:
+                    // セットのボタンの片方の押された状態をキャンセル
+                    buttons[ButtonId.Test6.ordinal()].setPressedOn(false);
+                    break;
+                case Test6:
+                    // セットのボタンの片方の押された状態をキャンセル
+                    buttons[ButtonId.Test5.ordinal()].setPressedOn(false);
+                    break;
             }
             return true;
         } else {
@@ -279,9 +297,6 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
                     break;
             }
         }
-        return false;
-    }
-    public boolean UButtonLongClick(int id) {
         return false;
     }
 }

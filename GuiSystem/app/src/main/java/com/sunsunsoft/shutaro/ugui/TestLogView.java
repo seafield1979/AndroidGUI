@@ -151,7 +151,7 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
     /**
      * UButtonCallbacks
      */
-    public boolean UButtonClick(int id) {
+    public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + id);
 
         ButtonId buttonId = ButtonId.values()[id];
@@ -172,9 +172,6 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
                 logWindows[0].startMovingPos(0,500, 20);
                 return true;
         }
-        return false;
-    }
-    public boolean UButtonLongClick(int id) {
         return false;
     }
 }

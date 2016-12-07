@@ -10,7 +10,6 @@ import android.graphics.RectF;
 /**
  * テキストを表示するボタン
  */
-
 public class UButtonText extends UButton {
 
     /**
@@ -34,10 +33,6 @@ public class UButtonText extends UButton {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public int getTextColor() {
-        return textColor;
     }
 
     public void setTextColor(int textColor) {
@@ -85,9 +80,15 @@ public class UButtonText extends UButton {
 
         int _height = size.height;
 
-        if (type == UButtonType.Press) {
-            // 押したら凹むボタン
+        if (type == UButtonType.BGColor) {
+            // 押したら色が変わるボタン
             if (isPressed) {
+                _color = pressedColor;
+            }
+        }
+        else {
+            // 押したら凹むボタン
+            if (isPressed || pressedOn) {
                 _pos.y += PRESS_Y;
             } else {
                 // ボタンの影用に下に矩形を描画
@@ -96,11 +97,6 @@ public class UButtonText extends UButton {
             }
             _height -= PRESS_Y;
 
-        } else {
-            // 押したら色が変わるボタン
-            if (isPressed) {
-                _color = pressedColor;
-            }
         }
         UDraw.drawRoundRectFill(canvas, paint,
                 new RectF(_pos.x, _pos.y, _pos.x + size.width, _pos.y + _height),

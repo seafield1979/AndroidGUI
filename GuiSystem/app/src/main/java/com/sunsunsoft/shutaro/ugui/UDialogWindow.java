@@ -508,7 +508,7 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
     /**
      * UButtonCallbacks
      */
-    public boolean UButtonClick(int id) {
+    public boolean UButtonClicked(int id, boolean pressedOn) {
         switch(id) {
             case CloseButtonId:
             case CloseDialogId:
@@ -519,12 +519,9 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
                 }
                 return true;
         }
-        if (super.UButtonClick(id)) {
+        if (super.UButtonClicked(id, pressedOn)) {
             return true;
         }
-        return false;
-    }
-    public boolean UButtonLongClick(int id) {
         return false;
     }
 }

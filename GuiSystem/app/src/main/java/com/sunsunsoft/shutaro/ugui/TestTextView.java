@@ -388,7 +388,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
     /**
      * UButtonCallbacks
      */
-    public boolean UButtonClick(int id) {
+    public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + id);
 
         if (id < ButtonId.values().length) {
