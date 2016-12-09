@@ -220,6 +220,11 @@ public class UScrollBar {
         this.topPos = _pos;
     }
 
+    public void updateScroll(long pos) {
+        barPos = (pos / (float)contentLen) * bgLength;
+        this.topPos = pos;
+    }
+
     public void updateBarPos() {
         barPos = (topPos / (float)contentLen) * bgLength;
     }

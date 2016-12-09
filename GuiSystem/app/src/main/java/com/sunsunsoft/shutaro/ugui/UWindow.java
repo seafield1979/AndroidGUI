@@ -156,7 +156,8 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         mScrollBarV.setBgColor(Color.rgb(128, 128, 128));
 
         mScrollBarH = new UScrollBar(ScrollBarType.Bottom, ScrollBarInOut.In,
-                this.pos, width, height, SCROLL_BAR_W, width, contentSize.height);
+                this.pos, width - SCROLL_BAR_W, height,
+                SCROLL_BAR_W, width - SCROLL_BAR_W, contentSize.width);
         mScrollBarH.setBgColor(Color.rgb(128, 128, 128));
 
         // 描画オブジェクトに登録する
@@ -166,6 +167,18 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     public void setContentSize(int width, int height) {
         contentSize.width = width;
         contentSize.height = height;
+    }
+
+    public void updateScrollBar() {
+        // スクロールバー
+        if (mScrollBarV != null) {
+            mScrollBarV.updateSize(size.width, size.height);
+            contentTop.y = mScrollBarV.updateContent(contentSize);
+        }
+        if (mScrollBarH != null) {
+            mScrollBarH.updateSize(size.width, size.height);
+            contentTop.x = mScrollBarH.updateContent(contentSize);
+        }
     }
 
     /**
@@ -180,15 +193,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     public void setSize(int width, int height) {
         super.setSize(width, height);
 
-        // スクロールバー
-        if (mScrollBarV != null) {
-            mScrollBarV.updateSize(width, height);
-            contentTop.y = mScrollBarV.updateContent(contentSize);
-        }
-        if (mScrollBarH != null) {
-            mScrollBarH.updateSize(width, height);
-            contentTop.x = mScrollBarH.updateContent(contentSize);
-        }
+        updateScrollBar();
 
         // 閉じるボタン
         updateCloseIconPos();

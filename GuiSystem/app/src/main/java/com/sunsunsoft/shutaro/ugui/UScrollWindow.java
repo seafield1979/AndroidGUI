@@ -1,10 +1,14 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 
 /**
  * Created by shutaro on 2016/12/09.
+ *
+ * client領域をスワイプでスクロールできるWindow
  */
 
 public class UScrollWindow extends UWindow {
@@ -52,14 +56,24 @@ public class UScrollWindow extends UWindow {
         if (vt.type == TouchType.Moving) {
             if (contentSize.width > clientSize.width) {
                 if (vt.moveX != 0) {
-                    contentTop.x += vt.moveX;
+                    contentTop.x -= vt.moveX;
+                    if (contentTop.x < 0) contentTop.x = 0;
+                    if (contentTop.x + size.width > contentSize.width) {
+                        contentTop.x = contentSize.width - size.width;
+                    }
+                    mScrollBarH.updateScroll((long)contentTop.x);
                     isDraw = true;
 
                 }
             }
             if (contentSize.height > clientSize.height) {
                 if (vt.moveY != 0) {
-                    contentTop.y += vt.moveY;
+                    contentTop.y -= vt.moveY;
+                    if (contentTop.y < 0) contentTop.y = 0;
+                    if (contentTop.y + size.height > contentSize.height) {
+                        contentTop.y = contentSize.height - size.height;
+                    }
+                    mScrollBarV.updateScroll((long)contentTop.y);
                     isDraw = true;
                 }
             }

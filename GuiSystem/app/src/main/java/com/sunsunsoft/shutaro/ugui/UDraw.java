@@ -120,7 +120,7 @@ public class UDraw {
      * @param paint
      * @param center
      * @param radius
-     * @param width
+     * @param width 枠の幅
      * @param color
      */
     public static void drawCircle(Canvas canvas, Paint paint, PointF center, float radius, int width, int color)
