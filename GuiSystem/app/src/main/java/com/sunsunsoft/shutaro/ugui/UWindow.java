@@ -27,7 +27,6 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         RightTop
     }
 
-
     /**
      * Consts
      */

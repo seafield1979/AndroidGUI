@@ -166,10 +166,10 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
                 logWindows[0].clear();
                 return true;
             case MoveUp:
-                logWindows[0].startMovingPos(0,0, 20);
+                logWindows[0].startMoving(0,0, 20);
                 return true;
             case MoveDown:
-                logWindows[0].startMovingPos(0,500, 20);
+                logWindows[0].startMoving(0,500, 20);
                 return true;
         }
         return false;

@@ -23,6 +23,9 @@ public class FragmentMenu extends Fragment implements OnClickListener{
         R.id.buttonWindow,
         R.id.buttonDialog,
             R.id.buttonTouch,
+            R.id.buttonScrollWin,
+            R.id.buttonListView
+
     };
 
     public FragmentMenu() {
@@ -56,9 +59,8 @@ public class FragmentMenu extends Fragment implements OnClickListener{
         switch(v.getId()) {
             case R.id.buttonHome:
             {
-                Intent i = new Intent(getContext().getApplicationContext(),SubActivity.class);
-                i.putExtra("testMode", 1);
-                startActivity(i);
+                Fragment fragment = FragmentTest.newInstance(PageView.IconWindow);
+                showFragment(fragment);
             }
                 break;
             case R.id.buttonButton:
@@ -104,6 +106,17 @@ public class FragmentMenu extends Fragment implements OnClickListener{
                 showFragment(fragment);
             }
             break;
+            case R.id.buttonScrollWin:
+            {
+                Fragment fragment = FragmentTest.newInstance(PageView.ScrollWindow);
+                showFragment(fragment);
+            }
+                break;
+            case R.id.buttonListView: {
+                Fragment fragment = FragmentTest.newInstance(PageView.ListView);
+                showFragment(fragment);
+            }
+                break;
         }
     }
 

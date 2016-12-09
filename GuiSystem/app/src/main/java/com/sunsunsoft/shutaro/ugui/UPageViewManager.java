@@ -11,7 +11,14 @@ import java.util.LinkedList;
 enum PageView {
     IconWindow,
     Test1,
+    ScrollWindow,
+    ListView
     ;
+
+    public static PageView toEnum(int value) {
+        if (value >= values().length) return PageView.IconWindow;
+        return values()[value];
+    }
 }
 
 /**
@@ -90,8 +97,13 @@ public class UPageViewManager {
         page = new PageViewTest1(mContext, mParentView);
         pages[PageView.Test1.ordinal()] = page;
 
-        stackPage(PageView.IconWindow);
+        // ScrollWindow
+        page = new PageViewScrollWindow(mContext, mParentView);
+        pages[PageView.ScrollWindow.ordinal()] = page;
 
+        // ListView
+        page = new PageViewListView(mContext, mParentView);
+        pages[PageView.ListView.ordinal()] = page;
     }
 
     /**

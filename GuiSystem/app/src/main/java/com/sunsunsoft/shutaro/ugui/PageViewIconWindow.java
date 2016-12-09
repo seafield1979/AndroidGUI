@@ -118,28 +118,6 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
     public boolean draw(Canvas canvas, Paint paint) {
         super.draw(canvas, paint);
 
-        // Windowの処理
-        // アクション(手前から順に処理する)
-        for (int i=mWindows.length - 1; i >= 0; i--) {
-            UWindow win = mWindows[i];
-            if (win == null) continue;
-            if (win.doAction()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean touchEvent(ViewTouch vt) {
-        // 手前から順に処理する
-        for (int i=mWindows.length - 1; i >= 0; i--) {
-            UWindow win = mWindows[i];
-            if (!win.isShow()) continue;
-
-            if (win.touchEvent(vt)) {
-                return true;
-            }
-        }
         return false;
     }
 

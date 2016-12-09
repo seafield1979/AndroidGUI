@@ -5,45 +5,67 @@
               android:orientation="vertical"
              tools:context="com.sunsunsoft.shutaro.ugui.FragmentMenu">
 
-    <Button
-        android:text="Home"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonHome"/>
-    <Button
-        android:text="TestButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonButton"/>
-    <Button
-        android:text="Test Textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonTextview"/>
-    <Button
-        android:text="Test MenuBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonMenuBar"/>
-    <Button
-        android:text="Test LogWindow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonLog"/>
-    <Button
-        android:text="Test Window"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonWindow"/>
-    <Button
-        android:text="Test Dialog"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonDialog"/>
-    <Button
-        android:text="Test Touch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonTouch"/>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:text="Home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonHome"/>
+            <Button
+                android:text="TestButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonButton"/>
+            <Button
+                android:text="Test Textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonTextview"/>
+            <Button
+                android:text="Test MenuBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonMenuBar"/>
+            <Button
+                android:text="Test LogWindow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonLog"/>
+            <Button
+                android:text="Test Window"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonWindow"/>
+            <Button
+                android:text="Test Dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonDialog"/>
+            <Button
+                android:text="Test Touch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonTouch"/>
+            <Button
+                android:text="scroll window"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonScrollWin"/>
+            <Button
+                android:text="list view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonListView"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

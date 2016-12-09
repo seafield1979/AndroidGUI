@@ -7,12 +7,10 @@ import android.graphics.Paint;
 import android.view.View;
 
 /**
- * Created by shutaro on 2016/12/05.
- *
- * UViewPageテスト用のクラス
+ * Created by shutaro on 2016/12/09.
  */
 
-public class PageViewTest1 extends UPageView implements UButtonCallbacks{
+public class PageViewListView  extends UPageView implements UButtonCallbacks{
     /**
      * Enums
      */
@@ -34,7 +32,7 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
      * Member Variables
      */
     // UButton
-    private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
+    private UButtonText[] buttons = new UButtonText[PageViewTest1.ButtonId.values().length];
 
 
     /**
@@ -44,7 +42,7 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
     /**
      * Constructor
      */
-    public PageViewTest1(Context context, View parentView) {
+    public PageViewListView(Context context, View parentView) {
         super(context, parentView);
     }
 
@@ -67,7 +65,7 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
         UButtonType buttonType;
 
         for (int i=0; i<buttons.length; i++) {
-            ButtonId id = ButtonId.values()[i];
+            PageViewTest1.ButtonId id = PageViewTest1.ButtonId.values()[i];
             if (i < 2) {
                 buttonType = UButtonType.BGColor;
             } else {
@@ -93,6 +91,10 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
         return false;
     }
 
+    public boolean touchEvent(ViewTouch vt) {
+        return false;
+    }
+
     public boolean onBackKeyDown() {
         return false;
     }
@@ -108,8 +110,8 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
     public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + (id + 1));
 
-        if (id < ButtonId.values().length) {
-            ButtonId buttonId = ButtonId.values()[id];
+        if (id < PageViewTest1.ButtonId.values().length) {
+            PageViewTest1.ButtonId buttonId = PageViewTest1.ButtonId.values()[id];
             switch (buttonId) {
                 case Test1:
                     break;

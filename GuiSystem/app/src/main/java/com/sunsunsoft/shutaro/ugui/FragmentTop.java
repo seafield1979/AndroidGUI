@@ -16,13 +16,15 @@ import android.widget.LinearLayout;
 public class FragmentTop extends MyFragment implements View.OnTouchListener {
     public static final String FRAMGMENT_NAME = FragmentTop.class.getName();
     private final static String BACKGROUND_COLOR = "background_color";
+    private final static String KEY_PAGE = "page";
 
     private TopView topView;
 
-    public static FragmentTop newInstance(@ColorRes int IdRes) {
+    public static FragmentTop newInstance(@ColorRes int IdRes, PageView page) {
         FragmentTop frag = new FragmentTop();
         Bundle b = new Bundle();
         b.putInt(BACKGROUND_COLOR, IdRes);
+        b.putInt(KEY_PAGE, page.ordinal());
         frag.setArguments(b);
         return frag;
     }
@@ -36,6 +38,8 @@ public class FragmentTop extends MyFragment implements View.OnTouchListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top, null);
+        Bundle bundle = getArguments();
+        String url = bundle.getString("URL");
 
         // Viewを追加
         topView = new TopView(getContext());
