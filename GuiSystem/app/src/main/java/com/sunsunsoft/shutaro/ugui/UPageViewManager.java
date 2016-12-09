@@ -12,14 +12,6 @@ enum PageView {
     IconWindow,
     Test1,
     ;
-    private static final int[] drawIdTable = {
-            0,  // IconWindow
-            1   // Test1
-    };
-
-    public int getDrawId() {
-        return drawIdTable[ordinal()];
-    }
 }
 
 /**
@@ -52,7 +44,19 @@ public class UPageViewManager {
     /**
      * Constructor
      */
-    public UPageViewManager(Context context, View parentView) {
+    // Singletonオブジェクト
+    private static UPageViewManager singleton;
+
+    // Singletonオブジェクトを作成する
+    public static UPageViewManager createInstance(Context context, View parentView) {
+        if (singleton == null) {
+            singleton = new UPageViewManager(context, parentView);
+        }
+        return singleton;
+    }
+    public static UPageViewManager getInstance() { return singleton; }
+
+    private UPageViewManager(Context context, View parentView) {
         mContext = context;
         mParentView = parentView;
 
@@ -77,8 +81,9 @@ public class UPageViewManager {
      * 配下のページを追加する
      */
     public void initPages() {
+        UPageView page;
         // IconWindow
-        UPageView page = new PageViewIconWindow(mContext, mParentView);
+        page = new PageViewIconWindow(mContext, mParentView);
         pages[PageView.IconWindow.ordinal()] = page;
 
         // Test1
@@ -86,6 +91,7 @@ public class UPageViewManager {
         pages[PageView.Test1.ordinal()] = page;
 
         stackPage(PageView.IconWindow);
+
     }
 
     /**
@@ -100,20 +106,6 @@ public class UPageViewManager {
         if (pageId == null) return false;
 
         return pages[pageId.ordinal()].draw(canvas, paint);
-    }
-
-    /**
-     * タッチ処理
-     * 配下のUViewPageのタッチ処理を呼び出す
-     * @param vt
-     * @return
-     */
-    public boolean touchEvent(ViewTouch vt) {
-        UPageView page = pages[currentPage().ordinal()];
-        if (page.touchEvent(vt)) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -167,8 +159,17 @@ public class UPageViewManager {
      * @param pageId
      */
     public void stackPage(PageView pageId) {
+
+        // 古いページの後処理
+        if (pageIdStack.size() > 0) {
+            PageView page = pageIdStack.getLast();
+            pages[page.ordinal()].onHide();
+        }
+
         pageIdStack.add(pageId);
-        pages[pageId.ordinal()].onShow();
+        if (pages[pageId.ordinal()] != null) {
+            pages[pageId.ordinal()].onShow();
+        }
     }
 
     /**

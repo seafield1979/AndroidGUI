@@ -2,7 +2,6 @@ package com.sunsunsoft.shutaro.ugui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,8 +10,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.view.View.OnTouchListener;
 
 /**
  * UButtonのテスト
@@ -133,8 +130,8 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
         y += 200 + 50;
 
         // UButtonImage
-        Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
-        Bitmap image2 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman2);
+        Bitmap image1 = UResourceManager.getInstance().getBitmapById(R.drawable.hogeman);
+        Bitmap image2 = UResourceManager.getInstance().getBitmapById(R.drawable.hogeman2);
         UButtonImage imageButton = UButtonImage.createButton(this,
                 IMAGE_BUTTON_ID,
                 BUTTON_PRIORITY, 100, y, 150, 150, image1, image2);

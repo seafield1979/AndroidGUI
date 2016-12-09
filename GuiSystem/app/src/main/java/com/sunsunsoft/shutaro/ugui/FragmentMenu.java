@@ -46,6 +46,9 @@ public class FragmentMenu extends Fragment implements OnClickListener{
             ((Button)view.findViewById(id)).setOnClickListener(this);
         }
 
+        // Bitmapマネージャー生成
+        UResourceManager.createInstance(getContext(), view);
+
         return view;
     }
 

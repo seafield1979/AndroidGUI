@@ -68,6 +68,14 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 
+        // LogWindow
+        logWindows[0] = ULogWindow.createInstance(getContext(), this, LogWindowType.Fix,
+                0, 0,
+                width / 2, height);
+        logWindows[1] = ULogWindow.createInstance(getContext(), this, LogWindowType.Fix,
+                width / 2, 0,
+                width / 2, height);
+
         // Buttons
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
@@ -81,16 +89,6 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
             UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
         }
-
-        // LogWindow
-        logWindows[0] = ULogWindow.createInstance(getContext(), this, LogWindowType.Fix,
-                0, getHeight()/2,
-                getWidth()/2,
-                getHeight()/2);
-        logWindows[1] = ULogWindow.createInstance(getContext(), this, LogWindowType.Fix,
-                getWidth()/2, getHeight()/2,
-                getWidth(),
-                getHeight()/2);
     }
 
     @Override

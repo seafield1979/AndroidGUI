@@ -290,7 +290,6 @@ public class UDrawManager {
 class DrawList
 {
     // 描画範囲 この範囲外には描画しない
-//    public Rect clipRect;
     private int priority;
     private LinkedList<UDrawable> list = new LinkedList<>();
 
@@ -420,7 +419,6 @@ class DrawList
         }
         return false;
     }
-
 
     /**
      * for Debug

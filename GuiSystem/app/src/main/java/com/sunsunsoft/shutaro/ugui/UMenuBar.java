@@ -1,11 +1,9 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -22,7 +20,6 @@ abstract public class UMenuBar extends UWindow {
     protected static final int MARGIN_LR = 50;
     protected static final int MARGIN_TOP = 15;
 
-    protected View mParentView;
     protected UMenuItemCallbacks mMenuItemCallbacks;
     LinkedList<UMenuItem> topItems;
     LinkedList<UMenuItem> items;
@@ -44,7 +41,6 @@ abstract public class UMenuBar extends UWindow {
                     int bgColor)
     {
         super(null, DRAW_PRIORITY, 0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
-        mParentView = parentView;
         mMenuItemCallbacks = callbackClass;
         topItems = new LinkedList<>();
         items = new LinkedList<>();
@@ -65,7 +61,7 @@ abstract public class UMenuBar extends UWindow {
      * @param bmpId
      */
     protected UMenuItem addTopMenuItem(int menuId, int bmpId) {
-        Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
+        Bitmap bmp = UResourceManager.getInstance().getBitmapById(bmpId);
         UMenuItem item = new UMenuItem(this, menuId, bmp);
         item.setCallbacks(mMenuItemCallbacks);
         item.setShow(true);
@@ -75,6 +71,7 @@ abstract public class UMenuBar extends UWindow {
 
         // 座標設定
         item.setPos(MARGIN_LR + (UMenuItem.ITEM_W + MARGIN_LR) * (topItems.size() - 1), MARGIN_TOP);
+
         return item;
     }
 
@@ -86,7 +83,7 @@ abstract public class UMenuBar extends UWindow {
      * @return
      */
     protected UMenuItem addMenuItem(UMenuItem parent, int menuId, int bmpId) {
-        Bitmap bmp = BitmapFactory.decodeResource(mParentView.getResources(), bmpId);
+        Bitmap bmp = UResourceManager.getInstance().getBitmapById(bmpId);
         UMenuItem item = new UMenuItem(this, menuId, bmp);
         item.setCallbacks(mMenuItemCallbacks);
         item.setParentItem(parent);

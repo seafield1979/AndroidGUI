@@ -55,7 +55,7 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
 
 
     public PageViewIconWindow(Context context, View parentView) {
-        super(context, parentView, PageView.IconWindow.getDrawId());
+        super(context, parentView);
     }
 
     public void initDrawables() {
@@ -63,7 +63,7 @@ public class PageViewIconWindow extends UPageView implements UMenuItemCallbacks,
         int height = mParentView.getHeight();
 
         // 描画オブジェクトクリア
-        UDrawManager.getInstance().initPage(drawPageId);
+        UDrawManager.getInstance().init();
 
         // UIconWindow
         UIconWindow.WindowDir winDir;

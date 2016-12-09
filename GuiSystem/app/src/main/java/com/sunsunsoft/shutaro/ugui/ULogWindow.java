@@ -24,6 +24,7 @@ enum LogWindowType {
  * メッセージを表示するWindow
  * メッセージをリストで保持する
  * 古いメッセージが一定時間で削除される
+ *
  */
 public class ULogWindow extends UWindow {
     public static final int SHOW_TIME = 3000;
@@ -65,9 +66,8 @@ public class ULogWindow extends UWindow {
         instance.parentView = parentView;
         instance.context = context;
         instance.type = type;
-        instance.init();
         instance.isShow = false;
-
+        instance.init();
         return instance;
     }
 
