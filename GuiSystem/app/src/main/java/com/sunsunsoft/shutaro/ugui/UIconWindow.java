@@ -479,11 +479,11 @@ public class UIconWindow extends UWindow {
 
         // メニューバーに重ならないように下にマージンを設ける
         if (dir == WindowDir.Vertical) {
-            setContentSize(size.width, maxSize + MARGIN_D);
+            setContentSize(size.width, maxSize + MARGIN_D, true);
             mScrollBarV.setPageLen(getHeight());
             contentTop.y = mScrollBarV.updateContent(contentSize);
         } else {
-            setContentSize(maxSize + MARGIN_D, size.height);
+            setContentSize(maxSize + MARGIN_D, size.height, true);
             mScrollBarH.setPageLen(getWidth());
             contentTop.x = mScrollBarH.updateContent(contentSize);
         }

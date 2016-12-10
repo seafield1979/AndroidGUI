@@ -14,4 +14,6 @@ public class UDebug {
     public static final boolean drawRectLine = false;
 
     public static final boolean drawTextBaseLine = true;
+
+    public static final boolean drawListItemIndex = true;
 }

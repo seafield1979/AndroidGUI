@@ -110,6 +110,7 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
                 x = 0;
                 y += windowH;
             }
+            window .setContentSize(2000,2000,true);
         }
     }
 

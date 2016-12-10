@@ -54,8 +54,8 @@ public class PageViewScrollWindow extends UPageView implements UButtonCallbacks,
 
 
         mScrollWindow = new UScrollWindowTest(this, 1, 0, 0, width, height, Color.WHITE);
-        mScrollWindow.setContentSize(2000,2000);
-        mScrollWindow.updateScrollBar();
+        mScrollWindow.setContentSize(2000,2000, true);
+        mScrollWindow.updateWindow();
     }
 
     public boolean draw(Canvas canvas, Paint paint) {

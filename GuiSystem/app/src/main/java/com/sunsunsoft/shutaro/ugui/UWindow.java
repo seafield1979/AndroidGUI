@@ -6,7 +6,6 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-
 /**
  * UWindow呼び出し元に通知するためのコールバック
  */
@@ -27,13 +26,21 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         RightTop
     }
 
+    // スクロールバーの表示タイプ
+    enum WindowSBShowType {
+        Hidden,             // 非表示
+        Show,               // 表示
+        Show2,              // 表示(スクロール中のみ表示)
+        ShowAllways         // 常に表示
+    }
+
     /**
      * Consts
      */
     public static final String TAG = "UWindow";
     public static final int CloseButtonId = 1000123;
 
-    protected static final int SCROLL_BAR_W = 100;
+    protected static final int SCROLL_BAR_W = 50;
 
     /**
      * Member Variables
@@ -42,18 +49,19 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     protected int bgColor;
     protected int frameColor;
 
-    /**
-     * Get/Set
-     */
     protected SizeL contentSize = new SizeL();     // 領域全体のサイズ
-    protected SizeL clientSize = new SizeL();      // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
+    protected Size clientSize = new Size();      // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
     protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
     protected UScrollBar mScrollBarH;
     protected UScrollBar mScrollBarV;
     protected UButtonClose closeIcon;            // 閉じるボタン
     protected CloseIconPos closeIconPos;     // 閉じるボタンの位置
 
-    public boolean isShow() {
+    protected WindowSBShowType mSBType;
+
+    /**
+     * Get/Set
+     */    public boolean isShow() {
         return isShow;
     }
 
@@ -146,40 +154,39 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         super(priority, x,y,width,height);
         this.windowCallbacks = callbacks;
         this.bgColor = color;
-        clientSize.width = size.width - SCROLL_BAR_W;
-        clientSize.height = size.height - SCROLL_BAR_W;
+        mSBType = WindowSBShowType.Show2;
+        clientSize.width = size.width;
+        clientSize.height = size.height;
         updateRect();
 
         // ScrollBar
-        mScrollBarV = new UScrollBar(ScrollBarType.Right, ScrollBarInOut.In,
-                this.pos, width, height, SCROLL_BAR_W, height, contentSize.height);
-        mScrollBarV.setBgColor(Color.rgb(128, 128, 128));
+        ScrollBarShowType showType = ScrollBarShowType.Show;
+        switch(mSBType) {
+            case Show:               // 表示
+                showType = ScrollBarShowType.Show;
+                break;
+            case Show2:              // 表示(スクロール中のみ表示)
+                showType = ScrollBarShowType.Show2;
+                break;
+            case ShowAllways:        // 常に表示
+                showType = ScrollBarShowType.ShowAllways;
+                break;
+        }
 
-        mScrollBarH = new UScrollBar(ScrollBarType.Bottom, ScrollBarInOut.In,
-                this.pos, width - SCROLL_BAR_W, height,
-                SCROLL_BAR_W, width - SCROLL_BAR_W, contentSize.width);
-        mScrollBarH.setBgColor(Color.rgb(128, 128, 128));
+        if (mSBType != WindowSBShowType.Hidden) {
+            mScrollBarV = new UScrollBar(ScrollBarLocation.Right, showType,
+                    this.pos, width, height - SCROLL_BAR_W, SCROLL_BAR_W,
+                    height - SCROLL_BAR_W, contentSize.height);
+
+            mScrollBarH = new UScrollBar(ScrollBarLocation.Bottom, showType,
+                    this.pos, width - SCROLL_BAR_W, height,
+                    SCROLL_BAR_W, width - SCROLL_BAR_W, contentSize.width);
+        }
 
         // 描画オブジェクトに登録する
         drawList = UDrawManager.getInstance().addDrawable(this);
     }
 
-    public void setContentSize(int width, int height) {
-        contentSize.width = width;
-        contentSize.height = height;
-    }
-
-    public void updateScrollBar() {
-        // スクロールバー
-        if (mScrollBarV != null) {
-            mScrollBarV.updateSize(size.width, size.height);
-            contentTop.y = mScrollBarV.updateContent(contentSize);
-        }
-        if (mScrollBarH != null) {
-            mScrollBarH.updateSize(size.width, size.height);
-            contentTop.x = mScrollBarH.updateContent(contentSize);
-        }
-    }
 
     /**
      * Methods
@@ -190,14 +197,52 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * @param width
      * @param height
      */
-    public void setSize(int width, int height) {
+    public void setSize(int width, int height, boolean update) {
         super.setSize(width, height);
 
-        updateScrollBar();
+        if (update) {
+            updateWindow();
+        }
 
         // 閉じるボタン
         updateCloseIconPos();
     }
+
+    public void setContentSize(int width, int height, boolean update) {
+        contentSize.width = width;
+        contentSize.height = height;
+
+        if (update) {
+            updateWindow();
+        }
+    }
+
+    public void updateWindow() {
+        // clientSize
+        if (size.width < contentSize.width &&
+                mSBType != WindowSBShowType.Show2)
+        {
+            clientSize.height = size.height - mScrollBarH.getBgWidth();
+        }
+        if (size.height < contentSize.height &&
+                mSBType != WindowSBShowType.Show2)
+        {
+            clientSize.width = size.width - mScrollBarV.getBgWidth();
+        }
+
+        // スクロールバー
+        if (mScrollBarV != null) {
+            mScrollBarV.setPageLen(clientSize.height);
+            mScrollBarV.updateSize(clientSize.width, clientSize.height, false);
+            contentTop.y = mScrollBarV.updateContent(contentSize);
+        }
+        if (mScrollBarH != null) {
+            mScrollBarH.setPageLen(clientSize.width);
+            mScrollBarH.updateSize(clientSize.width, clientSize.height, false);
+            contentTop.x = mScrollBarH.updateContent(contentSize);
+        }
+    }
+
 
     /**
      * Windowを閉じるときの処理
@@ -206,10 +251,6 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         // 描画オブジェクトから削除する
         if (drawList != null) {
             UDrawManager.getInstance().removeDrawable(this);
-//            drawList = null;
-        }
-        if (windowCallbacks != null) {
-            windowCallbacks.windowClose(this);
         }
     }
 
@@ -392,8 +433,11 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         switch (id) {
             case CloseButtonId:
                 // 閉じるボタンを押したら自身のWindowを閉じてから呼び出し元の閉じる処理を呼び出す
-                closeWindow();
-
+                if (windowCallbacks != null) {
+                    windowCallbacks.windowClose(this);
+                } else {
+                    closeWindow();
+                }
                 return true;
         }
         return false;

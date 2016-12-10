@@ -226,6 +226,13 @@ abstract public class UDrawable {
     abstract public boolean touchEvent(ViewTouch vt);
 
     /**
+     * DrawManagerの描画リストに追加する
+     */
+    public void addToDrawManager() {
+        UDrawManager.getInstance().addDrawable(this);
+    }
+
+    /**
      * 移動
      * @param moveX
      * @param moveY
