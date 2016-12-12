@@ -198,12 +198,9 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
 
-                Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
-                Bitmap image2 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman2);
-
                 for (int i=0; i<dialogButtonIds.length; i++) {
                     int buttonId = dialogButtonIds[i];
-                    dialogWindow.addImageButton(buttonId, image1, image2, 150, 150);
+                    dialogWindow.addImageButton(buttonId, R.drawable.hogeman, R.drawable.hogeman2, 150, 150);
                 }
                 dialogWindow.addButton(100, "Test" + 1, Color.BLACK, Color
                         .WHITE);
@@ -219,12 +216,9 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
 
-                Bitmap image1 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman);
-                Bitmap image2 = BitmapFactory.decodeResource(getResources(), R.drawable.hogeman2);
-
                 for (int i=0; i<dialogButtonIds.length; i++) {
                     int buttonId = dialogButtonIds[i];
-                    dialogWindow.addImageButton(buttonId, image1, image2, 150, 150);
+                    dialogWindow.addImageButton(buttonId, R.drawable.hogeman, R.drawable.hogeman2, 150, 150);
                 }
                 dialogWindow.addButton(100, "Test" + 1, Color.BLACK, Color
                         .WHITE);

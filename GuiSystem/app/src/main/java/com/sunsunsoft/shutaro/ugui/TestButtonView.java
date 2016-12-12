@@ -130,16 +130,14 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
         y += 200 + 50;
 
         // UButtonImage
-        Bitmap image1 = UResourceManager.getInstance().getBitmapById(R.drawable.hogeman);
-        Bitmap image2 = UResourceManager.getInstance().getBitmapById(R.drawable.hogeman2);
         UButtonImage imageButton = UButtonImage.createButton(this,
                 IMAGE_BUTTON_ID,
-                BUTTON_PRIORITY, 100, y, 150, 150, image1, image2);
+                BUTTON_PRIORITY, 100, y, 150, 150, R.drawable.hogeman, R.drawable.hogeman2);
         UDrawManager.getInstance().addDrawable(imageButton);
 
         UButtonImage imageButton2 = UButtonImage.createButton(this,
                 IMAGE_BUTTON_ID + 1,
-                BUTTON_PRIORITY, 300, y, 150, 150, image1, null);
+                BUTTON_PRIORITY, 300, y, 150, 150, R.drawable.hogeman, -1);
         UDrawManager.getInstance().addDrawable(imageButton2);
 
     }

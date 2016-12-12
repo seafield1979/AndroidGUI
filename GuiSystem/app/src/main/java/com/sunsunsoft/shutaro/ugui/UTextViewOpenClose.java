@@ -72,7 +72,8 @@ import android.graphics.RectF;
                                   int width,
                                   int color, int bgColor)
         {
-            super(text, textSize, priority, alignment, canvasW, false, true, x, y, width, color,
+            super(text, textSize, priority, alignment, canvasW, false, true, false, x, y, width,
+                    color,
                     bgColor);
 
             Size _size = getTextSize(canvasW);

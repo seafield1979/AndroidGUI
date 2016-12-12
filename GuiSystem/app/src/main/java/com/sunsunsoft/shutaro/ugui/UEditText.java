@@ -62,7 +62,7 @@ public class UEditText extends UTextView implements UEditDialogCallbacks{
                      float x, float y, int width,
                      int color, int bgColor)
     {
-        super(text, textSize, priority, alignment, canvasW, multiLine, true,
+        super(text, textSize, priority, alignment, canvasW, multiLine, true, false,
                 x, y, width, color, bgColor);
 
         this.baseSize = new Size(size);

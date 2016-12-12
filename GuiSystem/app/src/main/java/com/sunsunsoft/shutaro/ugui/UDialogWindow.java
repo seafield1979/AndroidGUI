@@ -297,15 +297,15 @@ public class UDialogWindow extends UWindow implements UButtonCallbacks{
     /**
      * アイコンボタンを追加
      */
-    public void addImageButton(int id, Bitmap image, Bitmap pressedImage, int width, int height) {
-        if (image == null) {
+    public void addImageButton(int id, int imageId, int pressedImageId, int width, int height) {
+        if (imageId == -1) {
             return;
         }
 
         UButtonImage button = UButtonImage.createButton(buttonCallbacks, id,
                 0,
                 0, 0, width, height,
-                image, pressedImage);
+                imageId, pressedImageId);
         mButtons.add(button);
         isUpdate = true;
     }
