@@ -102,8 +102,7 @@ public class TestButtonView extends SurfaceView implements Runnable,SurfaceHolde
             buttons[i] = new UButtonText(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
                     (i+1), 100, y,
                     width - 100*2, 120,
-                    Color.WHITE,
-                    Color.rgb(0,128,0));
+                    50, Color.WHITE, Color.rgb(0,128,0));
 
             UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;

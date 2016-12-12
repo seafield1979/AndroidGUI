@@ -43,7 +43,7 @@ public class UListView extends UScrollWindow
     public UListView(UWindowCallbacks callbacks,
                      UListItemCallbacks listItemCallbacks,
                      int priority, float x, float y, int width, int
-            height, int color)
+                             height, int color)
     {
         super(callbacks, priority, x, y, width, height, color);
         mListItemCallbacks = listItemCallbacks;
@@ -52,9 +52,16 @@ public class UListView extends UScrollWindow
     /**
      * Methods
      */
+    public UListItem get(int index) {
+        return mItems.get(index);
+    }
+
+
     public void add(UListItem item) {
         item.setPos(0, mBottomY);
         item.setIndex(mItems.size());
+        item.setListItemCallbacks(mListItemCallbacks);
+
         mItems.add(item);
         mBottomY += item.size.height;
 
@@ -117,28 +124,25 @@ public class UListView extends UScrollWindow
     public boolean touchEvent(ViewTouch vt) {
         // アイテムのクリック判定処理
         PointF offset = new PointF(pos.x, pos.y + contentTop.y);
+        boolean isDraw = false;
+
         for (UListItem item : mItems) {
             if (item.touchEvent(vt, offset)) {
-                return true;
+                isDraw = true;
             }
         }
 
         if (super.touchEvent(vt)) {
-            return true;
+            isDraw = true;
         }
-        return false;
+        return isDraw;
     }
 
     /**
      * for Debug
      */
     public void addDummyItems(int count) {
-        for (int i=0; i<count; i++) {
-            ListItemTest1 item = new ListItemTest1( mListItemCallbacks,
-                "hoge",
-                0, clientSize.width, UColor.getRandomColor());
-            add(item);
-        }
+
         updateWindow();
     }
 }

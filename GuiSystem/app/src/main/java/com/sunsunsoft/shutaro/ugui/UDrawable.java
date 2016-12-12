@@ -219,11 +219,20 @@ abstract public class UDrawable {
     }
 
     /**
+     * タッチアップ処理
+     * @param vt
+     * @return
+     */
+    public boolean touchUpEvent(ViewTouch vt) { return false; }
+
+    /**
      * タッチ処理
      * @param vt
      * @return
      */
-    abstract public boolean touchEvent(ViewTouch vt);
+    public boolean touchEvent(ViewTouch vt) {
+        return false;
+    }
 
     /**
      * DrawManagerの描画リストに追加する
@@ -231,6 +240,7 @@ abstract public class UDrawable {
     public void addToDrawManager() {
         UDrawManager.getInstance().addDrawable(this);
     }
+
 
     /**
      * 移動

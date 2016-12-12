@@ -29,6 +29,7 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
     public static final String TAG = "PageViewTest1";
     private static final int BUTTON_PRIORITY = 100;
     private static final int IMAGE_BUTTON_ID = 10;
+    private static final int TEXT_SIZE = 50;
 
     /**
      * Member Variables
@@ -77,8 +78,7 @@ public class PageViewTest1 extends UPageView implements UButtonCallbacks{
             buttons[i] = new UButtonText(this, buttonType, id.ordinal(), BUTTON_PRIORITY, "test" +
                     (i+1), 100, y,
                     width - 100*2, 120,
-                    Color.WHITE,
-                    Color.rgb(0,128,0));
+                    TEXT_SIZE, Color.WHITE, Color.rgb(0,128,0));
 
 
             UDrawManager.getInstance().addDrawable(buttons[i]);

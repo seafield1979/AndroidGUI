@@ -198,8 +198,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                 button1 = new UButtonText(this, UButtonType.Press, ButtonId.Edit.ordinal(), BUTTON_PRIORITY,
                         "edit", 100, y,
                         getWidth() - 100*2, 120,
-                        Color.WHITE,
-                        Color.rgb(0,128,0));
+                        50, Color.WHITE, Color.rgb(0,128,0));
                 drawManager.addDrawable(button1);
                 y += 120 + 50;
 

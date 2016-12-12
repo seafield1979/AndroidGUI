@@ -32,7 +32,7 @@ public class ListItemTest1 extends UListItem {
                          String text,
                          float x, int width, int color)
     {
-        super(listItemCallbacks, x, width, ITEM_H);
+        super(listItemCallbacks, true, x, width, ITEM_H, color);
         this.color = color;
         mText = text;
     }

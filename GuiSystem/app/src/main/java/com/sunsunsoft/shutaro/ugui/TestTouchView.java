@@ -84,8 +84,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
             buttons[i] = new UButtonText(this, UButtonType.Press, id.ordinal(),
                     BUTTON_PRIORITY, title,
                     100, y, width - 100*2, 120,
-                    Color.WHITE,
-                    Color.rgb(0,128,0));
+                    50, Color.WHITE, Color.rgb(0,128,0));
             UDrawManager.getInstance().addDrawable(buttons[i]);
             y += 150;
         }

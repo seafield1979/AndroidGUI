@@ -82,10 +82,8 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
             ButtonId id = ButtonId.values()[i];
             buttons[i] = new UButtonText(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
                     id.toString(),
-                    100, y,
-                    width - 100*2, 120,
-                    Color.WHITE,
-                    Color.rgb(0,128,0));
+                    100, y, width - 100*2, 120,
+                    50, Color.WHITE, Color.rgb(0,128,0));
             if (buttons[i] != null) {
                 UDrawManager.getInstance().addDrawable(buttons[i]);
             }

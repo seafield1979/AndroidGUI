@@ -92,10 +92,8 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
             int id = testButtonIds[i];
             buttons[i] = new UButtonText(this, UButtonType.Press, id, BUTTON_PRIORITY,
                     "Dialog" + (i+1),
-                    100, y,
-                    width - 100*2, 120,
-                    Color.WHITE,
-                    Color.rgb(0,128,0));
+                    100, y, width - 100*2, 120,
+                    50, Color.WHITE, Color.rgb(0,128,0));
             if (buttons[i] != null) {
                 UDrawManager.getInstance().addDrawable(buttons[i]);
             }
@@ -129,7 +127,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 dialogWindow.title = "hoge\nhoge";
 
                 for (int i=0; i<3; i++) {
-                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX, width,
+                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX,
                             false, false,
                             50, Color.rgb(50, 50, 0), 0);
                 }
@@ -152,7 +150,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 for (int i=0; i<3; i++) {
-                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX, width,
+                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX,
                             false, false,
                             50, Color.rgb(50, 50, 0), 0);
                 }
@@ -177,7 +175,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
                 for (int i=0; i<3; i++) {
-                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX, width,
+                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX,
                             false, false,
                             50, Color.rgb(50, 50, 0), 0);
                 }

@@ -76,8 +76,7 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
                     id.toString(),
                     100, y,
                     width - 100*2, 120,
-                    Color.WHITE,
-                    Color.rgb(0,128,0));
+                    50, Color.WHITE, Color.rgb(0,128,0));
             if (buttons[i] != null) {
                 UDrawManager.getInstance().addDrawable(buttons[i]);
             }

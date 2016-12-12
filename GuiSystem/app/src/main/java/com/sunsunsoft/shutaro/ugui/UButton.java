@@ -7,6 +7,12 @@ import android.graphics.RectF;
 import android.util.Log;
 
 interface UButtonCallbacks {
+    /**
+     * ボタンがクリックされた時の処理
+     * @param id  button id
+     * @param pressedOn  押された状態かどうか(On/Off)
+     * @return
+     */
     boolean UButtonClicked(int id, boolean pressedOn);
 }
 
@@ -31,7 +37,7 @@ abstract public class UButton extends UDrawable {
      * Consts
      */
     public static final String TAG = "UButton";
-    protected static final int PRESS_Y = 12;
+    protected static final int PRESS_Y = 16;
     protected static final int BUTTON_RADIUS = 16;
 
     /**
@@ -98,8 +104,22 @@ abstract public class UButton extends UDrawable {
     abstract void draw(Canvas canvas, Paint paint, PointF offset);
 
     /**
-     * Touchable Interface
+     * UDrawable Interface
      */
+    /**
+     * タッチアップイベント
+     */
+    public boolean touchUpEvent(ViewTouch vt) {
+        boolean done = false;
+
+        if (vt.isTouchUp()) {
+            if (isPressed) {
+                isPressed = false;
+                done = true;
+            }
+        }
+        return done;
+    }
 
     /**
      * タッチイベント
@@ -114,12 +134,6 @@ abstract public class UButton extends UDrawable {
         boolean done = false;
         if (offset == null) {
             offset = new PointF();
-        }
-        if (vt.isTouchUp()) {
-            if (isPressed) {
-                isPressed = false;
-                done = true;
-            }
         }
 
         switch(vt.type) {

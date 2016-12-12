@@ -15,13 +15,14 @@ public class UButtonText extends UButton {
     /**
      * Consts
      */
+    public static final String TAG = "UButtonText";
 
     /**
      * Member Variables
      */
     private String text;
     private int textColor;
-
+    private int mTextSize;
 
     /**
      * Get/Set
@@ -45,11 +46,13 @@ public class UButtonText extends UButton {
      */
     public UButtonText(UButtonCallbacks callbacks, UButtonType type, int id,
                        int priority, String text,
-                       float x, float y, int width, int height, int textColor, int color)
+                       float x, float y, int width, int height,
+                       int textSize, int textColor, int color)
     {
         super(callbacks, type, id, priority, x, y, width, height, color);
         this.text = text;
         this.textColor = textColor;
+        mTextSize = textSize;
     }
 
     /**
@@ -92,8 +95,11 @@ public class UButtonText extends UButton {
                 _pos.y += PRESS_Y;
             } else {
                 // ボタンの影用に下に矩形を描画
+                int height = PRESS_Y + 20;
                 UDraw.drawRoundRectFill(canvas, paint,
-                        new RectF(_pos.x, _pos.y, _pos.x + size.width, _pos.y + size.height), BUTTON_RADIUS, pressedColor, 0, 0);
+                        new RectF(_pos.x, _pos.y + size.height - height,
+                                _pos.x + size.width, _pos.y + size.height),
+                        BUTTON_RADIUS, pressedColor, 0, 0);
             }
             _height -= PRESS_Y;
 
@@ -104,17 +110,9 @@ public class UButtonText extends UButton {
 
         // テキスト
         if (text != null) {
-            Rect bound = new Rect();
-            paint.setTextSize(50);
-            paint.setColor(textColor);
-
-            // センタリング
-            paint.getTextBounds(text, 0, text.length(), bound);
-            Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-            float baseY = _pos.y + _height / 2 - (fontMetrics.ascent + fontMetrics
-                    .descent) / 2;
-
-            canvas.drawText(text, _pos.x + (size.width - bound.width()) / 2, baseY, paint);
+            UDraw.drawText(canvas, text, UAlignment.Center, mTextSize,
+                    _pos.x + size.width / 2,
+                    _pos.y + size.height / 2, textColor);
         }
     }
 }
