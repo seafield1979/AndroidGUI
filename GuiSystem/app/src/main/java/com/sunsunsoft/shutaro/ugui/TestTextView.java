@@ -63,7 +63,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
 
     private Paint paint = new Paint();
 
-    // Page buttons
+    // Page mButtons
     private UButtons pageButtons;
 
     // UButton
@@ -100,7 +100,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
      * @return
      */
     private UTextView addTextView(String text, int textSize, int priority,
-                                  UDraw.UAlignment alignment, boolean multiLine,
+                                  UAlignment alignment, boolean multiLine,
                                   boolean drawBG,
                                   float x, float y, int color, int bgColor) {
         UTextView textView = UTextView.createInstance(text, textSize, priority,
@@ -171,16 +171,16 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
             {
                 // TextView
                 for (int i=0; i<4; i++) {
-                    UDraw.UAlignment alignment = UDraw.UAlignment.None;
+                    UAlignment alignment = UAlignment.None;
                     switch (i) {
                         case 1:
-                            alignment = UDraw.UAlignment.CenterX;
+                            alignment = UAlignment.CenterX;
                             break;
                         case 2:
-                            alignment = UDraw.UAlignment.CenterY;
+                            alignment = UAlignment.CenterY;
                             break;
                         case 3:
-                            alignment = UDraw.UAlignment.Center;
+                            alignment = UAlignment.Center;
                             break;
                     }
                     String text = "hoge" + (i + 1);
@@ -205,16 +205,16 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
 
                 // TextView
                 for (int i=0; i<4; i++) {
-                    UDraw.UAlignment alignment = UDraw.UAlignment.None;
+                    UAlignment alignment = UAlignment.None;
                     switch (i) {
                         case 1:
-                            alignment = UDraw.UAlignment.CenterX;
+                            alignment = UAlignment.CenterX;
                             break;
                         case 2:
-                            alignment = UDraw.UAlignment.CenterY;
+                            alignment = UAlignment.CenterY;
                             break;
                         case 3:
-                            alignment = UDraw.UAlignment.Center;
+                            alignment = UAlignment.Center;
                             break;
                     }
                     String text = "hoge" + (i + 1);
@@ -232,24 +232,24 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
             {
                 // Multi line
                 addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.None, true, false,
+                        UAlignment.None, true, false,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
 
                 addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.CenterX, true, false,
+                        UAlignment.CenterX, true, false,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
                 addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.CenterY, true, false,
+                        UAlignment.CenterY, true, false,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
 
                 addTextView("abl\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.Center, true, false,
+                        UAlignment.Center, true, false,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
@@ -260,24 +260,24 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
             {
                 // Multi line
                 addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.None, true, true,
+                        UAlignment.None, true, true,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
 
                 addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.CenterX, true, true,
+                        UAlignment.CenterX, true, true,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
                 addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.CenterY, true, true,
+                        UAlignment.CenterY, true, true,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
 
                 addTextView("aaa\nbbb", TEXT_SIZE, TEXT_PRIORITY,
-                        UDraw.UAlignment.Center, true, true,
+                        UAlignment.Center, true, true,
                         getWidth() / 2, y, UColor.getRandomColor(), UColor
                                 .getRandomColor());
                 y += 200;
@@ -288,7 +288,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
             {
                 // EditText
                 editText = UEditText.createInstance(this, this, "aaa", TEXT_SIZE, 71,
-                        UDraw.UAlignment.None, getWidth(), false,
+                        UAlignment.None, getWidth(), false,
                         100, y, 300, Color.GREEN, Color.argb(128,0,
                                 0,0));
                 drawManager.addDrawable(editText);
@@ -296,7 +296,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
 
                 // UTextViewOpenClose
                 textView2 = UTextViewOpenClose.createInstance(
-                        "aaa\naaa\naaa\naaa", 71, TEXT_SIZE, UDraw.UAlignment.None,
+                        "aaa\naaa\naaa\naaa", 71, TEXT_SIZE, UAlignment.None,
                         getWidth(),
                         100, y, 300, Color.GREEN, Color.argb(128,0,
                                 0,0));

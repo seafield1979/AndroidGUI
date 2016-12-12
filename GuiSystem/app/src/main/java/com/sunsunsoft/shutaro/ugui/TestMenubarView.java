@@ -55,7 +55,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 
-        // buttons
+        // mButtons
         float y = 100;
         for (int i=0; i<buttons.length; i++) {
             buttons[i] = new UButtonText(this, UButtonType.Press, i, BUTTON_PRIORITY, "test" +

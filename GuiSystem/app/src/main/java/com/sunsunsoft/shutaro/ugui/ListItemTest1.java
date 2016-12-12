@@ -64,7 +64,7 @@ public class ListItemTest1 extends UListItem {
         if (UDebug.drawListItemIndex) {
             text += "" + mIndex;
         }
-        UDraw.drawText(canvas, text, UDraw.UAlignment.Center, TEXT_SIZE,
+        UDraw.drawText(canvas, text, UAlignment.Center, TEXT_SIZE,
                 _pos.x + size.width / 2, _pos.y + size.height / 2, TEXT_COLOR );
     }
 

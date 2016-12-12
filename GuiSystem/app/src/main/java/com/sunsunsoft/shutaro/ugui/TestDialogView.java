@@ -121,22 +121,18 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
         switch (id) {
             case Test1: {
                 // 横にボタンが並ぶダイアログ
-                /*
-                DialogType type, UButtonCallbacks buttonCallbacks,
-                                               UDialogCallbacks dialogCallbacks,
-                                               ButtonDir dir, DialogPosType posType,
-                                               boolean isAnimation,
-                                               int screenW, int screenH,
-                                               int textColor, int dialogColor)
-                 */
-
                 dialogWindow = UDialogWindow.createInstance(UDialogWindow.DialogType.Mordal,
                         this, this,
                         UDialogWindow.ButtonDir.Horizontal,
                         UDialogWindow.DialogPosType.Center, false,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
-                dialogWindow.message = "message";
+
+                for (int i=0; i<3; i++) {
+                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX, width,
+                            false, false,
+                            50, Color.rgb(50, 50, 0), 0);
+                }
                 for (int i = 0; i < dialogButtonIds.length; i++) {
                     int buttonId = dialogButtonIds[i];
                     dialogWindow.addButton(buttonId, "Test" + (i + 1), Color.BLACK, Color
@@ -155,7 +151,11 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         UDialogWindow.DialogPosType.Center, true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
-                dialogWindow.message = "message";
+                for (int i=0; i<3; i++) {
+                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX, width,
+                            false, false,
+                            50, Color.rgb(50, 50, 0), 0);
+                }
                 for (int i=0; i<dialogButtonIds.length; i++) {
                     int buttonId = dialogButtonIds[i];
                     dialogWindow.addButton(buttonId, "Test" + (i+1), Color.BLACK, Color
@@ -176,7 +176,11 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
                 dialogWindow.title = "hoge\nhoge";
-                dialogWindow.message = "message";
+                for (int i=0; i<3; i++) {
+                    dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX, width,
+                            false, false,
+                            50, Color.rgb(50, 50, 0), 0);
+                }
                 for (int i=0; i<dialogButtonIds.length; i++) {
                     int buttonId = dialogButtonIds[i];
                     dialogWindow.addButton(buttonId, "Test" + (i+1), Color.BLACK, Color

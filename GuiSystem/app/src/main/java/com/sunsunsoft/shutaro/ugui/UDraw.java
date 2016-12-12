@@ -12,19 +12,19 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 
+enum UAlignment {
+    None,
+    CenterX,
+    CenterY,
+    Center
+}
+
 /**
  * 自前の描画処理
  * OnDrawの中から呼び出す
  */
 
 public class UDraw {
-    enum UAlignment {
-        None,
-        CenterX,
-        CenterY,
-        Center
-    }
-
     // ラジアン角度
     public static final double RAD = 3.1415 / 180.0;
 
@@ -120,7 +120,7 @@ public class UDraw {
      * @param paint
      * @param center
      * @param radius
-     * @param width 枠の幅
+     * @param width
      * @param color
      */
     public static void drawCircle(Canvas canvas, Paint paint, PointF center, float radius, int width, int color)
@@ -278,18 +278,20 @@ public class UDraw {
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
 
         // テキストの左上端がx,yと一致するように補正
-        y -= (fontMetrics.ascent + fontMetrics.descent);
-
         switch (alignment) {
+            case None:
+                y -= fontMetrics.ascent;
+                break;
             case CenterX:
                 x -= width / 2;
+                y -= fontMetrics.ascent;
                 break;
             case CenterY:
-                y -= (-fontMetrics.top - fontMetrics.bottom) / 2;
+                y -= fontMetrics.ascent / 2 + textSize * 0.15;
                 break;
             case Center:
                 x -= width / 2;
-                y -= (-fontMetrics.top - fontMetrics.bottom) / 2;
+                y -= fontMetrics.ascent / 2 + textSize * 0.15;
                 break;
         }
         canvas.drawText(_text, x, y, paint);

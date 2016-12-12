@@ -67,7 +67,7 @@ import android.graphics.RectF;
 
 
         public UTextViewOpenClose(String text, int textSize, int priority,
-                                  UDraw.UAlignment alignment, int canvasW,
+                                  UAlignment alignment, int canvasW,
                                   float x, float y,
                                   int width,
                                   int color, int bgColor)
@@ -85,7 +85,7 @@ import android.graphics.RectF;
         }
 
         public static UTextViewOpenClose createInstance(String text, int textSize, int priority,
-                                                        UDraw.UAlignment alignment, int canvasW,
+                                                        UAlignment alignment, int canvasW,
                                                         float x, float y,
                                                         int width,
                                                         int color, int bgColor)
