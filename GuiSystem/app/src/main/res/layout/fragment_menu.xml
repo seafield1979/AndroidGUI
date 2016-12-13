@@ -20,37 +20,42 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonHome"/>
             <Button
-                android:text="TestButton"
+                android:text="Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonButton"/>
             <Button
-                android:text="Test Textview"
+                android:text="Textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonTextview"/>
             <Button
-                android:text="Test MenuBar"
+                android:text="image view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonImageView"/>
+            <Button
+                android:text="MenuBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonMenuBar"/>
             <Button
-                android:text="Test LogWindow"
+                android:text="LogWindow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonLog"/>
             <Button
-                android:text="Test Window"
+                android:text="Window"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonWindow"/>
             <Button
-                android:text="Test Dialog"
+                android:text="Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonDialog"/>
             <Button
-                android:text="Test Touch"
+                android:text="Touch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonTouch"/>

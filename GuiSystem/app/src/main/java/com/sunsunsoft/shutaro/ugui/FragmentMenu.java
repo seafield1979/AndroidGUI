@@ -18,6 +18,7 @@ public class FragmentMenu extends Fragment implements OnClickListener{
         R.id.buttonHome,
         R.id.buttonButton,
         R.id.buttonTextview,
+            R.id.buttonImageView,
         R.id.buttonMenuBar,
         R.id.buttonLog,
         R.id.buttonWindow,
@@ -76,6 +77,13 @@ public class FragmentMenu extends Fragment implements OnClickListener{
                 startActivity(i);
             }
             break;
+            case R.id.buttonImageView:
+            {
+                Fragment fragment = FragmentTest.newInstance(PageView.ImageView);
+                showFragment(fragment);
+            }
+            break;
+
             case R.id.buttonMenuBar:
             {
                 Fragment fragment = new FragmentTestMenubar();

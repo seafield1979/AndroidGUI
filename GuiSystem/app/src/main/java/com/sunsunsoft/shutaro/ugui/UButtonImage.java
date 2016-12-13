@@ -34,7 +34,6 @@ public class UButtonImage extends UButton {
     protected int stateId;          // 現在の状態
     protected int stateMax;         // 状態の最大値 addState で増える
 
-
     /**
      * Get/Set
      */

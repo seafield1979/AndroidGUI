@@ -12,7 +12,8 @@ enum PageView {
     IconWindow,
     Test1,
     ScrollWindow,
-    ListView
+    ListView,
+    ImageView
     ;
 
     public static PageView toEnum(int value) {
@@ -104,6 +105,10 @@ public class UPageViewManager {
         // ListView
         page = new PageViewListView(mContext, mParentView);
         pages[PageView.ListView.ordinal()] = page;
+
+        // ImageView
+        page = new PageViewImageView(mContext, mParentView);
+        pages[PageView.ImageView.ordinal()] = page;
     }
 
     /**
