@@ -8,19 +8,6 @@ import android.view.View;
 
 import java.util.LinkedList;
 
-enum PageView {
-    IconWindow,
-    Test1,
-    ScrollWindow,
-    ListView,
-    ImageView
-    ;
-
-    public static PageView toEnum(int value) {
-        if (value >= values().length) return PageView.IconWindow;
-        return values()[value];
-    }
-}
 
 /**
  * Created by shutaro on 2016/12/05.
@@ -29,7 +16,7 @@ enum PageView {
  * 現在のページ番号を元に配下の PageView の処理を呼び出す
  */
 
-public class UPageViewManager {
+abstract public class UPageViewManager {
     /**
      * Enums
      */
@@ -40,36 +27,16 @@ public class UPageViewManager {
     /**
      * Member Variables
      */
-    private Context mContext;
-    private View mParentView;
-    private UPageView[] pages = new UPageView[PageView.values().length];
-    private LinkedList<PageView> pageIdStack = new LinkedList<>();
+    protected Context mContext;
+    protected View mParentView;
+    protected UPageView[] pages = new UPageView[PageView.values().length];
+    protected LinkedList<PageView> pageIdStack = new LinkedList<>();
 
     /**
      * Get/Set
      */
 
-    /**
-     * Constructor
-     */
-    // Singletonオブジェクト
-    private static UPageViewManager singleton;
 
-    // Singletonオブジェクトを作成する
-    public static UPageViewManager createInstance(Context context, View parentView) {
-        if (singleton == null) {
-            singleton = new UPageViewManager(context, parentView);
-        }
-        return singleton;
-    }
-    public static UPageViewManager getInstance() { return singleton; }
-
-    private UPageViewManager(Context context, View parentView) {
-        mContext = context;
-        mParentView = parentView;
-
-        initPages();
-    }
 
     /**
      * Methods
@@ -88,28 +55,7 @@ public class UPageViewManager {
     /**
      * 配下のページを追加する
      */
-    public void initPages() {
-        UPageView page;
-        // IconWindow
-        page = new PageViewIconWindow(mContext, mParentView);
-        pages[PageView.IconWindow.ordinal()] = page;
-
-        // Test1
-        page = new PageViewTest1(mContext, mParentView);
-        pages[PageView.Test1.ordinal()] = page;
-
-        // ScrollWindow
-        page = new PageViewScrollWindow(mContext, mParentView);
-        pages[PageView.ScrollWindow.ordinal()] = page;
-
-        // ListView
-        page = new PageViewListView(mContext, mParentView);
-        pages[PageView.ListView.ordinal()] = page;
-
-        // ImageView
-        page = new PageViewImageView(mContext, mParentView);
-        pages[PageView.ImageView.ordinal()] = page;
-    }
+    abstract public void initPages();
 
     /**
      * 描画処理

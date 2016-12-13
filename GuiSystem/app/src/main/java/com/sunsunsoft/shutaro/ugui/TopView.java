@@ -44,7 +44,7 @@ public class TopView extends View implements View.OnTouchListener, ViewTouchCall
         this.setOnTouchListener(this);
         mContext = context;
 
-        mPageManager = UPageViewManager.createInstance(context, this);
+        mPageManager = PageViewManager.createInstance(context, this);
     }
 
     @Override

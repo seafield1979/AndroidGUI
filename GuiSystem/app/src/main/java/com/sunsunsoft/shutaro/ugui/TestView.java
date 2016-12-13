@@ -46,7 +46,7 @@ public class TestView extends View
         vt = new ViewTouch(this);
         mContext = context;
 
-        mPageManager = UPageViewManager.createInstance(context, this);
+        mPageManager = PageViewManager.createInstance(context, this);
 
         mPageManager.stackPage(pageView);
     }
