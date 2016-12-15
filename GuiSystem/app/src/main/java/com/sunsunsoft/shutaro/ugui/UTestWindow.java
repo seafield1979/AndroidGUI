@@ -62,9 +62,6 @@ public class UTestWindow extends UWindow {
      */
     public boolean touchEvent(ViewTouch vt) {
         if (!isShow) return false;
-        if (super.touchEvent(vt)) {
-            return true;
-        }
 
         boolean redraw = super.touchEvent(vt);
 
@@ -76,11 +73,14 @@ public class UTestWindow extends UWindow {
                 break;
             case Moving:
                 if (vt.isMoveStart()) {
+
                 }
-                pos.x += vt.moveX;
-                pos.y += vt.moveY;
-                updateRect();
-                redraw = true;
+                if (rect.contains((int)vt.getX(), (int)vt.getY())) {
+                    pos.x += vt.moveX;
+                    pos.y += vt.moveY;
+                    updateRect();
+                    redraw = true;
+                }
                 break;
         }
 
@@ -93,7 +93,7 @@ public class UTestWindow extends UWindow {
      * @param canvas
      * @param paint
      */
-    public void drawContent(Canvas canvas, Paint paint ) {
+    public void drawContent(Canvas canvas, Paint paint, PointF offset ) {
         // BG
         UDraw.drawRectFill(canvas, paint, getRect(), bgColor, 0, 0);
     }

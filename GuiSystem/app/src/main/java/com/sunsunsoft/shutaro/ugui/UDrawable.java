@@ -241,6 +241,12 @@ abstract public class UDrawable {
         UDrawManager.getInstance().addDrawable(this);
     }
 
+    /**
+     * DrawManageのリストから削除する
+     */
+    public void removeFromDrawManager() {
+        UDrawManager.getInstance().removeDrawable(this);
+    }
 
     /**
      * 移動

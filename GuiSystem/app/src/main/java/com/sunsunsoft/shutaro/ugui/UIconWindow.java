@@ -341,7 +341,7 @@ public class UIconWindow extends UWindow {
      * @param paint
      * @return trueなら描画継続
      */
-    public void drawContent(Canvas canvas, Paint paint)
+    public void drawContent(Canvas canvas, Paint paint, PointF offset)
     {
         if (!isShow) return;
 

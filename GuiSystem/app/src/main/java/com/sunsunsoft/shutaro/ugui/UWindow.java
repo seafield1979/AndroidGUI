@@ -43,7 +43,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     protected static final int SCROLL_BAR_W = 50;
     protected static final int TOP_BAR_H = 50;
     protected static final int TOP_BAR_COLOR = Color.rgb(100,100,200);
-    protected static final int FRAME_COLOR = Color.LTGRAY;
+    protected static final int FRAME_COLOR = 0;
 
     /**
      * Member Variables
@@ -169,8 +169,8 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
                       int bgColor)
     {
         this(callbacks, priority,
-        x, y, width, height,
-        bgColor, 0, 0, 0);
+                x, y, width, height,
+                bgColor, 0, 0, 0);
     }
 
     protected UWindow(UWindowCallbacks callbacks, int priority,
@@ -182,7 +182,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         this.bgColor = bgColor;
         mSBType = WindowSBShowType.Show2;
         clientSize.width = width - frameW * 2;
-        clientSize.height = height - topBarH - frameW * 2;
+        clientSize.height = height - topBarH - frameH * 2;
         this.topBarH = topBarH;
         this.topBarColor = TOP_BAR_COLOR;
         this.frameSize = new Size(frameW, frameH);
@@ -306,7 +306,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         if (!isShow) return;
 
         // Window内部
-        drawContent(canvas, paint);
+        drawContent(canvas, paint, new PointF(frameSize.width, frameSize.height + topBarH));
 
         // Window枠
         drawFrame(canvas, paint);
@@ -317,7 +317,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * @param canvas
      * @param paint
      */
-    abstract public void drawContent(Canvas canvas, Paint paint );
+    abstract public void drawContent(Canvas canvas, Paint paint, PointF offset);
 
     /**
      * Windowの背景を描画する
@@ -361,11 +361,11 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         if (frameSize.height > 0 && frameColor != 0) {
             // 上下
             UDraw.drawRectFill(canvas, paint, new Rect((int)pos.x, (int)pos.y,
-                    (int)pos.x + size.width, (int)pos.y + frameSize.height),
-                    frameColor, 0, 0);
+                            (int)pos.x + size.width, (int)pos.y + frameSize.height),
+                    0, 0, 0);
             UDraw.drawRectFill(canvas, paint,
                     new Rect((int)pos.x, (int)pos.y + size.height - frameSize.height,
-                            (int)pos.x + size.width, (int)pos.y + size.height), frameColor, 0,
+                            (int)pos.x + size.width, (int)pos.y + size.height), 0, 0,
                     0);
         }
 
@@ -391,6 +391,18 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
             mScrollBarH.draw(canvas, paint);
         }
     }
+
+    public boolean autoMoving() {
+        // Windowはサイズ変更時にclientSizeも変更する必要がある
+        if (!isMoving) return false;
+
+        boolean ret = super.autoMoving();
+
+        clientSize = size;
+
+        return ret;
+    }
+
 
     /**
      * Viewをスクロールする処理

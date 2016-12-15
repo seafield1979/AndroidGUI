@@ -40,8 +40,7 @@ abstract public class UMenuBar extends UWindow {
                     int parentW, int parentH,
                     int bgColor)
     {
-        super(null, DRAW_PRIORITY, 0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor, 50, 10,
-                10);
+        super(null, DRAW_PRIORITY, 0, parentH - MENU_BAR_H, parentW, MENU_BAR_H, bgColor);
         mMenuItemCallbacks = callbackClass;
         topItems = new LinkedList<>();
         items = new LinkedList<>();
@@ -189,7 +188,7 @@ abstract public class UMenuBar extends UWindow {
      * @param canvas
      * @param paint
      */
-    public void drawContent(Canvas canvas, Paint paint ) {
+    public void drawContent(Canvas canvas, Paint paint, PointF offset ) {
         if (!isShow) return;
 
         // トップのアイテムから描画

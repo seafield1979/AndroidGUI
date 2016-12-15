@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 
 import java.util.LinkedList;
 
@@ -22,12 +23,14 @@ public class UListView extends UScrollWindow
     /**
      * Constants
      */
+    public static final int MARGIN_V = 20;
 
     /**
      * Member variables
      */
     protected LinkedList<UListItem> mItems = new LinkedList<>();
     protected UListItemCallbacks mListItemCallbacks;
+    protected Rect mClipRect;
 
     // リストの最後のアイテムの下端の座標
     protected float mBottomY;
@@ -47,6 +50,7 @@ public class UListView extends UScrollWindow
     {
         super(callbacks, priority, x, y, width, height, color, 0, 0, 30);
         mListItemCallbacks = listItemCallbacks;
+        mClipRect = new Rect();
     }
 
     /**
@@ -94,18 +98,24 @@ public class UListView extends UScrollWindow
     }
 
 
-    public void drawContent(Canvas canvas, Paint paint) {
+    public void drawContent(Canvas canvas, Paint paint, PointF offset) {
         // BG
-        UDraw.drawRectFill(canvas, paint, rect, Color.LTGRAY, 0, 0);
+        drawBG(canvas, paint);
 
         // クリッピング前の状態を保存
         canvas.save();
 
+        PointF _pos = new PointF(pos.x + offset.x, pos.y + offset.y);
         // クリッピングを設定
-        canvas.clipRect(rect);
+        mClipRect.left = (int)_pos.x;
+        mClipRect.right = (int)_pos.x + clientSize.width;
+        mClipRect.top = (int)_pos.y;
+        mClipRect.bottom = (int)_pos.y + clientSize.height;
+
+        canvas.clipRect(mClipRect);
 
         // アイテムを描画
-        PointF _offset = new PointF(pos.x, pos.y - contentTop.y);
+        PointF _offset = new PointF(_pos.x, _pos.y - contentTop.y);
         for (UListItem item : mItems) {
             if (item.getBottom() < contentTop.y) continue;
 
@@ -123,7 +133,7 @@ public class UListView extends UScrollWindow
 
     public boolean touchEvent(ViewTouch vt) {
         // アイテムのクリック判定処理
-        PointF offset = new PointF(pos.x, pos.y + contentTop.y);
+        PointF offset = new PointF(pos.x, pos.y - contentTop.y);
         boolean isDraw = false;
 
         for (UListItem item : mItems) {
@@ -143,6 +153,10 @@ public class UListView extends UScrollWindow
      */
     public void addDummyItems(int count) {
 
+        for (int i=0; i<count; i++){
+            ListItemTest1 item = new ListItemTest1(null, "hoge", 0, size.width, Color.BLUE);
+            add(item);
+        }
         updateWindow();
     }
 }
