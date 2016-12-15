@@ -26,7 +26,7 @@ public class UTestWindow extends UWindow {
      * Constructor
      */
     private UTestWindow(float x, float y, int width, int height, int color) {
-        super(null, DRAW_PRIORITY, x, y, width, height, color);
+        super(null, DRAW_PRIORITY, x, y, width, height, color, 50, 10, 10);
     }
 
     /**
@@ -39,8 +39,7 @@ public class UTestWindow extends UWindow {
      * @return
      */
     public static UTestWindow createInstance(UWindowCallbacks callbacks, float x, float y, int
-            width, int height,
-                                             int color) {
+            width, int height, int color) {
         UTestWindow instance = new UTestWindow(x, y, width, height, color);
         instance.windowCallbacks = callbacks;
         instance.addCloseIcon();

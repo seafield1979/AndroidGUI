@@ -36,8 +36,6 @@ abstract public class UPageViewManager {
      * Get/Set
      */
 
-
-
     /**
      * Methods
      */

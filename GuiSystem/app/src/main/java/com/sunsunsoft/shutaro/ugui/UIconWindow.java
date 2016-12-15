@@ -84,8 +84,6 @@ public class UIconWindow extends UWindow {
 
     // ドラッグ中のアイコン
     private UIcon dragedIcon;
-    // ドロップ中のアイコン
-//    private UIcon dropedIcon;
 
     private WindowState state = WindowState.none;
     private WindowState nextState = WindowState.none;
@@ -420,11 +418,11 @@ public class UIconWindow extends UWindow {
 
         int i=0;
         if (dir == WindowDir.Vertical) {
-            int column = ((int)clientSize.width - ICON_MARGIN) / (ICON_W + ICON_MARGIN);
+            int column = (clientSize.width - ICON_MARGIN) / (ICON_W + ICON_MARGIN);
             if (column <= 0) {
                 return;
             }
-            int margin = ((int)clientSize.width - ICON_W * column) / (column + 1);
+            int margin = (clientSize.width - ICON_W * column) / (column + 1);
             for (UIcon icon : icons) {
                 int x = margin + (i % column) * (ICON_W + margin);
                 int y = margin + (i / column) * (ICON_H + margin);
@@ -481,11 +479,11 @@ public class UIconWindow extends UWindow {
         if (dir == WindowDir.Vertical) {
             setContentSize(size.width, maxSize + MARGIN_D, true);
             mScrollBarV.setPageLen(getHeight());
-            contentTop.y = mScrollBarV.updateContent(contentSize);
+            contentTop.y = mScrollBarV.updateContent(contentSize.height);
         } else {
             setContentSize(maxSize + MARGIN_D, size.height, true);
             mScrollBarH.setPageLen(getWidth());
-            contentTop.x = mScrollBarH.updateContent(contentSize);
+            contentTop.x = mScrollBarH.updateContent(contentSize.width);
         }
 
     }

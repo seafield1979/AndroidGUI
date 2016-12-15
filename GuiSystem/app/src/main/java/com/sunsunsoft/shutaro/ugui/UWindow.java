@@ -41,6 +41,9 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     public static final int CloseButtonId = 1000123;
 
     protected static final int SCROLL_BAR_W = 50;
+    protected static final int TOP_BAR_H = 50;
+    protected static final int TOP_BAR_COLOR = Color.rgb(100,100,200);
+    protected static final int FRAME_COLOR = Color.LTGRAY;
 
     /**
      * Member Variables
@@ -51,7 +54,10 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
 
     protected SizeL contentSize = new SizeL();     // 領域全体のサイズ
     protected Size clientSize = new Size();      // ウィンドウの幅からスクロールバーのサイズを引いたサイズ
-    protected PointF contentTop = new PointF();  // 画面に表示する領域の左上の座標
+    protected int topBarH;      // ウィンドウ上部のバーの高さ
+    protected int topBarColor;
+    protected Size frameSize;       // ウィンドウのフレームのサイズ
+    protected PointF contentTop = new PointF();  // クライアント領域のうち画面に表示する領域の左上の座標
     protected UScrollBar mScrollBarH;
     protected UScrollBar mScrollBarV;
     protected UButtonClose closeIcon;            // 閉じるボタン
@@ -61,7 +67,8 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
 
     /**
      * Get/Set
-     */    public boolean isShow() {
+     */
+    public boolean isShow() {
         return isShow;
     }
 
@@ -94,6 +101,15 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         this.frameColor = frameColor;
     }
 
+    public void setTopBar(int height, int color) {
+        topBarH = height;
+        topBarColor = color;
+    }
+
+    public void setFrame(Size size, int color) {
+        this.frameSize = size;
+        this.frameColor = color;
+    }
 
     // 座標系を変換する
     // 座標系は以下の３つある
@@ -147,16 +163,30 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      */
     /**
      * 外部からインスタンスを生成できないようにprivateでコンストラクタを定義する
-     * インスタンス生成には createWindow を使うべし
      */
-    protected UWindow(UWindowCallbacks callbacks, int priority, float x, float y, int width, int
-            height, int color) {
+    protected UWindow(UWindowCallbacks callbacks, int priority,
+                      float x, float y, int width, int height,
+                      int bgColor)
+    {
+        this(callbacks, priority,
+        x, y, width, height,
+        bgColor, 0, 0, 0);
+    }
+
+    protected UWindow(UWindowCallbacks callbacks, int priority,
+                      float x, float y, int width, int height,
+                      int bgColor, int topBarH, int frameW, int frameH)
+    {
         super(priority, x,y,width,height);
         this.windowCallbacks = callbacks;
-        this.bgColor = color;
+        this.bgColor = bgColor;
         mSBType = WindowSBShowType.Show2;
-        clientSize.width = size.width;
-        clientSize.height = size.height;
+        clientSize.width = width - frameW * 2;
+        clientSize.height = height - topBarH - frameW * 2;
+        this.topBarH = topBarH;
+        this.topBarColor = TOP_BAR_COLOR;
+        this.frameSize = new Size(frameW, frameH);
+        this.frameColor = FRAME_COLOR;
         updateRect();
 
         // ScrollBar
@@ -174,12 +204,16 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         }
 
         if (mSBType != WindowSBShowType.Hidden) {
-            mScrollBarV = new UScrollBar(ScrollBarLocation.Right, showType,
-                    this.pos, width, height - SCROLL_BAR_W, SCROLL_BAR_W,
+            mScrollBarV = new UScrollBar(ScrollBarType.Vertical, showType, pos,
+                    size.width - frameSize.width - SCROLL_BAR_W,
+                    frameSize.height + topBarH,
+                    clientSize.height, SCROLL_BAR_W,
                     height - SCROLL_BAR_W, contentSize.height);
 
-            mScrollBarH = new UScrollBar(ScrollBarLocation.Bottom, showType,
-                    this.pos, width - SCROLL_BAR_W, height,
+            mScrollBarH = new UScrollBar( ScrollBarType.Horizontal, showType, pos,
+                    frameSize.width,
+                    size.height - frameSize.height - SCROLL_BAR_W,
+                    clientSize.width,
                     SCROLL_BAR_W, width - SCROLL_BAR_W, contentSize.width);
         }
 
@@ -191,6 +225,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
     /**
      * Methods
      */
+
     /**
      * Windowのサイズを更新する
      * サイズ変更に合わせて中のアイコンを再配置する
@@ -219,12 +254,12 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
 
     public void updateWindow() {
         // clientSize
-        if (size.width < contentSize.width &&
+        if (clientSize.width < contentSize.width &&
                 mSBType != WindowSBShowType.Show2)
         {
             clientSize.height = size.height - mScrollBarH.getBgWidth();
         }
-        if (size.height < contentSize.height &&
+        if (clientSize.height < contentSize.height &&
                 mSBType != WindowSBShowType.Show2)
         {
             clientSize.width = size.width - mScrollBarV.getBgWidth();
@@ -233,13 +268,13 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
         // スクロールバー
         if (mScrollBarV != null) {
             mScrollBarV.setPageLen(clientSize.height);
-            mScrollBarV.updateSize(clientSize.width, clientSize.height, false);
-            contentTop.y = mScrollBarV.updateContent(contentSize);
+            mScrollBarV.updateSize();
+            contentTop.y = mScrollBarV.updateContent(contentSize.height);
         }
         if (mScrollBarH != null) {
             mScrollBarH.setPageLen(clientSize.width);
-            mScrollBarH.updateSize(clientSize.width, clientSize.height, false);
-            contentTop.x = mScrollBarH.updateContent(contentSize);
+            mScrollBarH.updateSize();
+            contentTop.x = mScrollBarH.updateContent(contentSize.width);
         }
     }
 
@@ -309,6 +344,39 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
      * @param paint
      */
     public void drawFrame(Canvas canvas, Paint paint) {
+
+        // Frame
+        if (frameSize.width > 0 && frameColor != 0) {
+            // 左右
+            UDraw.drawRectFill(canvas, paint,
+                    new Rect((int)pos.x, (int)pos.y,
+                            (int)pos.x + frameSize.width, (int)pos.y + size.height),
+                    frameColor, 0, 0);
+            UDraw.drawRectFill(canvas, paint,
+                    new Rect((int)pos.x + size.width - frameSize.width, (int)pos.y,
+                            (int)pos.x + size.width, (int)pos.y + size.height),
+                    frameColor, 0, 0);
+        }
+
+        if (frameSize.height > 0 && frameColor != 0) {
+            // 上下
+            UDraw.drawRectFill(canvas, paint, new Rect((int)pos.x, (int)pos.y,
+                    (int)pos.x + size.width, (int)pos.y + frameSize.height),
+                    frameColor, 0, 0);
+            UDraw.drawRectFill(canvas, paint,
+                    new Rect((int)pos.x, (int)pos.y + size.height - frameSize.height,
+                            (int)pos.x + size.width, (int)pos.y + size.height), frameColor, 0,
+                    0);
+        }
+
+        // TopBar
+        if (topBarH > 0 && topBarColor != 0) {
+            UDraw.drawRectFill(canvas, paint,
+                    new Rect((int)pos.x, (int)pos.y + frameSize.height,
+                            (int)pos.x + size.width - frameSize.width, (int)pos.y + frameSize
+                            .height + topBarH), topBarColor, 0, 0);
+        }
+
         // Close Button
         if (closeIcon != null && closeIcon.isShow()) {
             closeIcon.draw(canvas, paint, pos);
@@ -316,6 +384,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
 
         // スクロールバー
         if (mScrollBarV != null && mScrollBarV.isShow()) {
+
             mScrollBarV.draw(canvas, paint);
         }
         if (mScrollBarH != null && mScrollBarH.isShow()) {
@@ -356,7 +425,7 @@ abstract public class UWindow extends UDrawable implements UButtonCallbacks{
             }
         }
         // スクロールバーの表示を更新
-        mScrollBarV.updateScroll(new PointL((long)contentTop.x,(long)contentTop.y));
+        mScrollBarV.updateScroll((long)contentTop.y);
 
         return true;
     }

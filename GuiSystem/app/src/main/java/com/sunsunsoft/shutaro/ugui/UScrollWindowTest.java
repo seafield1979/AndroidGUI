@@ -16,7 +16,7 @@ public class UScrollWindowTest extends UScrollWindow {
     public UScrollWindowTest(UWindowCallbacks callbacks, int priority, float x, float y, int width, int
             height, int color)
     {
-        super(callbacks, priority, x, y, width, height, color);
+        super(callbacks, priority, x, y, width, height, color, 50, 5, 20);
     }
 
 

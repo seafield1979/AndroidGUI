@@ -45,7 +45,7 @@ public class UListView extends UScrollWindow
                      int priority, float x, float y, int width, int
                              height, int color)
     {
-        super(callbacks, priority, x, y, width, height, color);
+        super(callbacks, priority, x, y, width, height, color, 0, 0, 30);
         mListItemCallbacks = listItemCallbacks;
     }
 

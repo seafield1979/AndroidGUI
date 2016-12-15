@@ -51,9 +51,6 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
     // UButton
     private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
 
-    // ULogWindow
-    private ULogWindow logWindow;
-
     // UWindows
     private UWindowList windows = UWindowList.getInstance();
 
@@ -90,10 +87,6 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
             y += 150;
         }
 
-        // LogWindow
-        logWindow = ULogWindow.createInstance(getContext(), this,LogWindowType.AutoDisappear,
-                0, 500, getWidth(), getHeight() - 500);
-
         // UWindows
         float x = 0;
         y = 0;
@@ -117,10 +110,6 @@ public class TestWindowView extends View implements View.OnTouchListener, UButto
         if (isFirst) {
             isFirst = false;
             initDrawables(getWidth(), getHeight());
-        }
-        // 毎フレームの処理
-        if (logWindow.doAction()) {
-            invalidate();
         }
 
         // 背景塗りつぶし
