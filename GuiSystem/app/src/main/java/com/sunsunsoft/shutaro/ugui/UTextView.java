@@ -11,21 +11,24 @@ import android.graphics.RectF;
 /**
  * テキストを表示する
  */
-
 public class UTextView extends UDrawable {
     /**
      * Constracts
      */
     // BGを描画する際の上下左右のマージン
-    protected static final int MARGIN_H = 50;
-    protected static final int MARGIN_V = 20;
+    protected static final int MARGIN_H = 30;
+    protected static final int MARGIN_V = 15;
+
+    protected static final int DEFAULT_TEXT_SIZE = 50;
+    protected static final int DEFAULT_COLOR = Color.BLACK;
+    protected static final int DEFAULT_BG_COLOR = Color.WHITE;
 
     /**
      * Member variables
      */
     protected String text;
     protected UAlignment alignment;
-    protected boolean marginH;
+    protected Size mMargin = new Size(MARGIN_H, MARGIN_V);
     protected int textSize;
     protected int bgColor;
     protected int canvasW;
@@ -46,15 +49,17 @@ public class UTextView extends UDrawable {
         // サイズを更新
         Size size = getTextSize(canvasW);
         if (isDrawBG) {
-            setSize(size.width + MARGIN_H * 2, size.height + MARGIN_V * 2);
+            setSize(size.width + mMargin.width * 2, size.height + mMargin.height * 2);
         } else {
             setSize(size.width, size.height);
         }
         updateRect();
     }
 
-    public void setMarginH(boolean marginH) {
-        this.marginH = marginH;
+    public void setMargin(int width, int height) {
+        mMargin.width = width;
+        mMargin.height = height;
+        updateSize();
     }
 
     /**
@@ -71,7 +76,6 @@ public class UTextView extends UDrawable {
 
         this.text = text;
         this.alignment = alignment;
-        this.marginH = marginH;
         this.multiLine = multiLine;
         this.isDrawBG = isDrawBG;
         this.textSize = textSize;
@@ -100,14 +104,27 @@ public class UTextView extends UDrawable {
         return instance;
     }
 
+    // シンプルなTextViewを作成
+    public static UTextView createInstance(String text, int priority,
+                                           int canvasW, boolean isDrawBG,
+                                           float x, float y)
+    {
+        UTextView instance = new UTextView(text, DEFAULT_TEXT_SIZE, priority, UAlignment.None,
+                canvasW, false, isDrawBG, true,
+                x, y, 0, DEFAULT_COLOR, DEFAULT_BG_COLOR);
+        return instance;
+    }
+
     /**
      * Methods
      */
 
     protected void updateSize() {
         Size size = getTextSize(canvasW);
-        size = addBGPadding(size);
-        setSize(this.size.width, size.height);
+        if (isDrawBG) {
+            size = addBGPadding(size);
+        }
+        setSize(size.width, size.height);
     }
 
     /**
@@ -116,7 +133,12 @@ public class UTextView extends UDrawable {
      * @return マージンを追加した Size
      */
     protected Size addBGPadding(Size size) {
-        return new Size(size.width + MARGIN_H * 2, size.height + MARGIN_V * 2);
+        if (size == null) {
+            return new Size(0, 0);
+        }
+        size.width += mMargin.width * 2;
+        size.height += mMargin.height * 2;
+        return size;
     }
 
 
@@ -129,8 +151,8 @@ public class UTextView extends UDrawable {
     void draw(Canvas canvas, Paint paint, PointF offset) {
         PointF _pos = new PointF(pos.x, pos.y);
         if (offset != null) {
-            _pos.x = pos.x + offset.x;
-            _pos.y = pos.y + offset.y;
+            _pos.x += offset.x;
+            _pos.y += offset.y;
         }
         PointF _linePos = new PointF(_pos.x, _pos.y);
 
@@ -141,29 +163,45 @@ public class UTextView extends UDrawable {
             switch (alignment) {
                 case CenterX:
                     bgPos.x -= size.width / 2;
-                    _pos.y += MARGIN_V;
+                    _pos.y += mMargin.height;
                     break;
                 case CenterY:
+                    _pos.x += mMargin.height;
                     bgPos.y -= size.height / 2;
-                    if (marginH) _pos.x += MARGIN_H;
                     break;
                 case Center:
                     bgPos.x -= size.width / 2;
                     bgPos.y -= size.height / 2;
                     break;
                 case None:
-                    if (marginH) _pos.x += MARGIN_H;
-                    _pos.y += MARGIN_V;
+                    _pos.x += mMargin.width;
+                    _pos.y += mMargin.height;
+                    break;
+                case Right:
+                    bgPos.x -= size.width;
+                    _pos.x -= mMargin.width;
+                    _pos.y += mMargin.height;
+                    break;
+                case Right_CenterY:
+                    bgPos.x -= size.width;
+                    _pos.x -= mMargin.width;
+                    bgPos.y -= size.height / 2;
                     break;
             }
 
             if (!multiLine) {
-                if (alignment == UAlignment.CenterX || alignment == UAlignment.None) {
+                if (alignment == UAlignment.CenterX ||
+                        alignment == UAlignment.None ||
+                        alignment == UAlignment.Right)
+                {
                     _pos.y += textSize / 2;
                 }
             }
 
-            drawBG(canvas, paint, bgPos);
+            // Background
+            if (isDrawBG && bgColor != 0) {
+                drawBG(canvas, paint, bgPos);
+            }
 
             // BGの中央にテキストを表示したいため、aligmentを書き換える
             if (!multiLine) {
@@ -173,6 +211,9 @@ public class UTextView extends UDrawable {
                         break;
                     case None:
                         _alignment = UAlignment.CenterY;
+                        break;
+                    case Right:
+                        _alignment = UAlignment.Right_CenterY;
                         break;
                 }
             }

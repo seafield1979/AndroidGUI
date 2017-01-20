@@ -107,7 +107,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                 alignment,
                 getWidth(), multiLine, drawBG,
                 x, y,
-                getWidth() - 100, color, bgColor);
+                0, color, bgColor);
         textViews.add(textView);
         UDrawManager.getInstance().addDrawable(textView);
 
@@ -170,7 +170,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
             case PAGE1:
             {
                 // TextView
-                for (int i=0; i<4; i++) {
+                for (int i=0; i<6; i++) {
                     UAlignment alignment = UAlignment.None;
                     switch (i) {
                         case 1:
@@ -181,6 +181,12 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                             break;
                         case 3:
                             alignment = UAlignment.Center;
+                            break;
+                        case 4:
+                            alignment = UAlignment.Right;
+                            break;
+                        case 5:
+                            alignment = UAlignment.Right_CenterY;
                             break;
                     }
                     String text = "hoge" + (i + 1);
@@ -203,7 +209,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                 y += 120 + 50;
 
                 // TextView
-                for (int i=0; i<4; i++) {
+                for (int i=0; i<6; i++) {
                     UAlignment alignment = UAlignment.None;
                     switch (i) {
                         case 1:
@@ -214,6 +220,12 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
                             break;
                         case 3:
                             alignment = UAlignment.Center;
+                            break;
+                        case 4:
+                            alignment = UAlignment.Right;
+                            break;
+                        case 5:
+                            alignment = UAlignment.Right_CenterY;
                             break;
                     }
                     String text = "hoge" + (i + 1);

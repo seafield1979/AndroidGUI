@@ -1,5 +1,6 @@
 package com.sunsunsoft.shutaro.ugui;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,7 +17,15 @@ enum UAlignment {
     None,
     CenterX,
     CenterY,
-    Center
+    Center,
+    Right,
+    Right_CenterY
+}
+
+enum FontSize {
+    S,
+    M,
+    L
 }
 
 /**
@@ -25,12 +34,25 @@ enum UAlignment {
  */
 
 public class UDraw {
+
+    // フォントのサイズ
+    public static int getFontSize(FontSize size) {
+        switch (size) {
+            case S:
+                return 30;
+            case M:
+                return 40;
+            case L:
+            default:
+                return 50;
+        }
+    }
+
     // ラジアン角度
     public static final double RAD = 3.1415 / 180.0;
 
     public static void drawLine(Canvas canvas, Paint paint, float x1, float y1, float x2, float y2,
-                                int lineWidth, int color)
-    {
+                                int lineWidth, int color) {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(lineWidth);
         paint.setColor(color);
@@ -39,10 +61,11 @@ public class UDraw {
 
     /**
      * 矩形描画 (ライン）
+     *
      * @param canvas
      * @param paint
      * @param rect
-     * @param width 線の太さ
+     * @param width  線の太さ
      * @param color
      */
     public static void drawRect(Canvas canvas, Paint paint, Rect rect, int width, int color) {
@@ -54,10 +77,11 @@ public class UDraw {
 
     /**
      * 角丸矩形描画 (ライン）
+     *
      * @param canvas
      * @param paint
      * @param rect
-     * @param width 線の太さ
+     * @param width  線の太さ
      * @param color
      */
     public static void drawRoundRect(Canvas canvas, Paint paint, RectF rect, int width,
@@ -70,6 +94,7 @@ public class UDraw {
 
     /**
      * 矩形描画(塗りつぶし)
+     *
      * @param canvas
      * @param paint
      * @param rect
@@ -91,18 +116,18 @@ public class UDraw {
 
     /**
      * 角丸四角形(塗りつぶし)
+     *
      * @param canvas
      * @param paint
      * @param rect
      * @param strokeWidth
      * @param strokeColor
-     * @param radius    角の半径
+     * @param radius      角の半径
      * @param color
      */
     public static void drawRoundRectFill(Canvas canvas, Paint paint, RectF rect,
                                          float radius, int color,
-                                         int strokeWidth, int strokeColor)
-    {
+                                         int strokeWidth, int strokeColor) {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(color);
         canvas.drawRoundRect(rect, radius, radius, paint);
@@ -114,8 +139,10 @@ public class UDraw {
             canvas.drawRoundRect(rect, radius, radius, paint);
         }
     }
+
     /**
      * 円描画(線)
+     *
      * @param canvas
      * @param paint
      * @param center
@@ -123,8 +150,7 @@ public class UDraw {
      * @param width
      * @param color
      */
-    public static void drawCircle(Canvas canvas, Paint paint, PointF center, float radius, int width, int color)
-    {
+    public static void drawCircle(Canvas canvas, Paint paint, PointF center, float radius, int width, int color) {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(width);
         paint.setColor(color);
@@ -133,6 +159,7 @@ public class UDraw {
 
     /**
      * 円描画(塗りつぶし)
+     *
      * @param canvas
      * @param paint
      * @param center
@@ -146,7 +173,30 @@ public class UDraw {
     }
 
     /**
+     * Cross(×)を描画
+     *
+     * @param canvas
+     * @param paint
+     * @param center
+     * @param radius
+     * @param width
+     * @param color
+     */
+    public static void drawCross(Canvas canvas, Paint paint, PointF center, float radius,
+                                 int width, int color) {
+        paint.setColor(color);
+        paint.setStrokeWidth(width);
+        float x = (float) Math.cos(45 * RAD) * radius * 0.8f;
+        float y = (float) Math.sin(45 * RAD) * radius * 0.8f;
+        canvas.drawLine(center.x - x, center.y - y,
+                center.x + x, center.y + y, paint);
+        canvas.drawLine(center.x - x, center.y + y,
+                center.x + x, center.y - y, paint);
+    }
+
+    /**
      * 三角形描画(線)
+     *
      * @param canvas
      * @param paint
      * @param center
@@ -154,7 +204,7 @@ public class UDraw {
      * @param color
      */
     public static void drawTriangle(Canvas canvas, Paint paint, PointF center, float radius, int width, int color) {
-        Path path = trianglePath(center, radius);
+        Path path = trianglePath(center, radius, 0);
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(color);
@@ -164,35 +214,38 @@ public class UDraw {
 
     /**
      * 三角形描画(塗りつぶし)
+     *
      * @param canvas
      * @param paint
      * @param center
      * @param radius
      * @param color
      */
-    public static void drawTriangleFill(Canvas canvas, Paint paint, PointF center, float radius, int color) {
-        Path path = trianglePath(center, radius);
+    public static void drawTriangleFill(Canvas canvas, Paint paint, PointF center,
+                                        float radius, float rotate, int color) {
+        Path path = trianglePath(center, radius, rotate);
 
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(color);
         canvas.drawPath(path, paint);
     }
 
-    private static Path trianglePath(PointF center, float radius) {
-// 中心から半径の位置にある３点で三角形を描画する
+    private static Path trianglePath(PointF center, float radius, float rotate) {
+        // 中心から半径の位置にある３点で三角形を描画する
         Point p1, p2, p3;
-        float baseAngle = 180;
+
+        float baseAngle = 180 + rotate;
         float angle = baseAngle + 90;
-        p1 = new Point((int)(Math.cos(angle * RAD) * radius),
-                (int)(Math.sin(angle * RAD) * radius));
+        p1 = new Point((int) (Math.cos(angle * RAD) * radius),
+                (int) (Math.sin(angle * RAD) * radius));
 
         angle = baseAngle + 210;
-        p2 = new Point((int)(Math.cos(angle * RAD) * radius),
-                (int)(Math.sin(angle * RAD) * radius));
+        p2 = new Point((int) (Math.cos(angle * RAD) * radius),
+                (int) (Math.sin(angle * RAD) * radius));
 
         angle = baseAngle + 330;
-        p3 = new Point((int)(Math.cos(angle * RAD) * radius),
-                (int)(Math.sin(angle * RAD) * radius));
+        p3 = new Point((int) (Math.cos(angle * RAD) * radius),
+                (int) (Math.sin(angle * RAD) * radius));
 
         // 線を３つつなぐ
         Path path = new Path();
@@ -208,22 +261,22 @@ public class UDraw {
 
     /**
      * チェックボックスを描画する
+     *
      * @param canvas
      * @param paint
      * @param isChecked
      * @param x
      * @param y
      * @param width
-     * @param color  チェック時の色(みチェック時は灰色)
+     * @param color     チェック時の色(みチェック時は灰色)
      */
     public static void drawCheckbox(Canvas canvas, Paint paint, boolean isChecked,
-                                    float x, float y, float width, int color )
-    {
+                                    float x, float y, float width, int color) {
         RectF rect = new RectF(x, y, x + width, y + width);
 
         if (isChecked) {
             // 枠
-            drawRoundRectFill(canvas, paint, rect, 10, color, 0, 0 );
+            drawRoundRectFill(canvas, paint, rect, 10, color, 0, 0);
 
             // チェック
             Path path = new Path();
@@ -237,12 +290,13 @@ public class UDraw {
 
         } else {
             // 枠
-            drawRoundRect(canvas, paint, rect, 10, 15, Color.rgb(140,140,140) );
+            drawRoundRect(canvas, paint, rect, 10, 15, Color.rgb(140, 140, 140));
         }
     }
 
     /**
      * テキストを描画する（最初の１行のみ）
+     *
      * @param canvas
      * @param paint
      * @param text
@@ -252,8 +306,20 @@ public class UDraw {
      */
     public static Size drawTextOneLine(Canvas canvas, Paint paint, String text,
                                        UAlignment alignment, int textSize,
-                                       float x, float y, int color) {
+                                       float x, float y, int color)
+    {
+        return drawTextOneLine(canvas, paint, text,
+                alignment, textSize,
+                x, y, color, 0, 0);
+    }
+
+    public static Size drawTextOneLine(Canvas canvas, Paint paint, String text,
+                                       UAlignment alignment, int textSize,
+                                       float x, float y, int color, int bgColor, int margin) {
         if (text == null) return null;
+
+        // アンチエイリアス
+        paint.setAntiAlias(true);
 
         // x,yにラインを表示 for Debug
         if (UDebug.drawTextBaseLine) {
@@ -263,7 +329,7 @@ public class UDraw {
 
         int pos = text.indexOf("\n");
         String _text;
-        if ( pos != -1 ) {
+        if (pos != -1) {
             _text = text.substring(0, pos);
         } else {
             _text = text;
@@ -271,12 +337,12 @@ public class UDraw {
 
         paint.setStyle(Paint.Style.FILL);
         paint.setStrokeWidth(1);
-        paint.setColor(color);
         paint.setTextSize(textSize);
 
-        int width = (int)paint.measureText( text);
+        int width = (int) paint.measureText(text);
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
 
+        // テキストの左上端がx,yと一致するように補正
         // テキストの左上端がx,yと一致するように補正
         switch (alignment) {
             case None:
@@ -293,7 +359,23 @@ public class UDraw {
                 x -= width / 2;
                 y -= fontMetrics.ascent / 2 + textSize * 0.15;
                 break;
+            case Right:
+                x -= width;
+                y -= fontMetrics.ascent;
+                break;
+            case Right_CenterY:
+                x -= width;
+                y -= fontMetrics.ascent / 2 + textSize * 0.15;
+                break;
         }
+
+        if (bgColor != 0) {
+            paint.setColor(bgColor);
+            canvas.drawRect(x - margin, y - textSize - margin,
+                    x + width + margin, y + margin, paint);
+        }
+
+        paint.setColor(color);
         canvas.drawText(_text, x, y, paint);
 
         return new Size(width, textSize);
@@ -301,6 +383,7 @@ public class UDraw {
 
     /**
      * テキストを描画（複数行対応)
+     *
      * @param canvas
      * @param text
      * @param alignment
@@ -311,9 +394,19 @@ public class UDraw {
                                 UAlignment alignment, int textSize,
                                 float x, float y, int color)
     {
+        return drawText(canvas, text, alignment, textSize, x, y, color, 0);
+    }
+
+    public static Size drawText(Canvas canvas, String text,
+                                UAlignment alignment, int textSize,
+                                float x, float y, int color, int bgColor)
+    {
         if (text == null) return null;
 
         TextPaint textPaint = new TextPaint();
+
+        // アンチエイリアス
+        textPaint.setAntiAlias(true);
 
         // x,yにラインを表示 for Debug
         if (UDebug.drawTextBaseLine) {
@@ -321,7 +414,16 @@ public class UDraw {
             drawLine(canvas, textPaint, x, y - 50, x, y + 50, 3, Color.YELLOW);
         }
 
-        Size size = getTextSize(canvas.getWidth(), text, textSize);
+
+        // 改行ができるようにTextPaintとStaticLayoutを使用する
+        textPaint.setTextSize(textSize);
+        textPaint.setColor(color);
+
+        StaticLayout mTextLayout = new StaticLayout(text, textPaint,
+                canvas.getWidth() * 4 / 5, Layout.Alignment.ALIGN_NORMAL,
+                1.0f, 0.0f, false);
+
+        Size size = getTextSize(mTextLayout);
         switch (alignment) {
             case CenterX:
                 x = x - size.width / 2;
@@ -336,14 +438,6 @@ public class UDraw {
             case None:
                 break;
         }
-
-        // 改行ができるようにTextPaintとStaticLayoutを使用する
-        textPaint.setTextSize(textSize);
-        textPaint.setColor(color);
-
-        StaticLayout mTextLayout = new StaticLayout(text, textPaint,
-                canvas.getWidth() * 4 / 5, Layout.Alignment.ALIGN_NORMAL,
-                1.0f, 0.0f, false);
 
         canvas.save();
         canvas.translate(x, y);
@@ -363,13 +457,31 @@ public class UDraw {
      * @param canvasW
      * @return
      */
-    public static Size getTextSize(int canvasW, String text, int size) {
+    public static Size getTextSize(int canvasW, String text, int textSize) {
+        if (text == null) return new Size();
+
         TextPaint textPaint = new TextPaint();
-        textPaint.setTextSize(size);
+        textPaint.setTextSize(textSize);
         StaticLayout textLayout = new StaticLayout(text, textPaint,
-                canvasW, Layout.Alignment.ALIGN_NORMAL,
+                canvasW * 4 / 5, Layout.Alignment.ALIGN_NORMAL,
                 1.0f, 0.0f, false);
 
+        int height = textLayout.getHeight();
+        int maxWidth = 0;
+        int _width;
+
+        // 各行の最大の幅を計算する
+        for (int i = 0; i < textLayout.getLineCount(); i++) {
+            _width = (int)textLayout.getLineWidth(i);
+            if (_width > maxWidth) {
+                maxWidth = _width;
+            }
+        }
+
+        return new Size(maxWidth, height);
+    }
+
+    private static Size getTextSize(StaticLayout textLayout) {
         int height = textLayout.getHeight();
         int maxWidth = 0;
         int _width;
@@ -389,7 +501,24 @@ public class UDraw {
      * １行テキストの描画サイズを取得する
      */
     public static Size getOneLineTextSize(Paint paint, String text, int textSize) {
-
+        paint.setTextSize(textSize);
         return new Size((int)paint.measureText( text), textSize);
+    }
+
+    /**
+     * Bitmap画像
+     */
+    public static void drawBitmap(Canvas canvas, Paint paint, Bitmap image,
+                                  float x, float y, int width, int height)
+    {
+        canvas.drawBitmap(image, new Rect( 0, 0, image.getWidth(), image.getHeight()),
+                new Rect((int)x, (int)y, (int)x + width,(int)y + height), paint);
+    }
+    public static void drawBitmap(Canvas canvas, Paint paint, Bitmap image,
+                                  Rect rect)
+    {
+        paint.setColor(0xffffffff);
+        canvas.drawBitmap(image, new Rect( 0, 0, image.getWidth(), image.getHeight()),
+                rect, paint);
     }
 }
