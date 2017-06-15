@@ -9,6 +9,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.sunsunsoft.shutaro.ugui.pageview.PageViewManager;
+import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
+import com.sunsunsoft.shutaro.ugui.uview.UPageViewManager;
+
 
 /**
  * Created by shutaro on 2016/11/16.

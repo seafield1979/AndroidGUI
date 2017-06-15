@@ -2,9 +2,9 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.sunsunsoft.shutaro.ugui.FragmentTestMenubar">
+             tools:context="com.sunsunsoft.shutaro.ugui.fragment.FragmentTestMenubar">
 
-    <com.sunsunsoft.shutaro.ugui.TestMenubarView
+    <com.sunsunsoft.shutaro.ugui.fragment.TestMenubarView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/testView"/>

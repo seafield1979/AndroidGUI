@@ -7,5 +7,5 @@ import android.support.v4.app.Fragment;
  */
 
 abstract public class MyFragment extends Fragment {
-    abstract boolean onBackKeyDown();
+    abstract public boolean onBackKeyDown();
 }

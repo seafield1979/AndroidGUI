@@ -4,6 +4,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.sunsunsoft.shutaro.ugui.fragment.FragmentMenu;
+import com.sunsunsoft.shutaro.ugui.util.ULog;
+import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

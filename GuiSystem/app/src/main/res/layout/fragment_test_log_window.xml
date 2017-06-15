@@ -2,9 +2,9 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.sunsunsoft.shutaro.ugui.FragmentTestLogWindow">
+             tools:context="com.sunsunsoft.shutaro.ugui.fragment.FragmentTestLogWindow">
 
-    <com.sunsunsoft.shutaro.ugui.TestLogView
+    <com.sunsunsoft.shutaro.ugui.fragment.TestLogView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/testView"/>

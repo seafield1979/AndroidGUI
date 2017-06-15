@@ -2,9 +2,9 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.sunsunsoft.shutaro.ugui.FragmentTestDialog">
+             tools:context="com.sunsunsoft.shutaro.ugui.fragment.FragmentTestDialog">
 
-    <com.sunsunsoft.shutaro.ugui.TestDialogView
+    <com.sunsunsoft.shutaro.ugui.fragment.TestDialogView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/testView"/>

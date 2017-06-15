@@ -1,11 +1,15 @@
 package com.sunsunsoft.shutaro.ugui;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+
+import com.sunsunsoft.shutaro.ugui.fragment.FragmentTestTextview;
+import com.sunsunsoft.shutaro.ugui.fragment.FragmentTop;
+import com.sunsunsoft.shutaro.ugui.util.ULog;
+import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
 
 public class SubActivity extends AppCompatActivity {
 

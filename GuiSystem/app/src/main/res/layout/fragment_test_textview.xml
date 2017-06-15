@@ -6,7 +6,7 @@
              android:id="@+id/top_layout"
              >
 
-    <com.sunsunsoft.shutaro.ugui.TestTextView
+    <com.sunsunsoft.shutaro.ugui.fragment.TestTextView
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:id="@+id/textView"

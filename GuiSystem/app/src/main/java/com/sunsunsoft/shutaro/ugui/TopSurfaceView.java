@@ -12,6 +12,14 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.sunsunsoft.shutaro.ugui.util.UColor;
+import com.sunsunsoft.shutaro.ugui.util.ULog;
+
+import com.sunsunsoft.shutaro.ugui.uview.*;
+import com.sunsunsoft.shutaro.ugui.uview.icon.*;
+import com.sunsunsoft.shutaro.ugui.uview.window.*;
+import com.sunsunsoft.shutaro.ugui.uview.UMenuItemCallbacks;
+
 /**
  * 単語帳トップ SurfaceView版
  */
@@ -86,7 +94,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         // Sub
         UIconWindow subWindow = UIconWindow.createInstance(this, this, this, false, winDir,
                 width, height, Color.LTGRAY);
-        subWindow.isShow = false;
+        subWindow.setShow(false);
         mWindows[WindowType.Icon2.ordinal()] = subWindow;
 
         mIconWindows = UIconWindows.createInstance(mainWindow, subWindow, width, height);
@@ -106,7 +114,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
 
         // ULogWindow
         if (mLogWin == null) {
-            mLogWin = ULogWindow.createInstance(getContext(), this, LogWindowType.AutoDisappear,
+            mLogWin = ULogWindow.createInstance(getContext(), this, ULogWindow.LogWindowType.AutoDisappear,
                     0, 0, width / 2, height);
             mWindows[WindowType.Log.ordinal()] = mLogWin;
         }
@@ -257,7 +265,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
      */
     private void addIcon(UIconWindow window, IconType shape, int menuItemId) {
         UIconManager manager = window.getIconManager();
-        UIcon icon = manager.addIcon(shape, AddPos.Top);
+        UIcon icon = manager.addIcon(shape, UIconManager.AddPos.Top);
 
         // アイコンの初期座標は追加メニューアイコンの位置
         PointF menuPos = mMenuBar.getItemPos(menuItemId);
@@ -324,7 +332,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
      */
     public void clickIcon(UIcon icon) {
         ULog.print(TAG, "clickIcon");
-        switch(icon.type) {
+        switch(icon.getType()) {
             case CIRCLE:
                 break;
             case RECT:

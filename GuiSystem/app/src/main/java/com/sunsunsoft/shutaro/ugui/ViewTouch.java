@@ -2,32 +2,10 @@ package com.sunsunsoft.shutaro.ugui;
 
 import android.view.MotionEvent;
 
+import com.sunsunsoft.shutaro.ugui.util.ULog;
+
 import java.util.Timer;
 import java.util.TimerTask;
-
-enum TouchType {
-    None,
-    Touch,        // タッチ開始
-    LongPress,    // 長押し
-    Click,        // ただのクリック（タップ)
-    LongClick,    // 長クリック
-    Moving,       // 移動
-    MoveEnd,      // 移動終了
-    MoveCancel    // 移動キャンセル
-}
-
-/**
- * ViewTouchで長押しされた時のコールバック
- */
-
-interface ViewTouchCallbacks {
-
-    /**
-     * 長押しされたときに呼ばれる
-     */
-    void longPressed();
-}
-
 
 /**
  * View上のタッチ処理を判定する
@@ -62,7 +40,7 @@ public class ViewTouch {
     private float touchX, touchY;
 
     protected float x, y;       // スクリーン座標
-    float moveX, moveY;
+    protected float moveX, moveY;
     private boolean isMoveStart;
 
     // タッチ開始した時間
@@ -86,6 +64,8 @@ public class ViewTouch {
     public void setTouchUp(boolean touchUp) {
         isTouchUp = touchUp;
     }
+    public float getMoveX(){ return moveX; }
+    public float getMoveY(){ return moveY; }
 
     public ViewTouch() {
         this(null);
