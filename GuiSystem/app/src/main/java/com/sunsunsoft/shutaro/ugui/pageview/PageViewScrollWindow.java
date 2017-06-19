@@ -29,6 +29,8 @@ public class PageViewScrollWindow extends UPageView implements UButtonCallbacks,
     private static final int BUTTON_PRIORITY = 100;
     private static final int IMAGE_BUTTON_ID = 10;
 
+    private static final int ButtonIdOK1 = 100;
+
     /**
      * Member Variables
      */
@@ -62,8 +64,15 @@ public class PageViewScrollWindow extends UPageView implements UButtonCallbacks,
 
 
         mScrollWindow = new UScrollWindowTest(this, 1, 0, 0, width, height, Color.WHITE);
+        mScrollWindow.addToDrawManager();
         mScrollWindow.setContentSize(2000,2000, true);
         mScrollWindow.updateWindow();
+
+        UButtonText button = new UButtonText(this, UButtonType.BGColor, ButtonIdOK1, BUTTON_PRIORITY, "test", 100, 100,
+                width - 100*2, 120,
+                50, Color.WHITE, Color.rgb(0,128,0));
+
+
     }
 
     public boolean draw(Canvas canvas, Paint paint) {
@@ -90,7 +99,10 @@ public class PageViewScrollWindow extends UPageView implements UButtonCallbacks,
 
     public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + (id + 1));
-
+        switch (id) {
+            case ButtonIdOK1:
+                break;
+        }
         return false;
     }
     public boolean UButtonLongClick(int id) {

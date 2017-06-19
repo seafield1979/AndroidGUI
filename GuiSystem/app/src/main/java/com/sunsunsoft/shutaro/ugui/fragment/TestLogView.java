@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import com.sunsunsoft.shutaro.ugui.uview.DoActionRet;
 import com.sunsunsoft.shutaro.ugui.uview.button.*;
 import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
 import com.sunsunsoft.shutaro.ugui.util.ULog;
@@ -102,7 +103,7 @@ public class TestLogView extends View implements OnTouchListener, UButtonCallbac
             initDrawables(getWidth(), getHeight());
         }
         // 毎フレームの処理
-        if (logWindows[0].doAction()) {
+        if (logWindows[0].doAction() == DoActionRet.Redraw) {
             invalidate();
         }
 

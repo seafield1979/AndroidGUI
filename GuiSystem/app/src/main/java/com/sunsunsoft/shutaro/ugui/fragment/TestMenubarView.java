@@ -90,7 +90,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         paint.setAntiAlias(true);
 
         // Windowアクション(手前から順に処理する)
-        if (menuBar.doAction()) {
+        if (menuBar.doAction() == DoActionRet.Redraw) {
             invalidate();
         }
 
@@ -119,7 +119,7 @@ public class TestMenubarView extends View implements View.OnTouchListener, UButt
         }
 
         // MenuBar
-        if (menuBar.touchEvent(viewTouch)) {
+        if (menuBar.touchEvent(viewTouch, null)) {
             invalidate();
         }
 

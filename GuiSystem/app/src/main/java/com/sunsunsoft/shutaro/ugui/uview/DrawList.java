@@ -17,6 +17,7 @@ import com.sunsunsoft.shutaro.ugui.*;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+
 /**
  * 描画オブジェクトのリストを管理するクラス
  * プライオリティーやクリップ領域を持つ
@@ -95,14 +96,20 @@ public class DrawList
      * 毎フレームの処理
      * @return
      */
-    public boolean doAction() {
-        boolean allDone = true;
+    public DoActionRet doAction() {
+
+        DoActionRet ret = DoActionRet.None;
         for (UDrawable obj : list) {
-            if (obj.doAction()) {
-                allDone = false;
+            DoActionRet _ret = obj.doAction();
+            switch(_ret) {
+                case Done:
+                    return _ret;
+                case Redraw:
+                    ret = _ret;
+                    break;
             }
         }
-        return !allDone;
+        return ret;
     }
 
     /**
@@ -133,8 +140,7 @@ public class DrawList
     protected boolean touchUpEvent(ViewTouch vt) {
         boolean isRedraw = false;
 
-        for(ListIterator it = list.listIterator(list.size()); it.hasPrevious();){
-            UDrawable obj = (UDrawable)it.previous();
+        for(UDrawable obj : list){
             if (obj.touchUpEvent(vt)) {
                 isRedraw = true;
             }
@@ -158,16 +164,19 @@ public class DrawList
         if (manager.getTouchingObj() != null &&
                 vt.type != TouchType.Touch)
         {
-            if (manager.getTouchingObj().touchEvent(vt)) {
+            if (manager.getTouchingObj().touchEvent(vt, null)) {
                 return true;
             }
             return false;
         }
 
-        for(ListIterator it = list.listIterator(list.size()); it.hasPrevious();){
+        // 手前に表示されたものから処理したいのでリストを逆順で処理する
+        for(ListIterator it = list.listIterator(list.size()); it.hasPrevious();) {
             UDrawable obj = (UDrawable)it.previous();
-            if (obj.touchEvent(vt)) {
+            if (!obj.isShow()) continue;
+            PointF offset = obj.getDrawOffset();
 
+            if (obj.touchEvent(vt, offset)) {
                 if (vt.type == TouchType.Touch) {
                     manager.setTouchingObj(obj);
                 }
@@ -183,6 +192,7 @@ public class DrawList
      */
     /**
      * 描画オブジェクトをすべて出力する
+     * @param isShowOnly  画面に表示中のもののみログを出力する
      */
     public void showAll(boolean ascending, boolean isShowOnly) {
         // パッケージ名を除去

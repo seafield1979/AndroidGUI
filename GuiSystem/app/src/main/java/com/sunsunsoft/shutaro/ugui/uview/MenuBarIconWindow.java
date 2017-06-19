@@ -1,5 +1,6 @@
 package com.sunsunsoft.shutaro.ugui.uview;
 
+import android.graphics.Bitmap;
 import android.view.View;
 
 import com.sunsunsoft.shutaro.ugui.R;
@@ -45,7 +46,7 @@ public class MenuBarIconWindow extends UMenuBar {
      * Constructor
      */
     public MenuBarIconWindow(View parentView, UMenuItemCallbacks callbackClass, int parentW, int parentH, int bgColor) {
-        super(parentView, callbackClass, parentW, parentH, bgColor);
+        super(callbackClass, parentW, parentH, bgColor);
     }
 
     /**
@@ -72,30 +73,32 @@ public class MenuBarIconWindow extends UMenuBar {
         UMenuItem item2;
 
         // Add
-        item = addTopMenuItem(MenuItemId.AddTop.ordinal(), R.drawable.hogeman);
-        item2 = addMenuItem(item, MenuItemId.AddCard.ordinal(), R.drawable.hogeman);
-        addMenuItem(item2, MenuItemId.AddCard1.ordinal(), R.drawable.hogeman);
-        addMenuItem(item2, MenuItemId.AddCard2.ordinal(), R.drawable.hogeman);
-        addMenuItem(item2, MenuItemId.AddCard3.ordinal(), R.drawable.hogeman);
+        Bitmap image = UResourceManager.getBitmapById(R.drawable.hogeman);
+        item = addTopMenuItem(MenuItemId.AddTop.ordinal(), image);
+        item2 = addMenuItem(item, MenuItemId.AddCard.ordinal(), image);
+        addMenuItem(item2, MenuItemId.AddCard1.ordinal(), image);
+        addMenuItem(item2, MenuItemId.AddCard2.ordinal(), image);
+        addMenuItem(item2, MenuItemId.AddCard3.ordinal(), image);
 
-        addMenuItem(item, MenuItemId.AddBook.ordinal(), R.drawable.hogeman);
-        addMenuItem(item, MenuItemId.AddBox.ordinal(), R.drawable.hogeman);
+        addMenuItem(item, MenuItemId.AddBook.ordinal(), image);
+        addMenuItem(item, MenuItemId.AddBox.ordinal(), image);
 
         // Sort
-        item = addTopMenuItem(MenuItemId.SortTop.ordinal(), R.drawable.hogeman);
-        addMenuItem(item, MenuItemId.Sort1.ordinal(), R.drawable.hogeman);
-        addMenuItem(item, MenuItemId.Sort2.ordinal(), R.drawable.hogeman);
-        addMenuItem(item, MenuItemId.Sort3.ordinal(), R.drawable.hogeman);
+        item = addTopMenuItem(MenuItemId.SortTop.ordinal(), image);
+        addMenuItem(item, MenuItemId.Sort1.ordinal(), image);
+        addMenuItem(item, MenuItemId.Sort2.ordinal(), image);
+        addMenuItem(item, MenuItemId.Sort3.ordinal(), image);
         // ListType
-        item = addTopMenuItem(MenuItemId.ListTypeTop.ordinal(), R.drawable.hogeman);
-        addMenuItem(item, MenuItemId.ListType1.ordinal(), R.drawable.hogeman);
-        addMenuItem(item, MenuItemId.ListType2.ordinal(), R.drawable.hogeman);
-        addMenuItem(item, MenuItemId.ListType3.ordinal(), R.drawable.hogeman);
+        item = addTopMenuItem(MenuItemId.ListTypeTop.ordinal(), image);
+        addMenuItem(item, MenuItemId.ListType1.ordinal(), image);
+        addMenuItem(item, MenuItemId.ListType2.ordinal(), image);
+        addMenuItem(item, MenuItemId.ListType3.ordinal(), image);
         // Debug
-        item = addTopMenuItem(MenuItemId.DebugTop.ordinal(), R.drawable.debug);
-        addMenuItem(item, MenuItemId.Debug1.ordinal(), R.drawable.debug);
-        addMenuItem(item, MenuItemId.Debug2.ordinal(), R.drawable.debug);
-        addMenuItem(item, MenuItemId.Debug3.ordinal(), R.drawable.debug);
+        Bitmap image2 = UResourceManager.getBitmapById(R.drawable.debug);
+        item = addTopMenuItem(MenuItemId.DebugTop.ordinal(), image2);
+        addMenuItem(item, MenuItemId.Debug1.ordinal(), image2);
+        addMenuItem(item, MenuItemId.Debug2.ordinal(), image2);
+        addMenuItem(item, MenuItemId.Debug3.ordinal(), image2);
 
         mDrawList = UDrawManager.getInstance().addDrawable(this);
         updateBGSize();

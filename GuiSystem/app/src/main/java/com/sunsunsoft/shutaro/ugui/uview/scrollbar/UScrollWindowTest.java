@@ -22,7 +22,6 @@ public class UScrollWindowTest extends UScrollWindow {
         super(callbacks, priority, x, y, width, height, color, 50, 5, 20);
     }
 
-
     public void drawContent(Canvas canvas, Paint paint) {
         // test
         UDraw.drawCircle(canvas, paint, new PointF(500 + pos.x - contentTop.x, 500 + pos.y - contentTop

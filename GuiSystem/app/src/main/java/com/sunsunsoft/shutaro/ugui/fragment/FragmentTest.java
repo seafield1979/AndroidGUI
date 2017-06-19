@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 
 import com.sunsunsoft.shutaro.ugui.pageview.*;
 import com.sunsunsoft.shutaro.ugui.R;
+import com.sunsunsoft.shutaro.ugui.uview.UResourceManager;
 
 /**
  * Created by shutaro on 2016/12/09.
@@ -53,6 +54,7 @@ public class FragmentTest extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_test, container, false);
+        UResourceManager.getInstance().setView(view);
 
         // パラメータを取得
         Bundle bundle = getArguments();

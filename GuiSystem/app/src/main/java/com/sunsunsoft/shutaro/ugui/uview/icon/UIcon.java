@@ -9,6 +9,7 @@ import android.util.Log;
 import com.sunsunsoft.shutaro.ugui.ViewTouch;
 import com.sunsunsoft.shutaro.ugui.util.UColor;
 import com.sunsunsoft.shutaro.ugui.uview.DrawList;
+import com.sunsunsoft.shutaro.ugui.uview.DrawPriority;
 import com.sunsunsoft.shutaro.ugui.uview.UDraw;
 import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
 import com.sunsunsoft.shutaro.ugui.uview.UDrawable;
@@ -99,7 +100,7 @@ abstract public class UIcon extends UDrawable {
             isChecked = false;
         } else {
             isChecked = true;
-            this.drawPriority = UDrawManager.DrawPriority.DragIcon.p();
+            this.drawPriority = DrawPriority.DragIcon.p();
         }
         else {
             if (callbacks != null) {

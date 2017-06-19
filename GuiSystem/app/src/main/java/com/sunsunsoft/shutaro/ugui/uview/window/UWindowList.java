@@ -1,5 +1,6 @@
 package com.sunsunsoft.shutaro.ugui.uview.window;
 
+import com.sunsunsoft.shutaro.ugui.uview.DoActionRet;
 import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
 
 import java.util.LinkedList;
@@ -71,13 +72,14 @@ public class UWindowList {
      * アクション
      * @return true:再描画
      */
-    public boolean doAction() {
-        boolean redraw = false;
+    public DoActionRet doAction() {
+        DoActionRet ret = DoActionRet.None;
         for (UWindow window : lists) {
-            if (window.doAction()) {
-                redraw = true;
+            DoActionRet _ret = window.doAction();
+            if (_ret != DoActionRet.None) {
+                ret = _ret;
             }
         }
-        return redraw;
+        return ret;
     }
 }

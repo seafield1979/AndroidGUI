@@ -15,18 +15,22 @@ import com.sunsunsoft.shutaro.ugui.R;
 import com.sunsunsoft.shutaro.ugui.SubActivity;
 import com.sunsunsoft.shutaro.ugui.uview.UResourceManager;
 
-
+/**
+ * トップページの各テストページにジャンプするボタンが配置されたメニューページ
+ *
+ * レイアウト: fragment_menu.xml
+ */
 public class FragmentMenu extends Fragment implements OnClickListener{
     public static final String FRAMGMENT_NAME = FragmentTop.class.getName();
 
     int[] buttonIds = {
-        R.id.buttonHome,
-        R.id.buttonButton,
-        R.id.buttonTextview,
-            R.id.buttonImageView,
+            R.id.buttonButton,
+            R.id.buttonHome,
+            R.id.buttonTextview, R.id.buttonImageView,
         R.id.buttonMenuBar,
         R.id.buttonLog,
         R.id.buttonWindow,
+            R.id.buttonWindow2,
         R.id.buttonDialog,
             R.id.buttonTouch,
             R.id.buttonScrollWin,
@@ -56,7 +60,7 @@ public class FragmentMenu extends Fragment implements OnClickListener{
         }
 
         // Bitmapマネージャー生成
-        UResourceManager.createInstance(getContext(), view);
+        UResourceManager.createInstance(getContext());
 
         return view;
     }
@@ -107,6 +111,13 @@ public class FragmentMenu extends Fragment implements OnClickListener{
                 showFragment(fragment);
             }
             break;
+            case R.id.buttonWindow2:
+            {
+                Fragment fragment = new FragmentTestWindow2();
+                showFragment(fragment);
+            }
+            break;
+
             case R.id.buttonDialog:
             {
                 Fragment fragment = new FragmentTestDialog();

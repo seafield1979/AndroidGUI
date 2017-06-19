@@ -142,7 +142,7 @@ public class UIconWindow extends UWindow {
             }
         }
         else {
-            UDrawManager.getInstance().addWithNewPriority(dragedIcon, UDrawManager.DrawPriority.DragIcon.p());
+            UDrawManager.getInstance().addWithNewPriority(dragedIcon, DrawPriority.DragIcon.p());
         }
         this.dragedIcon = dragedIcon;
     }
@@ -309,8 +309,8 @@ public class UIconWindow extends UWindow {
      * 毎フレーム行う処理
      * @return true:再描画を行う(まだ処理が終わっていない)
      */
-    public boolean doAction() {
-        boolean redraw = false;
+    public DoActionRet doAction() {
+        DoActionRet ret = DoActionRet.None;
         boolean allFinished;
         List<UIcon> icons = getIcons();
 
@@ -333,11 +333,11 @@ public class UIconWindow extends UWindow {
                 if (allFinished) {
                     endIconMoving();
                 }
-                redraw = true;
+                ret = DoActionRet.Redraw;
             }
         }
 
-        return redraw;
+        return ret;
     }
 
     /**
@@ -567,7 +567,7 @@ public class UIconWindow extends UWindow {
             // チェックされたアイコンが最前面に表示されるように描画優先度をあげる
             for (UIcon icon : checkedIcons) {
                 icon.isDraging = true;
-                UDrawManager.getInstance().addWithNewPriority(icon, UDrawManager.DrawPriority.DragIcon.p());
+                UDrawManager.getInstance().addWithNewPriority(icon, DrawPriority.DragIcon.p());
             }
             // チェックアイコンのどれかをタッチしていたらドラッグ開始
             for (UIcon icon : checkedIcons) {
@@ -957,11 +957,11 @@ public class UIconWindow extends UWindow {
      * @param vt
      * @return trueならViewを再描画
      */
-    public boolean touchEvent(ViewTouch vt) {
+    public boolean touchEvent(ViewTouch vt, PointF offset) {
         if (!isShow) return false;
         if (state == WindowState.icon_moving) return false;
 
-        if (super.touchEvent(vt)) {
+        if (super.touchEvent(vt, offset)) {
             return true;
         }
         boolean done = false;
@@ -1011,7 +1011,7 @@ public class UIconWindow extends UWindow {
                     if (dragEndNormal(vt)) {
                         done = true;
                     }
-                } else {
+                } else if (state != WindowState.icon_selecting) {
                     if (dragEndChecking(vt)) {
                         done = true;
                     }

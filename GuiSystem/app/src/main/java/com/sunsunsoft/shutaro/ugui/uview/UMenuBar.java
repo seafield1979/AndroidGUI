@@ -11,6 +11,7 @@ import com.sunsunsoft.shutaro.ugui.uview.window.UWindow;
 
 import java.util.LinkedList;
 
+
 /**
  * メニューバー
  * メニューに表示する項目を管理する
@@ -18,14 +19,15 @@ import java.util.LinkedList;
 abstract public class UMenuBar extends UWindow {
 
     public static final int DRAW_PRIORITY = 90;
-    public static final int MENU_BAR_H = 150;
+    public static final int MENU_BAR_H = 180;
     protected static final int MARGIN_L = 30;
-    protected static final int MARGIN_LR = 50;
+    protected static final int MARGIN_H = 50;
     protected static final int MARGIN_TOP = 15;
 
+
     protected UMenuItemCallbacks mMenuItemCallbacks;
-    LinkedList<UMenuItem> topItems;
-    LinkedList<UMenuItem> items;
+    protected LinkedList<UMenuItem> topItems;
+    protected LinkedList<UMenuItem> items;
     protected DrawList mDrawList;
     protected boolean isAnimating;
 
@@ -39,7 +41,7 @@ abstract public class UMenuBar extends UWindow {
     /**
      * Constructor
      */
-    public UMenuBar(View parentView, UMenuItemCallbacks callbackClass,
+    public UMenuBar(UMenuItemCallbacks callbackClass,
                     int parentW, int parentH,
                     int bgColor)
     {
@@ -50,22 +52,24 @@ abstract public class UMenuBar extends UWindow {
     }
 
     /**
+     * Methods
+     */
+    /**
      * メニューバーを初期化
      */
     abstract protected void initMenuBar();
 
     protected void updateBGSize() {
-        size.width = MARGIN_L + topItems.size() * (UMenuItem.ITEM_W + MARGIN_LR);
+        size.width = MARGIN_L + topItems.size() * (UMenuItem.ITEM_W + MARGIN_H);
     }
 
     /**
      * メニューのトップ項目を追加する
      * @param menuId
-     * @param bmpId
+     * @param image
      */
-    protected UMenuItem addTopMenuItem(int menuId, int bmpId) {
-        Bitmap bmp = UResourceManager.getInstance().getBitmapById(bmpId);
-        UMenuItem item = new UMenuItem(this, menuId, bmp);
+    protected UMenuItem addTopMenuItem(int menuId, Bitmap image) {
+        UMenuItem item = new UMenuItem(this, menuId, true, image);
         item.setCallbacks(mMenuItemCallbacks);
         item.setShow(true);
 
@@ -73,8 +77,7 @@ abstract public class UMenuBar extends UWindow {
         items.add(item);
 
         // 座標設定
-        item.setPos(MARGIN_LR + (UMenuItem.ITEM_W + MARGIN_LR) * (topItems.size() - 1), MARGIN_TOP);
-
+        item.setPos(MARGIN_H + (UMenuItem.TOP_ITEM_W + MARGIN_H) * (topItems.size() - 1), MARGIN_TOP);
         return item;
     }
 
@@ -82,14 +85,13 @@ abstract public class UMenuBar extends UWindow {
      * 子メニューを追加する
      * @param parent
      * @param menuId
-     * @param bmpId
+     * @param image
      * @return
      */
-    protected UMenuItem addMenuItem(UMenuItem parent, int menuId, int bmpId) {
-        Bitmap bmp = UResourceManager.getInstance().getBitmapById(bmpId);
-        UMenuItem item = new UMenuItem(this, menuId, bmp);
+    protected UMenuItem addMenuItem(UMenuItem parent, int menuId, Bitmap image) {
+        UMenuItem item = new UMenuItem(this, menuId, false, image);
         item.setCallbacks(mMenuItemCallbacks);
-        item.setParentItem(parent);
+        item.setmParentItem(parent);
         // 子要素は初期状態では非表示。オープン時に表示される
         item.setShow(false);
 
@@ -106,17 +108,23 @@ abstract public class UMenuBar extends UWindow {
      * @return true:処理中 / false:完了
      */
     @Override
-    public boolean doAction() {
-        if (!isShow) return false;
+    public DoActionRet doAction() {
+        if (!isShow) return DoActionRet.None;
 
-        boolean allFinished = true;
+        DoActionRet ret = DoActionRet.None;
         for (UMenuItem item : topItems) {
-            if (item.doAction()) {
-                allFinished = false;
+            DoActionRet _ret = item.doAction();
+            switch(_ret) {
+                case Done:
+                    return _ret;
+                case Redraw:
+                    ret = _ret;
+                    break;
+
             }
         }
 
-        return !allFinished;
+        return ret;
     }
 
     /**
@@ -124,7 +132,7 @@ abstract public class UMenuBar extends UWindow {
      * 現状はクリック以外は受け付けない
      * メニューバー以下の項目(メニューの子要素も含めて全て)のクリック判定
      */
-    public boolean touchEvent(ViewTouch vt) {
+    public boolean touchEvent(ViewTouch vt, PointF offset) {
         if (!isShow) return false;
 
         boolean done = false;
@@ -137,11 +145,12 @@ abstract public class UMenuBar extends UWindow {
 
             if (item.checkTouch(vt, clickX, clickY)) {
                 done = true;
+                // クリック時に後ろのアイテムに反応するのを防ぐ
+                vt.setTouching(false);
+
                 if (item.isOpened()) {
                     // 他に開かれたメニューを閉じる
                     closeAllMenu(item);
-                } else {
-
                 }
                 break;
             }
@@ -153,6 +162,8 @@ abstract public class UMenuBar extends UWindow {
             if (0 <= clickX && clickX <= size.width &&
                     0 <= clickY && clickY <= size.height)
             {
+                // クリック時に後ろのアイテムに反応するのを防ぐ
+                vt.setTouching(false);
                 return true;
             }
         }
@@ -194,9 +205,14 @@ abstract public class UMenuBar extends UWindow {
     public void drawContent(Canvas canvas, Paint paint, PointF offset ) {
         if (!isShow) return;
 
+        // 背景描画
+//        UDraw.drawRoundRectFill(canvas, paint, new RectF(pos.x, pos.y, pos.x + getWidth() + 30,
+//                pos.y + getHeight()),
+//                30, UColor.LightGreen, 0, 0);
+
         // トップのアイテムから描画
         for (UMenuItem item : topItems) {
-            if (item != null && item.isShow) {
+            if (item != null && item.isShow()) {
                 item.draw(canvas, paint, pos);
             }
         }

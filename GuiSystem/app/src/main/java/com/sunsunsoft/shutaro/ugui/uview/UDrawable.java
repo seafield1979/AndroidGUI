@@ -25,11 +25,12 @@ abstract public class UDrawable {
      * Enums
      */
     // 自動移動のタイプ
-    enum MovingType {
+    public enum MovingType {
         UniformMotion,      // 等速運動
         Acceleration,       // 加速
         Deceleration        // 減速
     }
+
 
     /**
      * Constants
@@ -47,16 +48,19 @@ abstract public class UDrawable {
     protected int color;
     protected int drawPriority;     // DrawManagerに渡す描画優先度
 
-    // 自動移動用
+    // 自動移動、サイズ変更、色変更
     protected boolean isMoving;
     protected boolean isMovingPos;
     protected boolean isMovingSize;
+
     protected boolean isShow;
     protected MovingType movingType;
     protected int movingFrame;
     protected int movingFrameMax;
+
     protected PointF srcPos = new PointF();
     protected PointF dstPos = new PointF();
+
     protected Size srcSize = new Size();
     protected Size dstSize = new Size();
 
@@ -98,6 +102,8 @@ abstract public class UDrawable {
     public PointF getPos() {
         return pos;
     }
+    public float getPosX() { return pos.x; }
+    public float getPosY() { return pos.y; }
 
     public void setPos(float x, float y) {
         setPos(x, y, true);
@@ -118,8 +124,11 @@ abstract public class UDrawable {
         this.pos.y = pos.y;
         updateRect();
     }
+    public Size getSize() {
+        return size;
+    }
 
-    protected void updateRect() {
+    public void updateRect() {
         if (rect == null) {
             rect = new Rect((int)pos.x, (int)pos.y, (int)pos.x + size.width, (int)pos.y + size.height);
         } else {
@@ -128,6 +137,24 @@ abstract public class UDrawable {
             rect.top = (int) pos.y;
             rect.bottom = (int) pos.y + size.height;
         }
+    }
+    public boolean getIsShow() {
+        return isShow;
+    }
+
+    /**
+     * Rectをスケールする。ボタン等のタッチ範囲を広げるのに使用する
+     * @param scaleH
+     * @param scaleV
+     */
+    public void scaleRect(float scaleH, float scaleV) {
+        float _scaleW = size.width * (scaleH - 1.0f) / 2;
+        float _scaleH = size.height * (scaleV - 1.0f) / 2;
+
+        rect.left = (int)(pos.x + -_scaleW);
+        rect.top = (int)(pos.y + -_scaleH);
+        rect.right = (int)(pos.x + size.width + _scaleW);
+        rect.bottom = (int)(pos.y + size.height + _scaleH);
     }
 
     public float getRight() {
@@ -207,9 +234,11 @@ abstract public class UDrawable {
     /**
      * 毎フレームの処理
      * サブクラスでオーバーライドして使用する
-     * @return true:処理中 / false:処理完了
+     * @return
      */
-    public boolean doAction(){ return false; }
+    public DoActionRet doAction(){
+        return DoActionRet.None;
+    }
 
     /**
      * Rectをライン描画する for Debug
@@ -234,7 +263,8 @@ abstract public class UDrawable {
      * @param vt
      * @return
      */
-    public boolean touchEvent(ViewTouch vt) {
+    public boolean touchEvent(ViewTouch vt, PointF offset)
+    {
         return false;
     }
 
@@ -251,6 +281,7 @@ abstract public class UDrawable {
     public void removeFromDrawManager() {
         UDrawManager.getInstance().removeDrawable(this);
     }
+
 
     /**
      * 移動
@@ -374,8 +405,8 @@ abstract public class UDrawable {
     }
 
     /**
-     * 移動
-     * 移動開始位置、終了位置、経過フレームから現在位置を計算する
+     * 移動、サイズ変更、色変更
+     * 移動開始位置、終了位置、経過フレームから現在の値を計算する
      * @return true:移動中
      */
     public boolean autoMoving() {
@@ -394,6 +425,7 @@ abstract public class UDrawable {
             isMoving = false;
             isMovingPos = false;
             isMovingSize = false;
+
             updateRect();
             endMoving();
         } else {
@@ -418,7 +450,6 @@ abstract public class UDrawable {
                 setSize((int) (srcSize.width + (dstSize.width - srcSize.width) * ratio),
                         (int) (srcSize.height + (dstSize.height - srcSize.height) * ratio));
             }
-
         }
         return true;
     }

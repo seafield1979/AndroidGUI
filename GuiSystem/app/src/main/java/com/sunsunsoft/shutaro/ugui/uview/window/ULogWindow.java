@@ -10,6 +10,7 @@ import android.graphics.PointF;
 import android.view.View;
 
 import com.sunsunsoft.shutaro.ugui.ViewTouch;
+import com.sunsunsoft.shutaro.ugui.uview.DoActionRet;
 import com.sunsunsoft.shutaro.ugui.uview.DrawList;
 import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
 
@@ -128,14 +129,14 @@ public class ULogWindow extends UWindow {
      *
      * @return true:描画を行う
      */
-    public boolean doAction() {
+    public DoActionRet doAction() {
         // 自動移動
         if (isMoving) {
             if (autoMoving()) {
-                return true;
+                return DoActionRet.Redraw;
             }
         }
-        return false;
+        return DoActionRet.None;
     }
 
 
@@ -152,9 +153,9 @@ public class ULogWindow extends UWindow {
      * @param vt
      * @return trueならViewを再描画
      */
-    public boolean touchEvent(ViewTouch vt) {
+    public boolean touchEvent(ViewTouch vt, PointF offset) {
         if (!isShow) return false;
-        if (super.touchEvent(vt)) {
+        if (super.touchEvent(vt, offset)) {
             return true;
         }
 

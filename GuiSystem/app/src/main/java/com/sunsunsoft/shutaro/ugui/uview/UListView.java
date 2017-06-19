@@ -146,7 +146,7 @@ public class UListView extends UScrollWindow
             }
         }
 
-        if (super.touchEvent(vt)) {
+        if (super.touchEvent(vt, offset)) {
             isDraw = true;
         }
         return isDraw;

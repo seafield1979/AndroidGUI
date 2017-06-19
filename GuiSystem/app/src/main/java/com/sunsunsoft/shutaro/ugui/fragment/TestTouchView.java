@@ -105,7 +105,7 @@ public class TestTouchView extends View implements View.OnTouchListener, UButton
         }
         // 毎フレームの処理
         for (ULogWindow logWindow : logWindows) {
-            if (logWindow.doAction()) {
+            if (logWindow.doAction() == DoActionRet.Redraw) {
                 invalidate();
             }
         }

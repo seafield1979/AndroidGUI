@@ -16,11 +16,10 @@ import android.text.TextPaint;
 import com.sunsunsoft.shutaro.ugui.util.Size;
 
 
-
-
 /**
- * 自前の描画処理
- * OnDrawの中から呼び出す
+ * 描画処理を行うstaticメソッドをまとめたクラス
+ *
+ * 描画処理を使いやすいように１メソッドづつにまとめている。処理速度は少し遅い。
  */
 
 public class UDraw {
@@ -332,7 +331,6 @@ public class UDraw {
         int width = (int) paint.measureText(text);
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
 
-        // テキストの左上端がx,yと一致するように補正
         // テキストの左上端がx,yと一致するように補正
         switch (alignment) {
             case None:

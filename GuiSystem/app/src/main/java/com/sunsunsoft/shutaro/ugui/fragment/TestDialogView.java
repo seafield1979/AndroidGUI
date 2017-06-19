@@ -130,6 +130,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         UDialogWindow.ButtonDir.Horizontal,
                         UDialogWindow.DialogPosType.Center, false,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.addToDrawManager();
                 dialogWindow.setTitle("hoge\nhoge");
 
                 for (int i=0; i<3; i++) {
@@ -143,7 +144,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                             .YELLOW);
                 }
                 dialogWindow.addCloseButton(null);
-                dialogWindow.setDrawPriority(UDrawManager.DrawPriority.Dialog.p());
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
             }
                 break;
             case Test2:
@@ -154,6 +155,8 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         UDialogWindow.ButtonDir.Vertical,
                         UDialogWindow.DialogPosType.Center, true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.addToDrawManager();
+
                 dialogWindow.setTitle("hoge\nhoge");
                 for (int i=0; i<3; i++) {
                     dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX,
@@ -166,7 +169,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                             .YELLOW);
                 }
                 dialogWindow.addCloseButton(null);
-                dialogWindow.setDrawPriority(UDrawManager.DrawPriority.Dialog.p());
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
             }
                 break;
             case Test3:
@@ -179,6 +182,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         UDialogWindow.DialogPosType.Center,
                         true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.addToDrawManager();
                 dialogWindow.setTitle("hoge\nhoge");
                 for (int i=0; i<3; i++) {
                     dialogWindow.addTextView("hoge" + (i + 1), UAlignment.Center.CenterX,
@@ -191,7 +195,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                             .WHITE);
                 }
                 dialogWindow.addCloseButton(null);
-                dialogWindow.setDrawPriority(UDrawManager.DrawPriority.Dialog.p());
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
             }
                 break;
             case Test4:
@@ -201,6 +205,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         UDialogWindow.ButtonDir.Horizontal, UDialogWindow.DialogPosType.Center,
                         true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.addToDrawManager();
 
                 for (int i=0; i<dialogButtonIds.length; i++) {
                     int buttonId = dialogButtonIds[i];
@@ -208,7 +213,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 }
                 dialogWindow.addButton(100, "Test" + 1, Color.BLACK, Color
                         .WHITE);
-                dialogWindow.setDrawPriority(UDrawManager.DrawPriority.Dialog.p());
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
             }
                 break;
             case Test5:
@@ -219,6 +224,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                         UDialogWindow.DialogPosType.Center,
                         true,
                         width, height, UColor.getRandomColor(), UColor.getRandomColor());
+                dialogWindow.addToDrawManager();
 
                 for (int i=0; i<dialogButtonIds.length; i++) {
                     int buttonId = dialogButtonIds[i];
@@ -226,7 +232,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
                 }
                 dialogWindow.addButton(100, "Test" + 1, Color.BLACK, Color
                         .WHITE);
-                dialogWindow.setDrawPriority(UDrawManager.DrawPriority.Dialog.p());
+                dialogWindow.setDrawPriority(DrawPriority.Dialog.p());
             }
                 break;
         }
@@ -239,7 +245,7 @@ public class TestDialogView extends View implements View.OnTouchListener, UButto
             initDrawables(getWidth(), getHeight());
         }
         // 毎フレームの処理
-        if (logWindow.doAction()) {
+        if (logWindow.doAction() == DoActionRet.Redraw) {
             invalidate();
         }
 

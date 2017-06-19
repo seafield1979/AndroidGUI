@@ -50,6 +50,11 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonWindow"/>
             <Button
+                android:text="Window2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonWindow2"/>
+            <Button
                 android:text="Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

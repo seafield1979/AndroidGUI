@@ -337,7 +337,7 @@ public class TestTextView extends View implements View.OnTouchListener, UButtonC
             initDrawables(getWidth(), getHeight());
         }
         // 毎フレームの処理
-        if (logWindow.doAction()) {
+        if (logWindow.doAction() == DoActionRet.Redraw) {
             invalidate();
         }
 

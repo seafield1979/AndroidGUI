@@ -1,20 +1,19 @@
-package com.sunsunsoft.shutaro.ugui.uview.text;
+package com.sunsunsoft.shutaro.ugui.uview.window;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
-import com.sunsunsoft.shutaro.ugui.uview.window.*;
 import com.sunsunsoft.shutaro.ugui.ViewTouch;
 import com.sunsunsoft.shutaro.ugui.util.UColor;
+import com.sunsunsoft.shutaro.ugui.uview.DoActionRet;
 import com.sunsunsoft.shutaro.ugui.uview.UDraw;
 import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
-import com.sunsunsoft.shutaro.ugui.uview.window.UWindow;
 
 /**
  * UWindowのテスト用のシンプルなWindow
  */
-public class UTestWindow extends UWindow {
+public class UTestWindow2 extends UWindow {
     /**
      * Consts
      */
@@ -32,7 +31,7 @@ public class UTestWindow extends UWindow {
     /**
      * Constructor
      */
-    private UTestWindow(float x, float y, int width, int height, int color) {
+    private UTestWindow2(float x, float y, int width, int height, int color) {
         super(null, DRAW_PRIORITY, x, y, width, height, color, 50, 10, 10);
     }
 
@@ -45,12 +44,11 @@ public class UTestWindow extends UWindow {
      * @param color
      * @return
      */
-    public static UTestWindow createInstance(UWindowCallbacks callbacks, float x, float y, int
+    public static UTestWindow2 createInstance(UWindowCallbacks callbacks, float x, float y, int
             width, int height, int color) {
-        UTestWindow instance = new UTestWindow(x, y, width, height, color);
+        UTestWindow2 instance = new UTestWindow2(x, y, width, height, color);
         instance.windowCallbacks = callbacks;
         instance.addCloseIcon();
-        UDrawManager.getInstance().addDrawable(instance);
         return instance;
     }
 
@@ -58,8 +56,8 @@ public class UTestWindow extends UWindow {
      * 毎フレームの処理
      * @return　true:再描画
      */
-    public boolean doAction() {
-        return false;
+    public DoActionRet doAction() {
+        return DoActionRet.None;
     }
 
     /**
@@ -67,10 +65,10 @@ public class UTestWindow extends UWindow {
      * @param vt
      * @return trueならViewを再描画
      */
-    public boolean touchEvent(ViewTouch vt) {
+    public boolean touchEvent(ViewTouch vt, PointF offset) {
         if (!isShow) return false;
 
-        boolean redraw = super.touchEvent(vt);
+        boolean redraw = super.touchEvent(vt, offset);
 
         switch (vt.type) {
             case Click:

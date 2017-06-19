@@ -6,6 +6,7 @@ import android.graphics.PointF;
 
 import com.sunsunsoft.shutaro.ugui.TouchType;
 import com.sunsunsoft.shutaro.ugui.ViewTouch;
+import com.sunsunsoft.shutaro.ugui.uview.DoActionRet;
 import com.sunsunsoft.shutaro.ugui.uview.window.*;
 
 /**
@@ -42,16 +43,16 @@ public class UScrollWindow extends UWindow {
     /**
      * Methods
      */
-    public boolean doAction() {
-        return false;
+    public DoActionRet doAction() {
+        return DoActionRet.None;
     }
 
     public void drawContent(Canvas canvas, Paint paint, PointF offset) {
 
     }
 
-    public boolean touchEvent(ViewTouch vt) {
-        if (super.touchEvent(vt)) {
+    public boolean touchEvent(ViewTouch vt, PointF point) {
+        if (super.touchEvent(vt, point)) {
             return true;
         }
         // スクロール処理

@@ -12,6 +12,7 @@ import com.sunsunsoft.shutaro.ugui.MyFragment;
 import com.sunsunsoft.shutaro.ugui.pageview.*;
 import com.sunsunsoft.shutaro.ugui.R;
 import com.sunsunsoft.shutaro.ugui.TopView;
+import com.sunsunsoft.shutaro.ugui.uview.UResourceManager;
 
 /**
  * SubViewのテスト
@@ -42,6 +43,7 @@ public class FragmentTop extends MyFragment implements View.OnTouchListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top, null);
+        UResourceManager.getInstance().setView(view);
 
         // Viewを追加
         topView = new TopView(getContext());

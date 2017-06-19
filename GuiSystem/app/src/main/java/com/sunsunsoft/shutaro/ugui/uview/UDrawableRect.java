@@ -8,6 +8,9 @@ import com.sunsunsoft.shutaro.ugui.ViewTouch;
 
 /**
  * Created by shutaro on 2016/11/15.
+ *
+ * 四角形の描画情報を保持するクラス
+ * UDrawableを継承しているため UDrawManager に登録して一括描画できる
  */
 
 public class UDrawableRect extends UDrawable {

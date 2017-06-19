@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.sunsunsoft.shutaro.ugui.R;
+import com.sunsunsoft.shutaro.ugui.uview.UResourceManager;
 
 
 /**
@@ -26,6 +27,7 @@ public class FragmentTestButton extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_test_button, container, false);
+        UResourceManager.getInstance().setView(view);
 
         // SurfaceViewを追加
         TestButtonView testView = new TestButtonView(getContext());

@@ -1,7 +1,7 @@
 package com.sunsunsoft.shutaro.ugui.fragment;
 
 /**
- * Created by shutaro on 2016/11/15.
+ * Created by shutaro on 2017/06/19.
  */
 
 import android.content.Context;
@@ -12,16 +12,24 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.sunsunsoft.shutaro.ugui.uview.*;
-import com.sunsunsoft.shutaro.ugui.uview.button.*;
-import com.sunsunsoft.shutaro.ugui.util.ULog;
-import com.sunsunsoft.shutaro.ugui.uview.window.ULogWindow;
 import com.sunsunsoft.shutaro.ugui.ViewTouch;
+import com.sunsunsoft.shutaro.ugui.util.UColor;
+import com.sunsunsoft.shutaro.ugui.util.ULog;
+import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
+import com.sunsunsoft.shutaro.ugui.uview.button.UButtonCallbacks;
+import com.sunsunsoft.shutaro.ugui.uview.window.UTestWindow;
+import com.sunsunsoft.shutaro.ugui.uview.window.UTestWindow2;
+import com.sunsunsoft.shutaro.ugui.uview.window.UWindow;
+import com.sunsunsoft.shutaro.ugui.uview.window.UWindowCallbacks;
 
 /**
- * テストViewのテンプレート
+ * Created by shutaro on 2017/06/19
+ *
+ * UWindowの親子構造をテストするView
  */
-public class TestViewTemplate extends View implements View.OnTouchListener, UButtonCallbacks {
+
+public class TestWindowView2 extends View implements View.OnTouchListener, UButtonCallbacks,
+        UWindowCallbacks {
     // ボタンのID
     enum ButtonId {
         Sort("sort window")
@@ -38,8 +46,7 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
         }
     }
 
-    public static final String TAG = "TestButtonView";
-    private static final int BUTTON_PRIORITY = 100;
+    public static final String TAG = "TestButtonView2";
 
     // サイズ更新用
     private boolean isFirst = true;
@@ -49,18 +56,15 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
 
     private Paint paint = new Paint();
 
-    // UButton
-    private UButtonText[] buttons = new UButtonText[ButtonId.values().length];
-
-    // ULogWindow
-    private ULogWindow logWindow;
+    // UWindows
+    private UWindow mTopWindow;
 
     // get/set
-    public TestViewTemplate(Context context) {
+    public TestWindowView2(Context context) {
         this(context, null);
     }
 
-    public TestViewTemplate(Context context, AttributeSet attrs) {
+    public TestWindowView2(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setOnTouchListener(this);
     }
@@ -74,24 +78,15 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
         // 描画オブジェクトクリア
         UDrawManager.getInstance().init();
 
-        // Buttons
-        float y = 100;
-        for (int i=0; i<buttons.length; i++) {
-            ButtonId id = ButtonId.values()[i];
-            buttons[i] = new UButtonText(this, UButtonType.Press, id.ordinal(), BUTTON_PRIORITY,
-                    id.toString(),
-                    100, y,
-                    width - 100*2, 120,
-                    50, Color.WHITE, Color.rgb(0,128,0));
-            if (buttons[i] != null) {
-                UDrawManager.getInstance().addDrawable(buttons[i]);
-            }
-            y += 150;
-        }
+        // UWindows
+        int windowW = width - 200;
+        int windowH = height - 200;
+        mTopWindow = UTestWindow.createInstance(this, 100, 100, windowW, windowH, UColor
+                    .getRandomColor());
+        mTopWindow.setContentSize(2000,2000,true);
 
-        // LogWindow
-        logWindow = ULogWindow.createInstance(getContext(), this, ULogWindow.LogWindowType.AutoDisappear,
-                0, 500, getWidth(), getHeight() - 500);
+        UTestWindow2 window = UTestWindow2.createInstance(this, 100, 100,
+                windowW, windowH, UColor.getRandomColor());
     }
 
     @Override
@@ -99,10 +94,6 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
         if (isFirst) {
             isFirst = false;
             initDrawables(getWidth(), getHeight());
-        }
-        // 毎フレームの処理
-        if (logWindow.doAction() == DoActionRet.Redraw) {
-            invalidate();
         }
 
         // 背景塗りつぶし
@@ -161,15 +152,21 @@ public class TestViewTemplate extends View implements View.OnTouchListener, UBut
     public boolean UButtonClicked(int id, boolean pressedOn) {
         ULog.print(TAG, "button click:" + id);
 
-        if (id < TestWindowView.ButtonId.values().length) {
-            TestWindowView.ButtonId buttonId = TestWindowView.ButtonId.values()[id];
+        if (id < ButtonId.values().length) {
+            ButtonId buttonId = ButtonId.values()[id];
             switch (buttonId) {
                 case Sort:
                     invalidate();
                     return true;
             }
         }
-
         return false;
+    }
+
+    /**
+     * UWindowCallbacks
+     */
+    public void windowClose(UWindow window) {
+        UDrawManager.getInstance().removeDrawable(window);
     }
 }

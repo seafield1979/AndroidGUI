@@ -19,19 +19,15 @@ import com.sunsunsoft.shutaro.ugui.ViewTouch;
  *  バー以外の領域をタップしてスクロール
  *  指定のViewに張り付くように配置
  */
+
 public class UScrollBar {
-    /**
-     * Enums
-     */
-
-
     /**
      * Constants
      */
     public static final String TAG = "UScrollBar";
 
     // colors
-    private static final int SHOW2_BG_COLOR = Color.argb(160, 255,128,0);
+    private static final int BAR_COLOR = Color.argb(160, 128,128,128);
     private static final int SHOW_BAR_COLOR = Color.argb(255, 255,128,0);
     private static final int SHOW_BG_COLOR = Color.argb(128,255,255,255);
 
@@ -64,6 +60,9 @@ public class UScrollBar {
      * Get/Set
      */
 
+    public void setBgLength(int bgLength) {
+        this.bgLength = bgLength;
+    }
 
     public void setBgColor(int bgColor) {
         this.bgColor = bgColor;
@@ -100,7 +99,10 @@ public class UScrollBar {
     }
 
     public boolean isShow() {
-        return isShow;
+        if (isShow && barLength > 0) {
+            return true;
+        }
+        return false;
     }
 
     public void setShow(boolean show) {
@@ -137,7 +139,7 @@ public class UScrollBar {
 
         if (showType == ScrollBarShowType.Show2) {
             bgColor = 0;
-            barColor = SHOW2_BG_COLOR;
+            barColor = BAR_COLOR;
         } else {
             bgColor = SHOW_BAR_COLOR;
             barColor = SHOW_BG_COLOR;
@@ -199,13 +201,17 @@ public class UScrollBar {
         return topPos;
     }
 
-    public void draw(Canvas canvas, Paint paint) {
+    public void draw(Canvas canvas, Paint paint, PointF offset) {
         if (!isShow) return;
 
         paint.setStyle(Paint.Style.FILL);
 
         float baseX = pos.x + parentPos.x;
         float baseY = pos.y + parentPos.y;
+        if (offset != null) {
+            baseX += offset.x;
+            baseY += offset.y;
+        }
 
         float _barLength = barLength;
         float _barPos = barPos;
@@ -304,10 +310,10 @@ public class UScrollBar {
      * @param tv
      * @return
      */
-    public boolean touchEvent(ViewTouch tv) {
+    public boolean touchEvent(ViewTouch tv, PointF offset) {
         switch(tv.type) {
             case Touch:
-                if (touchDown(tv)) {
+                if (touchDown(tv, offset)) {
                     return true;
                 }
                 break;
@@ -328,10 +334,10 @@ public class UScrollBar {
      * @param vt
      * @return true:バーがスクロールした
      */
-    private boolean touchDown(ViewTouch vt) {
+    private boolean touchDown(ViewTouch vt, PointF offset) {
         // スペース部分をタッチしたら１画面分スクロール
-        float ex = vt.touchX() - parentPos.x;
-        float ey = vt.touchY() - parentPos.y;
+        float ex = vt.touchX() - parentPos.x - offset.x;
+        float ey = vt.touchY() - parentPos.y - offset.y;
 
         if (type == ScrollBarType.Vertical) {
             if (pos.x <= ex && ex < pos.x + bgWidth &&

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.sunsunsoft.shutaro.ugui.DetectableKeyboardEventLayout;
 import com.sunsunsoft.shutaro.ugui.MyFragment;
 import com.sunsunsoft.shutaro.ugui.R;
+import com.sunsunsoft.shutaro.ugui.uview.UResourceManager;
 
 
 /**
@@ -29,6 +30,7 @@ public class FragmentTestTextview extends MyFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_test_textview, container, false);
+        UResourceManager.getInstance().setView(view);
 
         TestTextView textView = ((TestTextView)view.findViewById(R.id.textView));
 

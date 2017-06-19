@@ -201,7 +201,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
         for (int i=mWindows.length - 1; i >= 0; i--) {
             UWindow win = mWindows[i];
             if (win == null) continue;
-            if (win.doAction()) {
+            if (win.doAction() == DoActionRet.Redraw) {
                 invalidate();
             }
         }
@@ -250,7 +250,7 @@ public class TopSurfaceView extends SurfaceView implements Runnable,SurfaceHolde
             UWindow win = mWindows[i];
             if (!win.isShow()) continue;
 
-            if (win.touchEvent(vt)) {
+            if (win.touchEvent(vt, null)) {
                 return true;
             }
         }

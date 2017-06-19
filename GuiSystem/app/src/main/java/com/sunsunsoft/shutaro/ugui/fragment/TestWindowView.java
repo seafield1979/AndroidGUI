@@ -12,7 +12,7 @@ import com.sunsunsoft.shutaro.ugui.uview.button.*;
 import com.sunsunsoft.shutaro.ugui.util.UColor;
 import com.sunsunsoft.shutaro.ugui.uview.UDrawManager;
 import com.sunsunsoft.shutaro.ugui.util.ULog;
-import com.sunsunsoft.shutaro.ugui.uview.text.UTestWindow;
+import com.sunsunsoft.shutaro.ugui.uview.window.UTestWindow;
 import com.sunsunsoft.shutaro.ugui.uview.window.*;
 import com.sunsunsoft.shutaro.ugui.ViewTouch;
 
